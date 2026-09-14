@@ -20,7 +20,12 @@ description: "Ennoia의 기존 App 또는 SuperApp에 업무를 요청하거나 
 
 새 질문이 이미 전송됐다면 반환된 `conversation_id`를 보존한다. `pending` 또는 `output=null`은 실패·성공 완료가 아니다. **진행 중인 결과 확인은 `get_ennoia_conversation`으로 한다.** 같은 질문을 `start_ennoia_conversation`이나 `continue_ennoia_conversation`으로 다시 보내지 않는다.
 
-기존 대화를 찾는 경우 `list_ennoia_conversations`에서 ID를 얻고 조회한다. 새로운 후속 질문이 있을 때만 `continue_ennoia_conversation`을 호출한다. 대화는 생성된 원래 프로젝트에 연결되며 기본 프로젝트 변경으로 이동하지 않는다.
+새로운 후속 질문은 원래 실행 경로를 유지한다.
+
+- 직접 App 대화: 반환된 `assistant_hash`와 `conversation_id`를 보존해 `chat_with_ennoia_app`에 새 message와 함께 전달한다. `continue_ennoia_conversation`은 직접 App 대화를 지원하지 않는다.
+- SuperApp 대화: 기존 `conversation_id`로 `continue_ennoia_conversation`을 호출한다. 기존 SuperApp 대화를 찾을 때는 `list_ennoia_conversations`를 사용한다.
+
+대화 목록은 직접 App 대화를 재발견하는 수단이 아니다. 직접 App의 ID를 잃었다면 기존 실행 응답에서 찾고, 복구할 수 없으면 사용자에게 기존 대화 정보를 요청한다. 새 대화를 만든 뒤 기존 대화를 이어갔다고 하지 않는다. 대기 결과는 두 경로 모두 `get_ennoia_conversation`으로 조회한다. 대화는 생성된 원래 프로젝트에 연결되며 기본 프로젝트 변경으로 이동하지 않는다.
 
 `get_ennoia_conversation`의 `completed`·status·메시지를 확인한다. 대기 중이면 host의 wait 기능으로 간격을 두고 조회하며, 장시간 변화가 없으면 현재 상태를 알린다. polling 한도가 있는 host에서는 대화 ID와 재개 방법을 남기며 완료로 꾸미지 않는다. 도구가 제공하지 않는 취소·resume 기능을 추측해서 호출하지 않는다.
 

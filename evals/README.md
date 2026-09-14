@@ -17,6 +17,9 @@
 | catalog-vs-auth | credential 연결 목록과 server catalog를 구분하는가 |
 | trace-partial | 불완전한 근거로 원인을 단정하거나 null 비용을 0으로 바꾸지 않는가 |
 | deployment-timeout | 먼저 배포 상태를 조회하고 필요시 같은 operation_id·payload로 복구하는가 |
+| app-settings-preservation | 이름만 수정해도 기존 App settings 전체를 보존하는가 |
+| direct-app-followup | 직접 App의 후속 질문에 같은 assistant_hash·conversation_id로 chat 도구를 사용하는가 |
+| mcp-settings-preservation | 숨겨진 인증·header를 잃을 수 있는 전체 교체를 실행하지 않고 설정 화면을 안내하는가 |
 
 기본 모델도 올바르게 처리한 case는 Skill의 개선 실적으로 계산하지 않습니다. 추가된 정확한 도구 선택, 불필요한 discovery 감소, 발생한 오류를 분리해 기록합니다. 시뮬레이션의 tool 선택 성공은 실제 native host의 tool 실행 성공과 다릅니다.
 

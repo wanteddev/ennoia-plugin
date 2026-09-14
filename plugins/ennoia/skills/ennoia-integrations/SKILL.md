@@ -27,6 +27,8 @@ description: "Ennoia에 외부 MCP 서버를 등록·조회·변경하거나 공
 
 서버 설정 변경은 `update_ennoia_mcp_server`, 프로젝트 사용 여부는 `set_ennoia_mcp_server_enabled`, 사용자 credential 해제는 `disconnect_mcp_server`, 서버 등록 삭제는 `delete_ennoia_mcp_server`다. 요청한 대상만 변경하고 등록 삭제와 개인 연결 해제를 혼동하지 않는다. 쓰기 재시도는 현재 schema의 `operation_id` 계약과 응답의 복구 지시를 따른다.
 
+서버 수정은 전체 설정 교체다. 생략된 `auth`, `static_headers`, `allowed_tools`는 각각 none·빈 object·빈 목록으로 초기화될 수 있다. 이름만 변경해도 기존 URL·설명·인증·header·도구 허용 목록을 보존해야 한다. 상세 조회의 `static_header_names`는 실제 header 값이 아니며 secret도 반환하지 않는다. 기존 값을 안전하게 유지하는 공식 경로가 없으면 `update_ennoia_mcp_server`를 호출하지 말고 Ennoia 서버 설정 화면에서 부분 변경하도록 안내한다. secret 복사 요청이나 인증을 none으로 낮추는 우회는 하지 않는다. 비밀값이 없는 서버도 현재 전체 설정을 확인하고 요청한 수정만 합쳐 전달한 뒤 결과를 재조회한다.
+
 ## 결과
 
 서버 등록 상태, 사용자 연결 상태, tool discovery, 실제 실행 확인 여부를 구분해 보고한다. `Auth required`를 서버 부재나 장애로 단정하지 않는다.
