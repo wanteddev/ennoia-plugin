@@ -1,0 +1,20 @@
+{
+  "name": "ennoia",
+  "interface": {
+    "displayName": "Ennoia"
+  },
+  "plugins": [
+    {
+      "name": "ennoia",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ennoia"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

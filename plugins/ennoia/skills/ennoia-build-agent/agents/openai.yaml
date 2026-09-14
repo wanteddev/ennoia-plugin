@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ennoia 에이전트 만들기"
+  short_description: "Ennoia 업무 에이전트를 구성하고 검증·테스트·저장합니다"
+  default_prompt: "Use $ennoia-build-agent — Ennoia에서 내 업무를 처리할 에이전트를 만들어줘."

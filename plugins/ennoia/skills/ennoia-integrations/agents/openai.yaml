@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ennoia MCP 연결 관리"
+  short_description: "Ennoia 외부 MCP의 등록과 사용자 인증 연결을 관리합니다"
+  default_prompt: "Use $ennoia-integrations — Ennoia에서 사용할 MCP 서버의 연결 상태를 확인해줘."

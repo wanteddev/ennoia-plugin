@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ennoia 연결"
+  short_description: "Ennoia 계정 인증과 사용할 그룹·프로젝트를 확인합니다"
+  default_prompt: "Use $ennoia-connect — Ennoia에 연결하고 사용할 프로젝트를 확인해줘."

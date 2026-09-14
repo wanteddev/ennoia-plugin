@@ -1,0 +1,33 @@
+---
+name: ennoia-build-agent
+description: "Ennoia multi-agent를 새로 만들거나 기존 graph·draft를 수정, 검증, 테스트, 저장할 때 사용합니다. 이미 배포된 App 실행이나 운영 배포 요청은 별도 Skill의 대상입니다."
+---
+
+# Ennoia 에이전트 만들기
+
+사용자가 요청한 업무를 Ennoia graph로 만들고 요청한 단계까지 완료한다. 생성 요청만으로 운영 배포·공유를 추가하지 않는다.
+
+## 대상과 입력
+
+설치된 Ennoia MCP tool을 이름으로 발견하고 최신 input schema를 따른다. 시작할 때 `get_current_ennoia_project`로 대상 이름·코드를 확인한다. `auto_selected`이면 생성·실행·저장 전에 사용자 선택을 확보한다. 이미 지정된 대상·모델·기존 설정은 유지한다. 기존 수정은 `list_multi_agents`의 검색 결과에서 ID를 얻고 `get_multi_agent`로 graph를 읽은 뒤 변경한다. 필요한 입력만 사용자에게 확인한다.
+
+## 필요한 것만 발견
+
+- 처음 graph를 작성할 때 `list_multi_agent_node_types`, 사용할 type의 `get_multi_agent_node_schema`, `get_multi_agent_edge_schema`를 확인한다. 상세 schema와 예제를 우선한다.
+- 자원 종류·사용 가능 여부가 불명확하면 `get_multi_agent_capabilities` 요약을 읽는다. 필요한 `list_multi_agent_models`, `list_multi_agent_mcp_servers`, `list_multi_agent_rag_collections`만 query로 좁혀 조회한다.
+- MCP는 선택한 서버의 `list_multi_agent_mcp_tools`를 조회한 뒤 사용할 도구의 `get_multi_agent_mcp_tool_schema`만 읽는다. 카탈로그와 OAuth 연결 상태를 혼동하지 않는다.
+- 같은 project·schema·capability version의 유효한 조회 결과는 작업 중 재사용한다. project·model·version이 바뀌거나 서버가 stale이라고 판단하면 관련 부분만 다시 조회한다.
+
+graph 입력과 자원 식별자는 [Graph 작성 계약](references/graph-authoring.md)을 필요한 경우 읽는다.
+
+## 검증·테스트·저장
+
+`validate_multi_agent`의 envelope `ok`와 `data.valid`를 모두 확인한다. 실패한 node/path와 `repair_hint`에 맞춰 수정한 뒤 재검증한다. 동일 실패에 근거 없는 수정을 반복하지 않는다.
+
+테스트가 요청됐거나 완성 여부 확인에 필요하면 짧은 graph는 `test_multi_agent`, 오래 걸릴 작업은 `start_multi_agent_test`를 사용한다. 비동기 결과는 반환된 `test_id`로 `get_multi_agent_test`를 조회한다. `running`은 완료가 아니다. polling은 host의 wait 기능과 간격 증가를 사용하며 새 test를 중복 시작하지 않는다. 이 테스트 경로의 `allow_side_effects`는 `false`다. 거부되거나 승인이 필요한 실행을 우회하지 않는다.
+
+저장은 `save_multi_agent`를 사용한다. 같은 graph·사용자·project에서 검증한 `validation_id` 경로를 우선해 큰 graph를 재전송하지 않는다. `validation_id`와 원본 nodes/edges를 동시에 보내지 않는다. graph를 변경했으면 다시 검증한다. 기존 draft 수정은 `operation=update`와 발견한 `multi_agent_id`를 사용한다. 재시도·만료는 [저장 복구](references/save-and-retry.md)를 따른다.
+
+## 결과
+
+대상 프로젝트, 생성/수정한 에이전트, 검증·테스트·저장 각각의 실제 상태와 남은 제한을 전달한다. 테스트 실패를 성공으로 덮거나 저장을 배포 완료로 표현하지 않는다. 응답의 credential을 출력하지 않는다.
