@@ -20,6 +20,8 @@ Claude validator의 성공은 Skill 행동이나 OAuth 성공을 증명하지 �
 
 문서 본문 문구를 정규식으로 맞추는 테스트 대신 broken reference, package 밖 경로, manifest version drift, MCP credential 포함, 미확인 tool 같은 배포 실패를 검사합니다. 모델 동작은 `evals/scenarios.json`을 별도로 사용합니다.
 
+기존 서버 호환성 판단은 `evals/dogfooding-scenarios.json`의 prompt·observations·environment만 평가자에게 주고 기대 판정은 `dogfooding-rubric.md`로 분리합니다. 기존 Plugin과 후보를 같은 case로 비교하며 baseline도 통과한 사례를 개선으로 계산하지 않습니다. 추측 식별자·중복 실행·설정 손실은 허용하지 않습니다. 독립 blind 판정과 실제 서버 실행은 별도 증거로 기록합니다.
+
 ## 릴리스
 
 1. portable manifest의 version을 갱신하고 `scripts/sync_manifests.py`를 실행합니다.

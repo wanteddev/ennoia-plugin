@@ -13,6 +13,8 @@
 
 App 수정은 부분 patch가 아니다. `name`, `description`, `welcome_message`, `history_count`, `allow_file_upload`, `recommended_questions`의 기존 값을 모두 읽고 요청한 값만 교체한 전체 settings를 보낸다. 생략된 값은 기본값으로 초기화될 수 있다. 이름만 바꾸더라도 설명·history·파일 업로드·추천 질문을 유지한다. 필수 기존 값이 누락되거나 null이라 현재 설정을 안전하게 재구성할 수 없으면 임의 기본값을 넣지 말고 Ennoia App 설정 화면에서 변경하도록 안내한다. 저장 후 설정을 다시 조회해 요청 범위만 바뀌었는지 확인한다.
 
+상세 조회에 설정 일부가 null 또는 불명확하면 안전하게 보존할 수 있는 공식 부분 변경 경로가 있는지 먼저 확인한다. 없다면 값의 임의 기본값이나 빈 값으로 전체 교체하지 않는다. 요청한 이름 변경은 설정 화면에서 수행하도록 안내한다.
+
 App의 상세 조회에 나타나지 않는 credential은 채워 넣거나 유추하지 않는다. 선택한 App의 credential이 없으면 backend의 관리 경로를 사용한다.
 
 쓰기 도구가 `operation_id`를 요구하면 하나의 논리적 변경에 같은 UUID를 사용한다. timeout 후 상태 조회를 먼저 하며 같은 요청에 새 ID를 만들지 않는다. 공유 링크는 의도적으로 공개 요청된 결과에만 전달한다. API key·OAuth token·업로드 ticket은 공유 링크가 아니다.
