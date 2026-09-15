@@ -9,7 +9,7 @@
 
 `operation_id`는 하나의 논리적 저장 작업에 하나의 UUID다. 응답 유실·timeout으로 같은 요청을 재시도할 때 같은 값과 같은 payload를 사용한다. 다른 수정 내용은 새 작업이며 다시 검증한다. `validation_id`는 사용자·project·graph에 묶여 있으므로 다른 대상에서 재사용하지 않는다.
 
-검증 만료·schema/capability 변경 오류면 관련 자원을 갱신하고 재검증한다. `error.next_action`, `repair_hint`, `retryable`을 먼저 확인한다. 결과가 불명확한 쓰기는 `list_multi_agents`/`get_multi_agent`로 현재 상태를 조회하고, backend가 지시하는 idempotent 재시도만 한다. 같은 요청을 새 `operation_id`로 무작정 반복하지 않는다.
+`CONTRACT_MISMATCH`처럼 실제 저장 응답에 명시된 검증 만료·schema/capability 변경 또는 `details.reason=source_version_changed` 오류에서만 관련 자원을 갱신하고 재검증한다. 정상 `validation_id`를 만료 추측으로 다시 검증하지 않는다. `error.next_action`, `repair_hint`, `retryable`을 먼저 확인한다. 결과가 불명확한 쓰기는 `list_multi_agents`/`get_multi_agent`로 현재 상태를 조회하고, backend가 지시하는 idempotent 재시도만 한다. 같은 요청을 새 `operation_id`로 무작정 반복하지 않는다.
 
 정상적인 같은 대상·graph의 `validation_id`는 재사용한다. 만료를 추측해 미리 반복 검증하지 않는다. `MAB_COMPILE_DEFERRED`이면 저장 가능성과 실행 검증을 분리한다. 저장 결과가 나와도 compile/test 실행 성공은 확인된 상태가 아니며, 실제 실행 또는 검증 결과를 별도 확인한다.
 

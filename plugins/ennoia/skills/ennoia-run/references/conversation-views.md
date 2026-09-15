@@ -1,0 +1,9 @@
+# 대화 조회 형식과 전체 답변
+
+현재 연결의 `get_ennoia_conversation` request input schema가 `view`를 지원할 때만 다음 형식을 사용한다. 짧은 완료 상태·단순 결과 확인은 `view=summary`를 선택한다. `latest_answer`는 최대 1024자 미리보기이고 `truncated`/`has_more`가 있으면 전체 답변이라고 전달하지 않는다. 최신 turn의 `execution_status=awaiting_input|pending|failed|unknown`과 `completed`를 함께 확인하며 이전 완료 답변으로 최신 turn의 완료를 대신하지 않는다.
+
+사용자가 이력·전체 답변·artifact/citation·구조화된 입력을 원하면 `view=messages`를 사용한다. 시작 cursor가 제공되면 그 cursor에서 읽고, 없으면 cursor 없이 시작한다. `limit`은 1..50 메시지/fragment item의 상한이며 필요한 범위만 조회한다. `has_more=true`이면 `next_cursor`로 다음 페이지를 읽는다. `has_more=false`에서 종료한다. `truncated=true`만 보고 cursor 없는 조회를 반복하지 않는다. 마지막 messages page에도 latest_answer 미리보기 때문에 truncated가 남을 수 있다.
+
+일반 메시지는 `role/content`와 metadata를 그대로 보존한다. fragment는 `message_index`와 `fragment.field`별로 묶고 Unicode 문자 `offset` 순서대로 연결한다. `encoding=text`의 content 조각은 `content`, `encoding=json`의 조각은 `fragment.value`를 이어 붙인 뒤 JSON으로 복원한다. `complete=true`는 그 필드의 마지막 조각이다. 조각 없는 필드와 citation/artifact/HITL·출처 metadata를 버리지 않는다. 전체 답변이라고 말하기 전에 필요한 최신 assistant 필드의 조각이 모두 complete인지, page가 끝났는지 확인한다. `message_index`는 snapshot 내 최신순 위치이며 inactive 버전도 포함하므로 role·시각·active 상태와 최신 turn을 함께 본다.
+
+`CONVERSATION_CURSOR_EXPIRED` 또는 `INVALID_CONVERSATION_CURSOR`이면 같은 `conversation_id`를 cursor 없이 새로 조회하고 **이전 부분 조립을 버린다**. 5분 snapshot TTL/동일 scope 새 조회 교체 뒤 이전·새 page를 섞지 않는다. `CONVERSATION_SNAPSHOT_TOO_LARGE`는 8MiB 경계의 typed 실패다. 빈 대화로 해석하지 말고 Ennoia 기존 화면에서 확인한다. 어느 경우에도 질문을 다시 보내지 않는다. 읽기 옵션이 현재 input schema에는 있으나 이전 backend가 거절하면 같은 ID의 legacy 조회로 돌아가 제공된 범위만 전달한다. legacy 응답이나 host가 제공한 큰 파일에서도 확인되지 않은 전체 답변을 만들지 않는다.

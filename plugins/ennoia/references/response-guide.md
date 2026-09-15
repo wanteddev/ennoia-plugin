@@ -39,6 +39,14 @@ App builder 상세는 OAuth 인증된 사용자 권한으로 조회하며 응답
 
 새 MCP 연결의 initialize `serverInfo.version`과 `instructions`에 있는 `source_revision`, `description_sha256`을 같은 세션에서 기록하고 실제 배포 image source revision과 대조한다. `unknown`은 로컬 빌드 revision이 확인되지 않았다는 뜻이다. 기존 연결 metadata나 캐시된 tool 설명은 새 서버의 runtime 반영을 증명하지 않는다. hash는 tool 이름과 description 문자열만의 SHA-256이며 schema, annotations 또는 사용 모델의 token 측정값이 아니다.
 
+## 신·구 서버 기능 선택
+
+현재 **실제로 호출할 host 연결**의 tool input schema를 확인한다. `get_ennoia_conversation`의 request에 `view=summary|messages`, `limit`, `cursor`가 보일 때만 해당 읽기 옵션을 사용한다. 없으면 기존 인자만 보낸다. `get_multi_agent`의 request에 `format=agent_config`가 보일 때만 해당 형식을 요청한다. 다른 연결의 schema, cached 설명, Plugin 버전 또는 initialize revision만으로 O backend 배포까지 확정하지 않는다. 새 MCP와 이전 O의 혼합 배포에서 새 읽기 옵션이 계약 오류로 거절되면 같은 ID를 기존 인자로 제한 조회하고 신규 기능을 미지원으로 기록한다. 읽기 fallback은 새 질문·테스트·저장·배포의 재전송을 허가하지 않는다. 입력 schema가 비어 있거나 불명확하면 capability를 추측하지 않는다.
+
+상태·비용·MCP discovery의 새 field가 없는 응답은 없는 그대로 해석한다. 명시적 `null`과 field 부재를 임의 값으로 채우지 않는다. 실제 응답에 `execution_status`, `settings_readiness`, `settings_field_states`, `settings_input_required`, `resource_count`, `applied_agent_scope`, `source`, `completeness`, `availability`, `cause`, `user_schema_discovery`가 있을 때 그 domain의 의미로만 쓴다. 없는 이전 응답에서는 기존 상태·unknown·재인증·제한 조회 절차를 따른다. MCP catalog의 `availability=ready`는 사용자 OAuth schema/실행 권한이 아니다. `input_schema={}`는 확인된 빈 입력 schema이고 `input_schema=null`은 미확인이다. `user_schema_discovery=unsupported`는 사용자별 schema API 미지원이며 credential cache가 있다는 뜻이 아니다.
+
+`get_project_cost`의 `resource_count`는 일별 resource row의 count 합계이며 LLM 요청 수나 에이전트 비용이 아니다. `request_count=null`, `applied_agent_scope=project`이면 agent 필터가 적용됐다고 설명하지 않는다. 통화·producer bucket timezone·반영 지연이 unknown이면 비용의 전체성이나 정확한 시간 범위를 확정하지 않는다. Trace·사용량·비용은 각각 source와 단위를 보존해 대조한다.
+
 1. host가 제공한 `structuredContent` 또는 원본 JSON text를 읽는다. 첫 번째 text는 한국어 요약일 수 있으므로 항상 JSON이라고 가정하지 않는다. 요약과 원본이 충돌하면 원본의 `ok`, `error`, `data` 상태를 우선하고 불일치를 짧게 알린다.
 2. `ok=true`는 요청 처리 성공이며 업무 완료의 충분한 근거가 아니다. `running`, `pending`, `completed=false`, `ready_for_agent=false`, 검증 결과의 `valid=false`를 각각 실제 상태로 설명한다. 완료 근거가 부족하면 미확인으로 표시한다.
 3. `partial_failures`, 생략·잘림·추가 페이지, 확인 대기, 예산 경고는 짧은 답변에서도 유지한다. `null` 사용량·비용은 미확인이지 0이 아니다. 확인된 범위만 합계·성공으로 보고한다.

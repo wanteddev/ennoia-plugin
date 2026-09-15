@@ -29,7 +29,9 @@ description: "Ennoia의 기존 App 또는 SuperApp에 업무를 요청하거나 
 
 대화 목록은 직접 App 대화를 재발견하는 수단이 아니다. 직접 App의 ID를 잃었다면 기존 실행 응답에서 찾고, 복구할 수 없으면 사용자에게 기존 대화 정보를 요청한다. 새 대화를 만든 뒤 기존 대화를 이어갔다고 하지 않는다. 대기 결과는 두 경로 모두 `get_ennoia_conversation`으로 조회한다. 대화는 생성된 원래 프로젝트에 연결되며 기본 프로젝트 변경으로 이동하지 않는다.
 
-`get_ennoia_conversation`의 `completed`·status·메시지를 확인한다. 배열의 마지막 요소가 최신 assistant라고 가정하지 않는다. role과 시각으로 최신 turn을 찾고 interrupt·pending을 확인한다. `completedYn`은 각 메시지의 보조 근거이며 이전 assistant가 완료됐어도 최신 turn이 중단되면 전체 업무 완료로 보고하지 않는다. host가 큰 대화 결과를 파일로 제공하면 제공된 파일의 필요한 부분만 읽고 현행 API에 없는 조회 옵션을 만들지 않는다. 실행 수락 여부가 불명확한 retryable 오류도 질문 재전송 전에 받은 `conversation_id`로 상태를 확인한다. 대기 중이면 host의 wait 기능으로 간격을 두고 조회하며, 장시간 변화가 없으면 현재 상태를 알린다. polling 한도가 있는 host에서는 대화 ID와 재개 방법을 남기며 완료로 꾸미지 않는다. 도구가 제공하지 않는 취소·resume 기능을 추측해서 호출하지 않는다.
+`get_ennoia_conversation`의 현재 input schema에 새 `view`가 있으면 단순 상태·결과 확인은 `summary`, 이력·전체 답변은 `messages`를 사용한다. 없는 이전 schema에는 새 인자를 보내지 않는다. 이력·전체 답변 요청의 cursor·fragment 복원은 [대화 조회 형식](references/conversation-views.md)을 읽는다. `summary.latest_answer`의 미리보기만으로 전체 답변이라고 하지 않는다. 실제 backend가 새 읽기 옵션을 거절하면 같은 ID의 기존 조회로 제한 복구한다.
+
+`completed`·status·메시지를 확인한다. 배열의 마지막 요소가 최신 assistant라고 가정하지 않는다. role과 시각으로 최신 turn을 찾고 interrupt·pending을 확인한다. `completedYn`은 각 메시지의 보조 근거이며 이전 assistant가 완료됐어도 최신 turn이 중단되면 전체 업무 완료로 보고하지 않는다. host가 큰 대화 결과를 파일로 제공하면 제공된 파일의 필요한 부분만 읽는다. 실행 수락 여부가 불명확한 retryable 오류도 질문 재전송 전에 받은 `conversation_id`로 상태를 확인한다. 대기 중이면 host의 wait 기능으로 간격을 두고 조회하며, 장시간 변화가 없으면 현재 상태를 알린다. polling 한도가 있는 host에서는 대화 ID와 재개 방법을 남기며 완료로 꾸미지 않는다. 도구가 제공하지 않는 취소·resume 기능을 추측해서 호출하지 않는다.
 
 ## 결과
 

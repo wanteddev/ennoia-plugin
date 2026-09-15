@@ -17,7 +17,7 @@ description: "Ennoia에 외부 MCP 서버를 등록·조회·변경하거나 공
 2. 카탈로그에서 얻은 `server_id` 또는 지원되는 exact alias로 `get_ennoia_mcp_server`를 조회한다. 임의의 inventory ID를 만들지 않는다.
 3. 필요한 도구는 `list_multi_agent_mcp_tools`와 선택한 도구의 `get_multi_agent_mcp_tool_schema`로 확인한다. 도구 목록 존재와 실제 OAuth·도구 실행 성공을 구분한다.
 
-동일 endpoint의 user 수동 서버, Plugin 서버, connector가 함께 보이면 source·scope·실제 사용 연결을 구분한다. `input_schema={}`와 `read_only=null`은 자체로 인증 실패를 뜻하지 않는다. 발견된 서버와 실제 connection·실행 오류를 확인하고 기존 연결을 자동 삭제하거나 credential을 다른 source에 복사하지 않는다.
+동일 endpoint의 user 수동 서버, Plugin 서버, connector가 함께 보이면 source·scope·실제 사용 연결을 구분한다. `input_schema={}`는 확인된 빈 schema, `input_schema=null`이나 field 누락은 미확인이다. `read_only=null`은 자체로 인증 실패를 뜻하지 않는다. 새 `availability`, `cause`, `source`, `next_action`은 실제 응답에 있을 때만 해석한다. project catalog `ready`는 사용자 OAuth 도구 허가가 아니다. `user_schema_discovery=unsupported`에서는 사용자별 credential/schema cache나 범용 OAuth 실행 경로를 주장하지 않는다. 발견된 서버와 실제 connection·실행 오류를 확인하고 기존 연결을 자동 삭제하거나 credential을 다른 source에 복사하지 않는다.
 
 ## 등록과 연결
 

@@ -8,6 +8,16 @@
 - Claude Marketplace와 Codex Marketplace가 각각 repo 루트에서 발견되며 같은 payload를 가리킵니다.
 - Portable manifest 원본과 Claude/Codex 호환 manifest를 함께 제공하며 transport 표기는 각 규격으로 생성합니다.
 
+## 2026-09-15 · 1.1.0 후보 계약
+
+- 일곱 공유 Skill은 **현재 사용 연결의 실제 input schema**가 허용할 때만 `get_ennoia_conversation(view=summary|messages)`와 `get_multi_agent(format=agent_config)`를 요청합니다. 구 schema에는 새 인자를 보내지 않습니다. 새 M/구 O 혼합 배포의 읽기 계약 오류에서는 같은 conversation ID의 legacy 조회로 제한 복구하며 질문·저장·배포를 재전송하지 않습니다. Plugin 버전이나 initialize metadata만으로 O backend rollout을 확정하지 않습니다.
+- `summary.latest_answer`는 최대 1024자 preview입니다. 전체 답변은 `messages`의 `has_more/next_cursor`와 `message_index/fragment.field/offset/encoding/complete`를 따라 필요한 범위만 복원하며 citation·artifact·HITL·일반 metadata를 유지합니다. 마지막 messages page의 `truncated=true`가 preview 때문일 수 있으므로 cursor 없는 반복 조회의 종료 조건으로 사용하지 않습니다. Snapshot은 300초/8MiB typed 한도이며 만료·교체 시 기존 부분 조립을 버립니다.
+- 현재 O는 원자적 edit revision/CAS가 없어 `agent_config`를 `CANONICAL_GRAPH_UNAVAILABLE`/`revision_not_supported`로 거절합니다. `source_version`은 원본 배포 metadata입니다. Canvas에서 실행 graph를 손실 역변환하거나 대체 agent를 만들지 않습니다. 이전 O에도 같은 안전 경계를 적용합니다.
+- 새 RAG 상태, App `settings_readiness`/field state, Trace·비용 단위/source, MCP schema `availability`/`user_schema_discovery`가 실제 응답에 있을 때만 사용합니다. 구 응답의 누락·null은 unknown으로 유지합니다. `resource_count`는 project 일별 resource count이고 LLM 요청 수나 agent별 비용이 아닙니다. 사용자 OAuth schema API/credential revision cache는 아직 없습니다.
+- App update는 **full PUT**이고 유효 설정 field를 생략해도 기본값으로 교체될 수 있습니다. 읽은 모든 설정을 안전하게 보존할 수 있을 때만 전체 입력으로 수정하며 미관측 값은 화면 변경을 안내합니다. `settings_readiness=complete`는 관측 완전성이고 PATCH/CAS가 아닙니다. readback은 동시 변경 방지가 아닙니다.
+- [기존 39개와 새 15개 합성 입력](../evals/server-aware-scenarios.json)의 판정은 분리된 [rubric](../evals/server-aware-rubric.md) 및 기존 eval rubric으로 진행합니다. 작성자가 독립 blind 결과, 실제 host latency/token·업무 성공을 주장하지 않습니다. 공식 static validator 결과는 Task 11 작업 보고서에 남깁니다.
+- 이 후보가 대조한 로컬 source는 O `fc0039b`, M `48b0a0b`(S9 테스트 수정만; 계약 source는 `b9ac91a`)입니다. 실제 배포 image revision은 확인되지 않았으며 새 연결의 initialize/schema/실행을 별도 V1 gate에서 대조해야 합니다. PR 병합·green 테스트만으로 운영 기능을 확정하지 않습니다. 새 계정 OAuth·실제 App write·대화 전체 본문·graph 수정의 native host 실행은 아직 확인하지 않았습니다.
+
 ## 2026-09-15 · 1.0.3 후보 로컬 검증
 
 - 70-tool 서버의 새 후보는 domain별 `stage_label`, `status_label`, `assistant_type_label`을 raw code와 함께 추가합니다. 이전 서버의 label 부재도 지원하고 unknown code는 추측하지 않습니다. M 서버 모델이 이 필드를 먼저 수용한 뒤 O 응답을 적용해야 합니다.

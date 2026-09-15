@@ -11,7 +11,7 @@ description: "Ennoia multi-agent를 새로 만들거나 기존 graph·draft를 �
 
 ## 대상과 입력
 
-설치된 Ennoia MCP tool을 이름으로 발견하고 최신 input schema를 따른다. 시작할 때 `get_current_ennoia_project`로 대상 이름을 확인한다. `auto_selected`이면 생성·실행·저장 전에 사용자 선택을 확보한다. 이미 지정된 대상·모델·기존 설정은 유지한다. 기존 수정은 `list_multi_agents`의 검색 결과에서 ID를 얻고 `get_multi_agent`로 graph를 읽은 뒤 변경한다. 필요한 입력만 사용자에게 확인한다.
+설치된 Ennoia MCP tool을 이름으로 발견하고 현재 연결의 input schema를 따른다. 시작할 때 `get_current_ennoia_project`로 대상 이름을 확인한다. `auto_selected`이면 생성·실행·저장 전에 사용자 선택을 확보한다. 이미 지정된 대상·모델·기존 설정은 유지한다. 기존 수정은 `list_multi_agents`의 검색 결과에서 ID를 얻는다. `get_multi_agent`에 `format=agent_config`가 실제 input schema에 있을 때 그 형식으로 조회한다. 없는 이전 schema에는 `format`을 보내지 않는다. 현 upstream의 `CANONICAL_GRAPH_UNAVAILABLE`/`details.reason=revision_not_supported`는 canonical edit revision·CAS 부재를 뜻한다. 손실된 Canvas에서 nodes/edges를 자동 재구성하거나 대체 에이전트를 생성하지 않는다. 안전한 원본 graph/export가 없으면 확인 가능한 설정만 제시하고 수정은 제한한다. 필요한 입력만 사용자에게 확인한다.
 
 ## 필요한 것만 발견
 

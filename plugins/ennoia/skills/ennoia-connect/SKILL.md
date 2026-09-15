@@ -24,6 +24,8 @@ host의 `needs-auth` 또는 `AUTH_REQUIRED`, `ENNOIA_REAUTH_REQUIRED`, HTTP 401�
 
 재인증 뒤 `get_ennoia_context`와 현재 프로젝트를 확인한다. 같은 실패를 반복하면 오류 코드와 host 연결 상태를 보고하고 무한 재시도하지 않는다. 세부 오류 구분은 [인증 복구](references/authentication.md)를 읽는다.
 
+새 serverInfo revision을 사용하려면 실제 사용 연결을 새로 initialize한 metadata와 배포 image revision을 대조한다. Plugin 버전·다른 연결의 cached schema만으로 새 backend 기능을 확정하지 않는다. 인증 실패에 남은 이전 `project_context`는 현재 선택의 증거가 아니다.
+
 사용자가 계정 전환을 요청했을 때만 `switch_ennoia_account`, 로그아웃을 요청했을 때만 `logout_ennoia`를 사용한다. 단순 조회 실패를 해결하려고 기존 연결을 삭제하지 않는다.
 
 ## 완료 기준

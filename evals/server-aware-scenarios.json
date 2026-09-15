@@ -1,0 +1,681 @@
+[
+  {
+    "id": "new-summary-simple",
+    "skill": "ennoia-run",
+    "prompt": "방금 요청한 App 작업이 끝났는지 짧게 확인해줘.",
+    "observations": [
+      {
+        "tool": "host_tool_schema",
+        "result": {
+          "tool": "get_ennoia_conversation",
+          "request": {
+            "conversation_id": "string",
+            "view": [
+              "legacy",
+              "summary",
+              "messages"
+            ],
+            "limit": {
+              "minimum": 1,
+              "maximum": 50
+            },
+            "cursor": "messages only"
+          }
+        }
+      },
+      {
+        "tool": "chat_with_ennoia_app",
+        "result": {
+          "ok": true,
+          "data": {
+            "conversation_id": "conv-a",
+            "status": "pending"
+          }
+        }
+      }
+    ],
+    "environment": "새 M/O 합성 입력. 실제 host와 backend 호출 없음. 필요한 다음 tool과 완료 표현을 작성한다."
+  },
+  {
+    "id": "old-schema-simple",
+    "skill": "ennoia-run",
+    "prompt": "기존 대화 conv-b의 상태를 확인해줘.",
+    "observations": [
+      {
+        "tool": "host_tool_schema",
+        "result": {
+          "tool": "get_ennoia_conversation",
+          "request": {
+            "conversation_id": "string"
+          }
+        }
+      },
+      {
+        "tool": "get_ennoia_conversation",
+        "result": {
+          "ok": true,
+          "data": {
+            "conversation_id": "conv-b",
+            "completed": false,
+            "messages": []
+          }
+        }
+      }
+    ],
+    "environment": "이전 M/O 합성 입력. 현재 실제 사용 연결에는 view/limit/cursor가 없다."
+  },
+  {
+    "id": "mixed-backend-read-fallback",
+    "skill": "ennoia-run",
+    "prompt": "기존 conv-c의 결과를 확인해줘.",
+    "observations": [
+      {
+        "tool": "host_tool_schema",
+        "result": {
+          "tool": "get_ennoia_conversation",
+          "request": {
+            "conversation_id": "string",
+            "view": [
+              "legacy",
+              "summary",
+              "messages"
+            ],
+            "limit": {
+              "minimum": 1,
+              "maximum": 50
+            },
+            "cursor": "messages only"
+          }
+        }
+      },
+      {
+        "tool": "get_ennoia_conversation",
+        "request": {
+          "conversation_id": "conv-c",
+          "view": "summary"
+        },
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "APP_API_CONTRACT_MISMATCH"
+          }
+        }
+      }
+    ],
+    "environment": "새 M와 이전 O/backend 혼합 배포의 합성 계약 오류. 읽기 조회만 허용. 오류 code는 현 M/O client의 stable allowlist다."
+  },
+  {
+    "id": "new-full-answer-fragments",
+    "skill": "ennoia-run",
+    "prompt": "conv-d의 답변 전체와 citation, artifact를 보여줘.",
+    "observations": [
+      {
+        "tool": "host_tool_schema",
+        "result": {
+          "tool": "get_ennoia_conversation",
+          "request": {
+            "conversation_id": "string",
+            "view": [
+              "legacy",
+              "summary",
+              "messages"
+            ],
+            "limit": {
+              "minimum": 1,
+              "maximum": 50
+            },
+            "cursor": "messages only"
+          }
+        }
+      },
+      {
+        "tool": "get_ennoia_conversation",
+        "request": {
+          "conversation_id": "conv-d",
+          "view": "summary"
+        },
+        "result": {
+          "ok": true,
+          "data": {
+            "view": "summary",
+            "execution_status": "completed",
+            "completed": true,
+            "latest_answer": "전체 답변: 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자",
+            "latest_message_index": 0,
+            "messages": [
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "citations": [
+                  {
+                    "title": "근거 A",
+                    "url": "https://example.com/source"
+                  }
+                ],
+                "artifacts": [
+                  {
+                    "name": "표 A",
+                    "type": "table"
+                  }
+                ],
+                "completedYn": "Y"
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "fragment": {
+                  "field": "content",
+                  "encoding": "text",
+                  "offset": 0,
+                  "complete": false
+                },
+                "content": "전체 답변: 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자"
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "fragment": {
+                  "field": "content",
+                  "encoding": "text",
+                  "offset": 1024,
+                  "complete": false
+                },
+                "content": "료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인"
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "fragment": {
+                  "field": "content",
+                  "encoding": "text",
+                  "offset": 2048,
+                  "complete": false
+                },
+                "content": "했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료"
+              }
+            ],
+            "has_more": true,
+            "next_cursor": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.0.fc58f90228d327e9c3f48ccb5051d61eb03faef49ab43bab3d82bafd6aaa5b2c",
+            "truncated": true
+          }
+        }
+      },
+      {
+        "tool": "get_ennoia_conversation",
+        "request": {
+          "conversation_id": "conv-d",
+          "view": "messages",
+          "cursor": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.0.fc58f90228d327e9c3f48ccb5051d61eb03faef49ab43bab3d82bafd6aaa5b2c",
+          "limit": 10
+        },
+        "result": {
+          "ok": true,
+          "data": {
+            "view": "messages",
+            "execution_status": "completed",
+            "completed": true,
+            "latest_answer": "전체 답변: 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자",
+            "latest_message_index": 0,
+            "messages": [
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "citations": [
+                  {
+                    "title": "근거 A",
+                    "url": "https://example.com/source"
+                  }
+                ],
+                "artifacts": [
+                  {
+                    "name": "표 A",
+                    "type": "table"
+                  }
+                ],
+                "completedYn": "Y"
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "fragment": {
+                  "field": "content",
+                  "encoding": "text",
+                  "offset": 0,
+                  "complete": false
+                },
+                "content": "전체 답변: 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자"
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "fragment": {
+                  "field": "content",
+                  "encoding": "text",
+                  "offset": 1024,
+                  "complete": false
+                },
+                "content": "료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인"
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "fragment": {
+                  "field": "content",
+                  "encoding": "text",
+                  "offset": 2048,
+                  "complete": false
+                },
+                "content": "했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료"
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "fragment": {
+                  "field": "content",
+                  "encoding": "text",
+                  "offset": 3072,
+                  "complete": true
+                },
+                "content": "와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. 요청한 자료와 검증 근거를 확인했습니다. "
+              }
+            ],
+            "has_more": false,
+            "next_cursor": null,
+            "truncated": true
+          }
+        }
+      }
+    ],
+    "environment": "현 O conversation_projection.message_fragments/page_items/make_cursor가 만든 source-reachable 합성 출력. 본문은 >8KiB, fragment item은 identity+fragment+content만 갖고 citation/artifact는 별도 일반 item에 보존된다. 실제 서비스 호출 없음."
+  },
+  {
+    "id": "messages-json-metadata",
+    "skill": "ennoia-run",
+    "prompt": "conv-e의 답변과 구조화된 metadata를 빠짐없이 보여줘.",
+    "observations": [
+      {
+        "tool": "host_tool_schema",
+        "result": {
+          "tool": "get_ennoia_conversation",
+          "request": {
+            "conversation_id": "string",
+            "view": [
+              "legacy",
+              "summary",
+              "messages"
+            ],
+            "limit": {
+              "minimum": 1,
+              "maximum": 50
+            },
+            "cursor": "messages only"
+          }
+        }
+      },
+      {
+        "tool": "get_ennoia_conversation",
+        "result": {
+          "ok": true,
+          "data": {
+            "view": "messages",
+            "messages": [
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "content": "완료",
+                "fragment": {
+                  "field": "metadata",
+                  "encoding": "json",
+                  "value": "{\"citations\":",
+                  "offset": 0,
+                  "complete": false
+                }
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "fragment": {
+                  "field": "metadata",
+                  "encoding": "json",
+                  "value": "[{\"title\":\"A\"}]}",
+                  "offset": 13,
+                  "complete": true
+                }
+              }
+            ],
+            "has_more": false,
+            "next_cursor": null
+          }
+        }
+      }
+    ],
+    "environment": "새 projection의 json fragment 합성 입력. metadata 조각을 JSON 복원하고 일반 content도 보존한다."
+  },
+  {
+    "id": "cursor-expired-restart",
+    "skill": "ennoia-run",
+    "prompt": "conv-f의 전체 답변을 이어서 가져와줘.",
+    "observations": [
+      {
+        "tool": "host_tool_schema",
+        "result": {
+          "tool": "get_ennoia_conversation",
+          "request": {
+            "conversation_id": "string",
+            "view": [
+              "legacy",
+              "summary",
+              "messages"
+            ],
+            "cursor": "messages only"
+          }
+        }
+      },
+      {
+        "tool": "get_ennoia_conversation",
+        "request": {
+          "conversation_id": "conv-f",
+          "view": "messages",
+          "cursor": "old-cursor"
+        },
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "CONVERSATION_CURSOR_EXPIRED",
+            "retryable": false
+          }
+        }
+      }
+    ],
+    "environment": "같은 scope snapshot 교체/300초 TTL 합성 상태. 이전 부분 조립이 있었다."
+  },
+  {
+    "id": "cursor-invalid-restart",
+    "skill": "ennoia-run",
+    "prompt": "conv-g의 기록을 다시 확인해줘.",
+    "observations": [
+      {
+        "tool": "host_tool_schema",
+        "result": {
+          "tool": "get_ennoia_conversation",
+          "request": {
+            "conversation_id": "string",
+            "view": [
+              "legacy",
+              "summary",
+              "messages"
+            ],
+            "cursor": "messages only"
+          }
+        }
+      },
+      {
+        "tool": "get_ennoia_conversation",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "INVALID_CONVERSATION_CURSOR",
+            "retryable": false
+          }
+        }
+      }
+    ],
+    "environment": "현 O/M stable code 기반 합성 상태. 질문은 이미 전송됐다."
+  },
+  {
+    "id": "snapshot-too-large",
+    "skill": "ennoia-run",
+    "prompt": "conv-h의 전체 기록을 보여줘.",
+    "observations": [
+      {
+        "tool": "host_tool_schema",
+        "result": {
+          "tool": "get_ennoia_conversation",
+          "request": {
+            "conversation_id": "string",
+            "view": [
+              "legacy",
+              "summary",
+              "messages"
+            ]
+          }
+        }
+      },
+      {
+        "tool": "get_ennoia_conversation",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "CONVERSATION_SNAPSHOT_TOO_LARGE",
+            "retryable": false
+          }
+        }
+      }
+    ],
+    "environment": "현 O의 8MiB snapshot typed limit. 실제 문서는 제공되지 않는다."
+  },
+  {
+    "id": "canonical-request-unsupported",
+    "skill": "ennoia-build-agent",
+    "prompt": "기존 draft agent-x의 RAG node만 수정해 저장해줘.",
+    "observations": [
+      {
+        "tool": "host_tool_schema",
+        "result": {
+          "tool": "get_multi_agent",
+          "request": {
+            "multi_agent_id": "string",
+            "format": [
+              "canvas",
+              "agent_config"
+            ]
+          }
+        }
+      },
+      {
+        "tool": "get_multi_agent",
+        "request": {
+          "multi_agent_id": "agent-x",
+          "format": "agent_config"
+        },
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "CANONICAL_GRAPH_UNAVAILABLE",
+            "retryable": false,
+            "details": {
+              "reason": "revision_not_supported"
+            }
+          }
+        }
+      }
+    ],
+    "environment": "현 O/M 실제 계약에 기반한 합성 입력. source_version은 원본 배포 metadata; 검증된 canonical export가 없다."
+  },
+  {
+    "id": "old-canvas-unsafe",
+    "skill": "ennoia-build-agent",
+    "prompt": "기존 draft agent-y의 graph를 일부 수정해줘.",
+    "observations": [
+      {
+        "tool": "host_tool_schema",
+        "result": {
+          "tool": "get_multi_agent",
+          "request": {
+            "multi_agent_id": "string"
+          }
+        }
+      },
+      {
+        "tool": "get_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "multi_agent_id": "agent-y",
+            "nodes": [
+              {
+                "id": "n1",
+                "type": "agent"
+              }
+            ],
+            "edges": [],
+            "source_version": 3
+          }
+        }
+      }
+    ],
+    "environment": "이전 M/O Canvas 결과 합성 입력. end edge·handle·실행 설정의 완전성이 증명되지 않았다."
+  },
+  {
+    "id": "stale-validation-explicit",
+    "skill": "ennoia-build-agent",
+    "prompt": "agent-z에 대한 검증 ID로 저장을 마무리해줘.",
+    "observations": [
+      {
+        "tool": "validate_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "validation_id": "valid-z",
+            "valid": true
+          }
+        }
+      },
+      {
+        "tool": "save_multi_agent",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "CONTRACT_MISMATCH",
+            "details": {
+              "reason": "source_version_changed"
+            }
+          }
+        }
+      }
+    ],
+    "environment": "현 O persistence의 실제 code/reason 기반 합성 입력. 저장 전 validation ID는 정상으로 관찰됐다."
+  },
+  {
+    "id": "new-cost-project-count",
+    "skill": "ennoia-diagnose",
+    "prompt": "agent-a의 요청 수와 비용을 지난주 기준으로 알려줘.",
+    "observations": [
+      {
+        "tool": "get_project_cost",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "request_count": null,
+                "resource_count": 12,
+                "requested_agent_key": "agent-a",
+                "applied_agent_scope": "project",
+                "source": "resource_usage_daily",
+                "completeness": "reported_values_complete",
+                "currency": null,
+                "producer_bucket_timezone": "unknown",
+                "reflection_delay": "unknown",
+                "total_cost": 4.2
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "environment": "S6 실제 DTO field 기반 합성 입력. project 일별 resource endpoint에는 agent filter/LLM 요청 수가 없다."
+  },
+  {
+    "id": "new-mcp-schema-unsupported",
+    "skill": "ennoia-integrations",
+    "prompt": "외부 MCP 서버 srv-a의 tool을 이 사용자 계정으로 쓸 수 있는지 확인해줘.",
+    "observations": [
+      {
+        "tool": "get_multi_agent_mcp_tool_schema",
+        "result": {
+          "ok": true,
+          "data": {
+            "server_id": "srv-a",
+            "tool_name": "search",
+            "input_schema": null,
+            "availability": "unsupported",
+            "source": "project_catalog",
+            "user_schema_discovery": "unsupported"
+          }
+        }
+      },
+      {
+        "tool": "list_mcp_connections",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "server_id": "srv-a",
+                "status": "ACTIVE"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "environment": "S8 actual DTO field 기반 합성 입력. USER credential의 authorized schema/permission route와 credential revision cache가 없다."
+  },
+  {
+    "id": "new-app-full-put",
+    "skill": "ennoia-publish",
+    "prompt": "App app-a 이름만 분석 도우미로 바꿔줘.",
+    "observations": [
+      {
+        "tool": "get_ennoia_app",
+        "result": {
+          "ok": true,
+          "data": {
+            "assistant_hash": "app-a",
+            "name": "기존 이름",
+            "description": "설명",
+            "welcome_message": "환영",
+            "history_count": 10,
+            "allow_file_upload": false,
+            "recommended_questions": [
+              "질문"
+            ],
+            "settings_readiness": "complete",
+            "settings_field_states": {
+              "name": "value",
+              "description": "value",
+              "welcome_message": "value",
+              "history_count": "value",
+              "allow_file_upload": "value",
+              "recommended_questions": "value"
+            },
+            "settings_input_required": []
+          }
+        }
+      }
+    ],
+    "environment": "S7 actual DTO field 기반 합성 입력. upstream은 full PUT, omitted valid fields default, no PATCH/CAS. 동시 변경 여부는 관찰되지 않았다."
+  },
+  {
+    "id": "old-app-null-settings",
+    "skill": "ennoia-publish",
+    "prompt": "App app-b 이름만 바꿔줘.",
+    "observations": [
+      {
+        "tool": "get_ennoia_app",
+        "result": {
+          "ok": true,
+          "data": {
+            "assistant_hash": "app-b",
+            "name": "기존",
+            "description": null,
+            "history_count": null,
+            "recommended_questions": null
+          }
+        }
+      }
+    ],
+    "environment": "이전 응답에는 settings_readiness/field_states/input_required가 없다. upstream은 full PUT/defaults/no CAS."
+  }
+]

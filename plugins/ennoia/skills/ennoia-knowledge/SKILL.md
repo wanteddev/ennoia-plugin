@@ -19,7 +19,7 @@ Ennoia MCP의 현재 input schema를 확인하고 `get_current_ennoia_project`�
 
 ## 처리 완료와 연결
 
-업로드 요청 성공 뒤 `list_rag_files`로 필요한 `file_seq`를 찾고 `get_rag_file_status`를 확인한다. `processing_state=ready` 및 `ready_for_agent=true`가 준비 완료의 근거다. 처리 중은 같은 파일을 적절한 간격으로 조회한다. 실패는 오류를 확인하고 요청 범위에서 `retry_failed_rag_files`를 사용한다. 업로드를 반복해 중복 문서를 만들지 않는다.
+업로드 요청 성공 뒤 `list_rag_files`로 필요한 `file_seq`를 찾고 `get_rag_file_status`를 확인한다. 새 응답의 `processing_state=ready` 및 `ready_for_agent=true`가 함께 있으면 준비 완료의 근거다. 이전 응답에 해당 field가 없으면 준비를 추측하지 않고 기존 status와 제한 조회로 확인한다. 처리 중은 같은 파일을 적절한 간격으로 조회한다. 실패는 오류를 확인하고 요청 범위에서 `retry_failed_rag_files`를 사용한다. 업로드를 반복해 중복 문서를 만들지 않는다.
 
 에이전트 연결에는 `list_multi_agent_rag_collections`가 반환한 **`collection_name`**을 `ragConfig.index_names`에 사용한다. 값이 null이면 선택한 `collection_code`로 `get_rag_collection`을 조회한다. 단건에도 index 이름이 없으면 연결 미완료로 알린다. code나 표시 이름으로 대체하지 않는다. 연결할 node schema를 확인하고 graph를 검증한다. 에이전트 생성·수정도 요청됐다면 `ennoia-build-agent`의 절차를 적용한다. 이미 명확한 사용자 요청을 다시 승인받지 않는다.
 
