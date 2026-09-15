@@ -1,4 +1,7 @@
 interface:
   display_name: "Ennoia 문서 지식"
   short_description: "Ennoia 문서를 등록하고 검색 준비와 RAG 연결을 확인합니다"
+  icon_small: "./assets/icon.png"
+  icon_large: "./assets/icon.png"
+  brand_color: "#0066FF"
   default_prompt: "Use $ennoia-knowledge — 이 문서를 Ennoia 지식 컬렉션에 연결해줘."

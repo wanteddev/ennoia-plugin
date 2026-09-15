@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Portable manifest 원본에서 host별 호환 manifest를 재현 가능하게 생성한다."""
+"""Portable manifest와 공식 asset 원본에서 host별 배포 파일을 생성한다."""
 
 import argparse
 import json
@@ -38,22 +38,39 @@ def outputs(root: Path) -> dict[Path, dict]:
     }
 
 
+def asset_outputs(root: Path) -> dict[Path, bytes]:
+    plugin = root / "plugins/ennoia"
+    icon = (plugin / "assets/icon.png").read_bytes()
+    logo = (plugin / "assets/logo.svg").read_text(encoding="utf-8")
+    # 원본 vector path는 보존하고 dark mode의 단색 fill만 흰색으로 전환한다.
+    original_fill = "fill: #14181d;"
+    if logo.count(original_fill) != 1:
+        raise ValueError("공식 로고 fill이 바뀌었습니다. dark mode 변환을 확인하세요.")
+    assets = {plugin / "assets/logo-dark.svg": logo.replace(original_fill, "fill: #ffffff;").encode("utf-8")}
+    # Skill UI asset 경로는 Skill 내부에 둔다. 원본은 하나이며 복사본은 생성한다.
+    for skill in sorted((plugin / "skills").glob("*/SKILL.md")):
+        assets[skill.parent / "assets/icon.png"] = icon
+    return assets
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="변경 없이 생성 결과의 일치 여부를 확인")
     args = parser.parse_args()
     mismatches = []
-    for path, data in outputs(ROOT).items():
-        expected = json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+    generated = {path: (json.dumps(data, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+                 for path, data in outputs(ROOT).items()}
+    generated.update(asset_outputs(ROOT))
+    for path, expected in generated.items():
         if args.check:
-            if not path.is_file() or path.read_text(encoding="utf-8") != expected:
+            if not path.is_file() or path.read_bytes() != expected:
                 mismatches.append(str(path.relative_to(ROOT)))
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(expected, encoding="utf-8")
+            path.write_bytes(expected)
     if mismatches:
-        raise SystemExit("Manifest가 원본과 다릅니다. python3 scripts/sync_manifests.py 실행 필요: " + ", ".join(mismatches))
-    print("Manifest sync 확인 완료" if args.check else "호환 manifest 생성 완료")
+        raise SystemExit("생성 파일이 원본과 다릅니다. python3 scripts/sync_manifests.py 실행 필요: " + ", ".join(mismatches))
+    print("Manifest·asset sync 확인 완료" if args.check else "호환 manifest·asset 생성 완료")
 
 
 if __name__ == "__main__":

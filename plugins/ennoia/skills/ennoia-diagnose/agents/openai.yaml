@@ -1,4 +1,7 @@
 interface:
   display_name: "Ennoia 실행 진단"
   short_description: "Ennoia Trace와 사용량으로 실행 실패·지연·비용을 조사합니다"
+  icon_small: "./assets/icon.png"
+  icon_large: "./assets/icon.png"
+  brand_color: "#0066FF"
   default_prompt: "Use $ennoia-diagnose — Ennoia 에이전트가 실패한 원인을 근거와 함께 확인해줘."
