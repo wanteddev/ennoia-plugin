@@ -34,7 +34,7 @@
         }
       }
     ],
-    "environment": "새 M/O 합성 입력. 실제 host와 backend 호출 없음. 필요한 다음 tool과 완료 표현을 작성한다."
+    "environment": "새 M/O schema와 pending 대화 결과의 합성 입력. 실제 host와 backend 호출 없음."
   },
   {
     "id": "old-schema-simple",
@@ -92,17 +92,18 @@
         "tool": "get_ennoia_conversation",
         "request": {
           "conversation_id": "conv-c",
-          "view": "summary"
+          "view": "summary",
+          "limit": 10
         },
         "result": {
           "ok": false,
           "error": {
-            "code": "APP_API_CONTRACT_MISMATCH"
+            "code": "INVALID_REQUEST"
           }
         }
       }
     ],
-    "environment": "새 M와 이전 O/backend 혼합 배포의 합성 계약 오류. 읽기 조회만 허용. 오류 code는 현 M/O client의 stable allowlist다."
+    "environment": "현재 사용 연결의 M input schema는 summary를 제공한다. 같은 conversation_id의 summary 요청 직후 O의 HTTP 422 stable code가 관측됐다. O runtime revision은 제공되지 않았다. 실제 호출 없음."
   },
   {
     "id": "new-full-answer-fragments",
@@ -318,38 +319,94 @@
           "ok": true,
           "data": {
             "view": "messages",
+            "execution_status": "completed",
+            "completed": true,
+            "latest_answer": "완료",
+            "latest_message_index": 0,
             "messages": [
               {
                 "message_index": 0,
                 "role": "assistant",
                 "content": "완료",
+                "createdAt": 4000,
+                "activeYn": "Y",
+                "completedYn": "Y",
+                "citations": [
+                  {
+                    "title": "근거 B",
+                    "url": "https://example.com/source-b"
+                  }
+                ]
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
                 "fragment": {
-                  "field": "metadata",
+                  "field": "documentMeta",
                   "encoding": "json",
-                  "value": "{\"citations\":",
                   "offset": 0,
-                  "complete": false
+                  "complete": false,
+                  "value": "\"{\\\"sources\\\":[{\\\"title\\\":\\\"근거 B\\\",\\\"excerpt\\\":\\\"문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 "
                 }
               },
               {
                 "message_index": 0,
                 "role": "assistant",
                 "fragment": {
-                  "field": "metadata",
+                  "field": "documentMeta",
                   "encoding": "json",
-                  "value": "[{\"title\":\"A\"}]}",
-                  "offset": 13,
-                  "complete": true
+                  "offset": 1024,
+                  "complete": false,
+                  "value": "출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문"
+                }
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "fragment": {
+                  "field": "documentMeta",
+                  "encoding": "json",
+                  "offset": 2048,
+                  "complete": false,
+                  "value": "서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명"
+                }
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "fragment": {
+                  "field": "documentMeta",
+                  "encoding": "json",
+                  "offset": 3072,
+                  "complete": false,
+                  "value": " 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 설명 문서 출처 "
+                }
+              },
+              {
+                "message_index": 0,
+                "role": "assistant",
+                "fragment": {
+                  "field": "documentMeta",
+                  "encoding": "json",
+                  "offset": 4096,
+                  "complete": true,
+                  "value": "설명 \\\"}]}\""
                 }
               }
             ],
             "has_more": false,
-            "next_cursor": null
+            "next_cursor": null,
+            "truncated": true
           }
+        },
+        "request": {
+          "conversation_id": "conv-e",
+          "view": "messages",
+          "limit": 50
         }
       }
     ],
-    "environment": "새 projection의 json fragment 합성 입력. metadata 조각을 JSON 복원하고 일반 content도 보존한다."
+    "environment": "현 O normalized_messages→message_fragments→page_items로 생성한 합성 출력. documentMeta는 큰 upstream JSON 문자열이며 일반 content와 citation이 함께 있었다. 실제 서비스 호출 없음."
   },
   {
     "id": "cursor-expired-restart",
@@ -376,7 +433,7 @@
         "request": {
           "conversation_id": "conv-f",
           "view": "messages",
-          "cursor": "old-cursor"
+          "cursor": "cccccccccccccccccccccccccccccccc.0.715d31d3d5d00b8fcb4931def61e5f2f87d1f72bb800abdec648b7c23429534a"
         },
         "result": {
           "ok": false,
@@ -387,7 +444,7 @@
         }
       }
     ],
-    "environment": "같은 scope snapshot 교체/300초 TTL 합성 상태. 이전 부분 조립이 있었다."
+    "environment": "이전 snapshot에서 발급된 정상 형식 cursor를 갖고 있다. 같은 scope snapshot은 300초 TTL/새 조회 교체 정책을 따른다. 이전 page 일부가 제공됐다. 실제 서비스 호출 없음."
   },
   {
     "id": "cursor-invalid-restart",
@@ -417,10 +474,15 @@
             "code": "INVALID_CONVERSATION_CURSOR",
             "retryable": false
           }
+        },
+        "request": {
+          "conversation_id": "conv-g",
+          "view": "messages",
+          "cursor": "dddddddddddddddddddddddddddddddd.0.b2cdc22e40d8c08119803cee587932c5b68c8801315049ce8a31db6f5b5de820"
         }
       }
     ],
-    "environment": "현 O/M stable code 기반 합성 상태. 질문은 이미 전송됐다."
+    "environment": "현재 snapshot의 cursor 형식은 32 hex.offset.64 hex이며 제공된 문자열은 형식 검사를 통과한다. 질문은 이미 전송됐다. 실제 서비스 호출 없음."
   },
   {
     "id": "snapshot-too-large",
@@ -546,15 +608,12 @@
         "result": {
           "ok": false,
           "error": {
-            "code": "CONTRACT_MISMATCH",
-            "details": {
-              "reason": "source_version_changed"
-            }
+            "code": "CONTRACT_MISMATCH"
           }
         }
       }
     ],
-    "environment": "현 O persistence의 실제 code/reason 기반 합성 입력. 저장 전 validation ID는 정상으로 관찰됐다."
+    "environment": "현 M host-visible stable error에는 내부 reason이 포함되지 않는다. 저장 전 validation ID는 정상으로 관측됐다. 실제 서비스 호출 없음."
   },
   {
     "id": "new-cost-project-count",
@@ -600,7 +659,7 @@
             "tool_name": "search",
             "input_schema": null,
             "availability": "unsupported",
-            "source": "project_catalog",
+            "source": "user_connection",
             "user_schema_discovery": "unsupported"
           }
         }
@@ -648,9 +707,12 @@
               "welcome_message": "value",
               "history_count": "value",
               "allow_file_upload": "value",
-              "recommended_questions": "value"
+              "recommended_questions": "value",
+              "welcome_message_enabled": "value"
             },
-            "settings_input_required": []
+            "settings_input_required": [],
+            "assistant_type": "C",
+            "welcome_message_enabled": true
           }
         }
       }
@@ -671,7 +733,7 @@
             "name": "기존",
             "description": null,
             "history_count": null,
-            "recommended_questions": null
+            "recommended_questions": []
           }
         }
       }
