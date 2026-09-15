@@ -1,5 +1,10 @@
 # Ennoia Plugin
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="plugins/ennoia/assets/logo-dark.svg">
+  <img src="plugins/ennoia/assets/logo.svg" alt="Ennoia" width="240">
+</picture>
+
 Ennoia에서 에이전트를 만들고, 문서를 지식으로 연결하고, App에 업무를 요청하고, 배포·실행 상태를 관리하는 Plugin입니다.
 
 **하나의 repo, 하나의 Skill 원본을 Codex App·Claude App·Codex CLI·Claude CLI에서 사용합니다.** 앱은 ZIP 업로드 없이 GitHub repo를 Marketplace로 추가합니다.
@@ -107,6 +112,7 @@ plugins/ennoia/
   .mcp.json                         # 두 host의 호환 MCP 설정
   skills/                           # 공유 Skill 원본 7개
   references/                       # 공통 응답 해석·표시 규칙
+  assets/                           # 공식 아이콘·로고, 다크 모드용 로고
 scripts/                            # 작성자용 sync·검증 도구
 tests/                              # 배포 회귀 검증과 tool 계약 snapshot
 evals/                              # 모델 동작 검증 시나리오
@@ -123,6 +129,8 @@ python3 scripts/validate.py
 python3 -m unittest discover -s tests -v
 ```
 
-Metadata·version은 `plugins/ennoia/plugin.json`, MCP 설정은 `plugins/ennoia/mcp.json`에서 수정한 뒤 `python3 scripts/sync_manifests.py`로 호환 파일을 생성합니다. Skill은 `plugins/ennoia/skills` 원본에서 수정합니다. 동일한 버전을 덮어쓰지 말고 릴리스 시 version을 올려 host cache를 갱신합니다.
+Metadata·version은 `plugins/ennoia/plugin.json`, MCP 설정은 `plugins/ennoia/mcp.json`에서 수정한 뒤 `python3 scripts/sync_manifests.py`로 호환 파일을 생성합니다. 이 명령은 공식 asset 원본에서 다크 모드 로고와 Skill별 아이콘 복사본도 생성합니다. Skill은 `plugins/ennoia/skills` 원본에서 수정합니다. 동일한 버전을 덮어쓰지 말고 릴리스 시 version을 올려 host cache를 갱신합니다.
+
+아이콘·로고 출처, 브랜드 색상과 host별 표시 범위는 [브랜드 자산](docs/branding.md)을 참고합니다.
 
 [기여·검증 기준](CONTRIBUTING.md)과 [동작 평가](evals/README.md)를 따라 검증합니다. CI는 credential 없이 패키지 구조와 회귀 테스트를 실행합니다. Native client 검증, OAuth, 실제 MCP 업무 결과와 latency 개선은 별도로 확인해야 합니다.

@@ -21,6 +21,22 @@ def read_json(path: Path) -> dict:
     return data
 
 
+def validate_brand_assets(base: Path, interface: dict, fields: tuple[str, ...], color_key: str) -> list[str]:
+    errors = []
+    color = interface.get(color_key)
+    if not isinstance(color, str) or not re.fullmatch(r"#[0-9a-fA-F]{6}", color):
+        errors.append(f"brand color 오류: {base.name}/{color_key}")
+    for field in fields:
+        value = interface.get(field)
+        if not isinstance(value, str) or not value.startswith("./assets/"):
+            errors.append(f"asset 경로 오류: {base.name}/{field}")
+            continue
+        target = (base / value).resolve()
+        if not target.is_relative_to(base / "assets") or not target.is_file() or target.suffix not in {".png", ".svg"}:
+            errors.append(f"누락 또는 asset 경로 밖 파일: {base.name}/{field}")
+    return errors
+
+
 def validate_repository(root: Path) -> list[str]:
     root = root.resolve()
     plugin = root / "plugins/ennoia"
@@ -37,6 +53,8 @@ def validate_repository(root: Path) -> list[str]:
             errors.append("manifest component 경로 오류")
         if portable.get("extensions", {}).get("com.openai", {}).get("interface") != codex.get("interface"):
             errors.append("manifest OpenAI interface 불일치")
+        interface = codex.get("interface", {})
+        errors.extend(validate_brand_assets(plugin, interface, ("composerIcon", "logo", "logoDark"), "brandColor"))
         for filename, transport in (("mcp.json", "streamable-http"), (".mcp.json", "http")):
             mcp = read_json(plugin / filename)
             if mcp.get("mcpServers") != {"ennoia": {"type": transport, "url": "https://mcp.ennoia.so/mcp"}}:
@@ -84,6 +102,10 @@ def validate_repository(root: Path) -> list[str]:
             ui = yaml.safe_load((skill.parent / "agents/openai.yaml").read_text(encoding="utf-8"))
             if "$" + skill.parent.name not in ui.get("interface", {}).get("default_prompt", ""):
                 errors.append(f"Skill UI prompt 참조 오류: {skill.parent.name}")
+            skill_interface = ui.get("interface", {})
+            errors.extend(validate_brand_assets(skill.parent, skill_interface, ("icon_small", "icon_large"), "brand_color"))
+            if skill_interface.get("brand_color") != interface.get("brandColor"):
+                errors.append(f"Skill brand color 불일치: {skill.parent.name}")
         if sum(map(len, descriptions)) > 1800:
             errors.append("Skill discovery description 총량 초과")
 

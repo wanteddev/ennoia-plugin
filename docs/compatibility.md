@@ -8,6 +8,12 @@
 - Claude Marketplace와 Codex Marketplace가 각각 repo 루트에서 발견되며 같은 payload를 가리킵니다.
 - Portable manifest 원본과 Claude/Codex 호환 manifest를 함께 제공하며 transport 표기는 각 규격으로 생성합니다.
 
+## 2026-09-15 · 1.0.2 PR 검증
+
+- [브랜드 자산](branding.md)을 추가한 PR 버전입니다. Codex Plugin과 7개 Skill UI에 아이콘·색상을 설정하고, Plugin 로고의 밝은·어두운 배경 표시를 브라우저 미리보기로 확인했습니다.
+- manifest·asset sync, 회귀 테스트 11개, official Codex validator와 Claude strict validator를 통과했습니다. 별도 디렉터리에 복사한 payload에서도 Plugin 이미지와 7개 Skill 아이콘 경로가 해석되고 원본과 일치했습니다.
+- 실제 Codex App에 1.0.2를 설치하거나 기존 1.0.1 설정을 변경하지 않았습니다. PR 병합 후 Marketplace 업데이트가 필요하며, 실제 App 표시와 MCP 업무 실행을 새로 검증한 결과는 아닙니다.
+
 ## 2026-09-15 · 1.0.1 확인 기준
 
 - 공통 응답 reference를 7개 Skill에 연결하고 현재 설정·실제 대상, 인증 실패의 잔여 context, 이전 서버, 진행 중·부분 결과를 처리합니다. 원격 MCP endpoint와 설치 방식은 동일합니다.

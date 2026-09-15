@@ -57,6 +57,24 @@ class ValidationTests(unittest.TestCase):
         (self.root / "plugins/ennoia/outside").symlink_to(self.root.parent)
         self.assertTrue(any("symlink" in e for e in self.validate(self.root)))
 
+    def test_missing_plugin_brand_asset_is_rejected(self):
+        (self.root / "plugins/ennoia/assets/logo-dark.svg").unlink()
+        self.assertTrue(any("asset" in e for e in self.validate(self.root)))
+
+    def test_skill_icon_outside_its_cache_directory_is_rejected(self):
+        path = self.root / "plugins/ennoia/skills/ennoia-connect/agents/openai.yaml"
+        path.write_text(path.read_text().replace("./assets/icon.png", "../../assets/icon.png"))
+        self.assertTrue(any("asset" in e for e in self.validate(self.root)))
+
+    def test_invalid_brand_color_is_rejected(self):
+        for name in ("plugin.json", ".codex-plugin/plugin.json"):
+            path = self.root / "plugins/ennoia" / name
+            data = json.loads(path.read_text())
+            interface = data["extensions"]["com.openai"]["interface"] if name == "plugin.json" else data["interface"]
+            interface["brandColor"] = "blue"
+            path.write_text(json.dumps(data))
+        self.assertTrue(any("brand" in e for e in self.validate(self.root)))
+
 
 if __name__ == "__main__":
     unittest.main()
