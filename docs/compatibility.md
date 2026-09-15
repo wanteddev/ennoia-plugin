@@ -10,7 +10,8 @@
 
 ## 2026-09-15 · 1.0.3 후보 로컬 검증
 
-- 기존 70-tool 서버의 schema·error contract를 대상으로 Skill 판단과 설치 안내만 보강했습니다. 새로운 API field나 실제 서버 배포를 전제하지 않습니다.
+- 70-tool 서버의 새 후보는 domain별 `stage_label`, `status_label`, `assistant_type_label`을 raw code와 함께 추가합니다. 이전 서버의 label 부재도 지원하고 unknown code는 추측하지 않습니다. M 서버 모델이 이 필드를 먼저 수용한 뒤 O 응답을 적용해야 합니다.
+- 새 연결 initialize는 Docker build에서 dev/www 모두 주입한 full commit SHA와 이름·설명 문자열의 hash를 기록합니다. 로컬 fallback `unknown`은 배포된 Git HEAD가 아닙니다. 로컬 설명 문자 수와 실제 모델 token·호출 비용·성능은 별개로 기록합니다. 새 후보 source는 push/PR/배포 전이므로 새 원격 연결의 initialize 확인은 아직 없습니다.
 - [16개 합성 dogfooding 입력](../evals/dogfooding-scenarios.json)과 [분리된 rubric](../evals/dogfooding-rubric.md)을 제공합니다. 작성자의 입력 점검과 독립 blind 모델 비교는 별도이며, 합성 입력은 실서비스 검증이 아닙니다.
 - 새 계정 OAuth, 앱 UI와 실제 RAG·대화·쓰기 작업은 이 변경에서 확인하지 않았습니다. 로컬 검증 결과는 작업 보고서에 기록하며 native host 인증과 실제 실행은 별도 단계입니다.
 

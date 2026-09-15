@@ -31,6 +31,14 @@
 
 ## 상태와 답변
 
+서로 다른 upstream domain의 한 글자 code를 섞어 해석하지 않는다. multi-agent `stage` D/P는 Draft/Published, 해당 deployment `status` W/R/D/F/S/E는 Waiting/Running/Deploying/Failed/Stop/Editing이다. RAG 파일 `status` W/R/C/F는 Waiting/Running/Complete/Failed이며 App `assistant_type` P/S/C/M은 Preset/System/Custom/Multi Agent이다. `*_label`이 있으면 raw code도 함께 보존한다. 새 label이 없는 이전 서버에서는 해당 domain의 code만 해석하고 모르는 값은 unknown으로 남긴다. Builder conversation의 BUILDING/COMPLETED/ARCHIVED는 runtime 실행 상태가 아니다.
+
+Ennoia Knowledge Skill의 RAG 준비 후에는 확인된 `collection_name`을 `ragConfig.index_names`에 연결한다. 생성·수정 요청이 포함됐다면 Build Agent Skill의 `validate_multi_agent` → `save_multi_agent` → `test_multi_agent` 계약을 따른다. 준비 상태 조회만 요청됐다면 graph 저장·실행을 추가하지 않는다.
+
+App builder 상세는 OAuth 인증된 사용자 권한으로 조회하며 응답에 credential/secret이 포함되지 않는다. App update는 upstream full PUT이고 생략한 유효 필드도 기본값으로 교체될 수 있다. 상세의 `settings_field_states`와 `settings_input_required`로 보존할 전체 입력을 확인한다. CAS가 없어 읽기·수정 사이 동시 변경은 보장하지 않는다.
+
+새 MCP 연결의 initialize `serverInfo.version`과 `instructions`에 있는 `source_revision`, `description_sha256`을 같은 세션에서 기록하고 실제 배포 image source revision과 대조한다. `unknown`은 로컬 빌드 revision이 확인되지 않았다는 뜻이다. 기존 연결 metadata나 캐시된 tool 설명은 새 서버의 runtime 반영을 증명하지 않는다. hash는 tool 이름과 description 문자열만의 SHA-256이며 schema, annotations 또는 사용 모델의 token 측정값이 아니다.
+
 1. host가 제공한 `structuredContent` 또는 원본 JSON text를 읽는다. 첫 번째 text는 한국어 요약일 수 있으므로 항상 JSON이라고 가정하지 않는다. 요약과 원본이 충돌하면 원본의 `ok`, `error`, `data` 상태를 우선하고 불일치를 짧게 알린다.
 2. `ok=true`는 요청 처리 성공이며 업무 완료의 충분한 근거가 아니다. `running`, `pending`, `completed=false`, `ready_for_agent=false`, 검증 결과의 `valid=false`를 각각 실제 상태로 설명한다. 완료 근거가 부족하면 미확인으로 표시한다.
 3. `partial_failures`, 생략·잘림·추가 페이지, 확인 대기, 예산 경고는 짧은 답변에서도 유지한다. `null` 사용량·비용은 미확인이지 0이 아니다. 확인된 범위만 합계·성공으로 보고한다.
