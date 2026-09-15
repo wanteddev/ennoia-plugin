@@ -8,6 +8,22 @@
 - Claude Marketplace와 Codex Marketplace가 각각 repo 루트에서 발견되며 같은 payload를 가리킵니다.
 - Portable manifest 원본과 Claude/Codex 호환 manifest를 함께 제공하며 transport 표기는 각 규격으로 생성합니다.
 
+## 2026-09-15 · V1 host gate 현황
+
+| 근거 | 관측 | 남은 gate |
+| --- | --- | --- |
+| 정적 패키지·source | 후보 1.1.0 payload `70aaa645183f724a5fb2ee4f15a92830bc32c2f0`의 source·별도 합성 fixture | host install/OAuth/업무 판정으로 환산하지 않음 |
+| 현 Codex App 작업 | 기존 1.0.2 Skill 읽기, 현재 선택/context MCP 읽기 2회 성공; 연결 source·App version·server initialize revision unknown | 새 Git 설치/새 세션/Plugin-only 연결 및 후보 업무 실행 미확인 |
+| Codex CLI native 후보 | `0.153.4`에서 Git 후보 ref 설치·1.1.0 활성화·36 payload file 일치, 새 ephemeral read-only 세션에서 connect Skill/common reference 원문 일치, 두 MCP 읽기 성공/인증 true; 끝에 main/1.0.2 복구·설정 hash 동일 | 수동 MCP가 공존해 실제 연결 source unknown; Plugin-only OAuth·직접 App/SuperApp 업무·새 server initialize 미확인 |
+| 다른 host inventory | Claude CLI `2.1.271`의 로컬 조회와 Claude App version metadata; Codex CLI version은 위 실제 시험 | Claude CLI/App 및 Codex App 후보 Git 설치·새 세션/화면 미확인; 최소 지원 version이 아님 |
+| 운영 image provenance | public MCP route 2/2 ready pod의 image digest가 M `0d28a54154c072f35d0190fbc22903072ff49391`에 매핑됨; O API image는 `d4a7796195d01bd50814d92bf1bb13e0b443e3df` | 후보 M/O rollout, fresh initialize/schema, worker terminal SSE/업무 실행 미확인 |
+
+[`V1 host case 96건`](../evals/results/2026-09-15-host-cases.json)은 네 host의 Git 설치·새 Skill 로딩·OAuth·직접 App/SuperApp run·선택 쓰기·성능을 분리합니다. Codex CLI native 설치/Skill 두 건은 `pass`, 나머지 94건은 `not_tested`입니다. [`후보 CLI 읽기 2건`](../evals/results/2026-09-15-codex-cli-native-read.json)은 인증된 새 세션 읽기 성공이며 Plugin-only source 확정이 아닙니다. [`현 Codex App 세션 읽기 2건`](../evals/results/2026-09-15-current-session-read.json)은 이전 1.0.2의 별도 증거입니다. [54-case 독립 합성 판정](../evals/2026-09-15-v1-summary.md)의 유효 raw 세 source 결과와 별도 source-qualified 후보 51 pass/3 partial/0 fail, 남은 중요 F5를 host 결과와 구분합니다. App UI surface와 Claude App 후보 동작은 미관측입니다. 실제 release gate는 static, native install, OAuth source, 업무, 성능을 분리합니다. Native 세션 88,074ms는 startup/모델/다른 Plugin 포함으로 성능 비교나 속도 개선 근거가 아닙니다. 원본 host log/UI 자료는 공개 commit에 넣지 않습니다. 본 기록 시점에는 새 server schema를 native host가 호출했다는 근거가 없습니다.
+
+신규 M additive output label과 strict 구 M schema는 M-first 적용 순서를 지킵니다. 신규 P2 read 인자와 구 O strict schema의 `INVALID_REQUEST`에서는 실제 사용한 schema/정확히 같은 읽기 ID에만 한정된 fallback을 평가합니다. 현재 O의 canonical edit CAS 및 USER OAuth discovery upstream 지원은 각각 여전히 미확인/미지원 경계입니다. 직접 App와 SuperApp 경로는 필수 업무 gate이고 선택 mutation이 미실행이라는 이유로 제외하지 않습니다.
+
+구 schema App에서 관측된 기존 여섯 설정이 완전해도 새 `welcome_message_enabled` field를 무조건 요구하는 후보 source의 F5 문제가 남아 있습니다. Source-qualified 합성 fail 0건이 기존 App 설정 수정의 성공을 증명하지 않으며, 이 경로는 수정과 회귀 검증 후 별도 판단해야 합니다.
+
 ## 2026-09-15 · 1.1.0 후보 계약
 
 - 일곱 공유 Skill은 **현재 사용 연결의 실제 input schema**가 허용할 때만 `get_ennoia_conversation(view=summary|messages)`와 `get_multi_agent(format=agent_config)`를 요청합니다. 구 schema에는 새 인자를 보내지 않습니다. 새 M/구 O 혼합 배포는 새 읽기 인자가 O strict request에서 HTTP 422 `INVALID_REQUEST`로 거절될 수 있습니다. 정확히 같은 ID·schema에 맞춘 새 읽기 옵션 직후일 때만 새 옵션 없는 legacy 조회를 한 번 시도하며 임의의 `INVALID_REQUEST`를 구 backend로 단정하지 않습니다. 질문·저장·배포는 재전송하지 않습니다. Plugin 버전이나 initialize metadata만으로 O backend rollout을 확정하지 않습니다.
@@ -16,7 +32,7 @@
 - 새 RAG 상태, App `settings_readiness`/field state, Trace·비용 단위/source, MCP schema `availability`/`user_schema_discovery`가 실제 응답에 있을 때만 사용합니다. 구 응답의 누락·null은 unknown으로 유지합니다. `resource_count`는 project 일별 resource count이고 LLM 요청 수나 agent별 비용이 아닙니다. 사용자 OAuth schema API/credential revision cache는 아직 없습니다.
 - App update는 **full PUT**이고 유효 설정 field를 생략해도 기본값으로 교체될 수 있습니다. 읽은 모든 설정을 안전하게 보존할 수 있을 때만 전체 입력으로 수정하며 미관측 값은 화면 변경을 안내합니다. `settings_readiness=complete`는 관측 완전성이고 PATCH/CAS가 아닙니다. readback은 동시 변경 방지가 아닙니다.
 - [기존 39개와 새 15개 합성 입력](../evals/server-aware-scenarios.json)의 판정은 분리된 [rubric](../evals/server-aware-rubric.md) 및 기존 eval rubric으로 진행합니다. 작성자가 독립 blind 결과, 실제 host latency/token·업무 성공을 주장하지 않습니다. 공식 static validator 결과는 Task 11 작업 보고서에 남깁니다.
-- 이 후보가 대조한 로컬 source는 O `fc0039b`, M `48b0a0b`(S9 테스트 수정만; 계약 source는 `b9ac91a`)입니다. 실제 배포 image revision은 확인되지 않았으며 새 연결의 initialize/schema/실행을 별도 V1 gate에서 대조해야 합니다. PR 병합·green 테스트만으로 운영 기능을 확정하지 않습니다. 새 계정 OAuth·실제 App write·대화 전체 본문·graph 수정의 native host 실행은 아직 확인하지 않았습니다.
+- 이 후보가 대조한 로컬 source는 O `fc0039b`, M `48b0a0b`(S9 테스트 수정만; 계약 source는 `b9ac91a`)입니다. 운영 baseline M/O API image source 매핑은 위 V1 표에 확인되었지만 후보 image rollout과 새 연결 initialize/schema/실행은 별도 gate입니다. PR 병합·green 테스트만으로 운영 기능을 확정하지 않습니다. 새 계정 OAuth·실제 App write·대화 전체 본문·graph 수정의 native host 실행은 아직 확인하지 않았습니다.
 
 ## 2026-09-15 · 1.0.3 후보 로컬 검증
 

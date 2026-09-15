@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/wanteddev/ennoia-plugin/blob/main/evals/results/2026-09-15-dogfooding-schema.json",
+  "title": "Ennoia native host dogfooding case",
+  "description": "One case per object; timestamped result files contain arrays of these objects. Unknown measured counters are null; an unattempted case has known zero calls and null measurements.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "recorded_at", "observed_at", "host", "host_version", "surface", "plugin_version", "plugin_commit",
+    "server_revision", "loaded_skill_version", "connection_source", "case_id", "case_stage", "result",
+    "evidence_kind", "evidence_note", "tool_calls", "unexpected_writes", "duplicate_dispatches", "measurement"
+  ],
+  "properties": {
+    "recorded_at": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{2}:\\d{2})$"},
+    "observed_at": {"type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{2}:\\d{2})$"},
+    "host": {"enum": ["codex-app", "claude-app", "codex-cli", "claude-cli"]},
+    "host_version": {"type": "string", "minLength": 1},
+    "surface": {"type": "string", "minLength": 1},
+    "plugin_version": {"type": "string", "minLength": 1},
+    "plugin_commit": {"type": "string", "minLength": 1},
+    "server_revision": {"type": ["string", "null"], "minLength": 1},
+    "loaded_skill_version": {"type": "string", "minLength": 1},
+    "connection_source": {"enum": ["plugin", "manual", "connector", "unknown"]},
+    "case_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "case_stage": {"enum": ["git_install", "fresh_skill", "oauth", "connection", "core_run", "compatibility", "optional_mutation", "performance", "read"]},
+    "result": {"enum": ["pass", "fail", "not_tested", "blocked"]},
+    "evidence_kind": {"enum": ["native_host", "current_session", "none"]},
+    "evidence_note": {"type": "string", "minLength": 1},
+    "trial": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["arm", "pair_id", "model", "input_sha256", "cache_condition", "session_condition", "tool_search_condition", "other_plugins_condition", "failure_kind"],
+      "properties": {
+        "arm": {"enum": ["baseline", "candidate"]},
+        "pair_id": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
+        "input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "cache_condition": {"type": "string", "minLength": 1},
+        "session_condition": {"enum": ["fresh", "reused"]},
+        "tool_search_condition": {"type": "string", "minLength": 1},
+        "other_plugins_condition": {"type": "string", "minLength": 1},
+        "failure_kind": {"enum": ["none", "timeout", "auth", "tool", "backend", "other"]}
+      }
+    },
+    "tool_calls": {"type": ["integer", "null"], "minimum": 0},
+    "unexpected_writes": {"type": ["integer", "null"], "minimum": 0},
+    "duplicate_dispatches": {"type": ["integer", "null"], "minimum": 0},
+    "measurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "elapsed_ms", "mcp_wall_ms", "response_chars", "response_utf8_bytes", "input_tokens",
+        "cached_input_tokens", "output_tokens", "reference_loads", "additional_confirmations", "retries"
+      ],
+      "properties": {
+        "elapsed_ms": {"type": ["number", "null"], "minimum": 0},
+        "mcp_wall_ms": {"type": ["number", "null"], "minimum": 0},
+        "response_chars": {"type": ["integer", "null"], "minimum": 0},
+        "response_utf8_bytes": {"type": ["integer", "null"], "minimum": 0},
+        "input_tokens": {"type": ["integer", "null"], "minimum": 0},
+        "cached_input_tokens": {"type": ["integer", "null"], "minimum": 0},
+        "output_tokens": {"type": ["integer", "null"], "minimum": 0},
+        "reference_loads": {"type": ["integer", "null"], "minimum": 0},
+        "additional_confirmations": {"type": ["integer", "null"], "minimum": 0},
+        "retries": {"type": ["integer", "null"], "minimum": 0}
+      }
+    }
+  }
+}
