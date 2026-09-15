@@ -11,6 +11,8 @@ Ennoia 계정과 작업 대상을 확인해 다음 업무를 바로 시작할 �
 
 ## 연결 확인
 
+host에서 보이는 Skill 이름(`ennoia-connect`), 설치된 Plugin 식별자, 실제 MCP 서버 이름은 서로 다른 값이다. Skill 목록만 있을 때 그 이름을 Plugin ID나 서버 이름의 조회 filter에 넣지 않는다. Plugin/MCP 도구가 안 보이면 host의 **전체 Plugin·MCP server inventory**에서 실제 식별자를 확인한 뒤 해당 항목의 활성화·연결 상태를 조회한다. host가 이미 정확한 식별자를 제공했다면 그것을 사용하고 불명확하면 미확인으로 남긴다. 설치된 로컬 manifest 이름만으로 현재 host 설치 ID를 추측하지 않는다.
+
 1. 설치된 Ennoia MCP에서 `get_current_ennoia_project`를 발견해 호출한다. host에 따라 tool prefix가 달라지므로 `mcp__ennoia__` 같은 전체 이름을 고정하지 않는다.
 2. 인증·scope 확인이 필요하면 `get_ennoia_context`를 호출한다. 정상 업무에서 이미 확인된 상태를 매 호출마다 중복 조회하지 않는다.
 3. 그룹·프로젝트 이름으로 대상을 표시한다. `project_context`가 실제 호출 대상의 근거다. 사용자가 이미 정확한 대상을 정했다면 다시 허락을 묻지 않는다.
