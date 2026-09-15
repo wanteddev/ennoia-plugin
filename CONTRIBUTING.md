@@ -17,6 +17,8 @@ python3 scripts/validate_results.py
 
 공개 결과 case는 [`evals/results/2026-09-15-dogfooding-schema.json`](evals/results/2026-09-15-dogfooding-schema.json)의 필수 field와 host·surface·Plugin/source SHA·Skill 로딩/연결 source를 따릅니다. 미측정 수치는 `null`, 미실행 호출 수는 0으로 기록하고 합성 판정을 실제 host `pass`로 재분류하지 않습니다. Host 원본 log·UI·credential은 commit에서 제외합니다. Native Git 설치, 새 세션 Skill 로딩, 인증/연결 source, App/CLI 실행, 성능을 각기 독립 gate로 기록합니다.
 
+[`독립 필수 행렬`](evals/results/2026-09-15-mandatory-host-cases.json)의 각 업무·신구 계약 case를 별도로 판정합니다. Composite case는 여러 경로의 성공을 대체하지 않습니다. 성능 `pass`에는 실제 관측된 전체 시간·MCP 시간·응답 크기·모델/cache token 및 reference/추가 확인/재시도 수를 요구하고, 실패 sample의 결측은 이유를 기록합니다. 한 arm이나 무측정 결과에서 비교 우위를 주장하지 않습니다.
+
 ```bash
 claude plugin validate --strict .claude-plugin/marketplace.json
 claude plugin validate --strict plugins/ennoia

@@ -14,7 +14,9 @@ FILES = (
     ROOT / "evals/results/2026-09-15-host-cases.json",
     ROOT / "evals/results/2026-09-15-current-session-read.json",
     ROOT / "evals/results/2026-09-15-codex-cli-native-read.json",
+    ROOT / "evals/results/2026-09-15-mandatory-host-cases.json",
 )
+COMPOSITE_CASES = {"app-direct-run", "legacy-contract", "agent-create-save-delete", "publish-lifecycle", "performance-read-pairs"}
 
 
 def _type_ok(value, accepted: list[str]) -> bool:
@@ -67,6 +69,7 @@ def validate_records(records: object, schema_path: Path = SCHEMA) -> list[str]:
         return ["결과는 하나 이상의 case 배열이어야 합니다"]
     errors = []
     seen = set()
+    observed_trials = []
     for index, case in enumerate(records):
         path = f"cases[{index}]"
         errors.extend(_check(case, schema, path))
@@ -79,12 +82,22 @@ def validate_records(records: object, schema_path: Path = SCHEMA) -> list[str]:
         result = case.get("result") if isinstance(case.get("result"), str) else None
         stage = case.get("case_stage") if isinstance(case.get("case_stage"), str) else None
         kind = case.get("evidence_kind") if isinstance(case.get("evidence_kind"), str) else None
+        if result == "pass" and isinstance(case.get("case_id"), str) and case["case_id"] in COMPOSITE_CASES:
+            errors.append(f"{path}: composite case는 독립 업무/계약 비교 pass를 대체할 수 없음")
         times = {}
         for field in ("recorded_at", "observed_at"):
             value = case.get(field)
             if isinstance(value, str):
+                # Schema pattern이 없는 timezone을 거절하므로 naive datetime과 비교하지 않는다.
+                pattern = schema["properties"][field]["pattern"]
+                if not re.fullmatch(pattern, value):
+                    continue
                 try:
-                    times[field] = datetime.fromisoformat(value.replace("Z", "+00:00"))
+                    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+                    if parsed.tzinfo is None or parsed.utcoffset() is None:
+                        errors.append(f"{path}.{field}: timezone 필요")
+                    else:
+                        times[field] = parsed
                 except ValueError:
                     errors.append(f"{path}.{field}: 실제 calendar 시각이 아님")
         if "recorded_at" in times and "observed_at" in times and times["recorded_at"] < times["observed_at"]:
@@ -126,6 +139,14 @@ def validate_records(records: object, schema_path: Path = SCHEMA) -> list[str]:
                 errors.append(f"{path}: 성능 실행에는 matched trial 조건/server revision 필요")
             elif (result == "pass" and trial.get("failure_kind") != "none") or (result == "fail" and trial.get("failure_kind") == "none"):
                 errors.append(f"{path}: 성능 성공/실패와 failure_kind 불일치")
+            required_metrics = schema["properties"]["measurement"]["required"]
+            missing = [field for field in required_metrics if not isinstance(measurement, dict) or measurement.get(field) is None]
+            if result == "pass" and missing:
+                errors.append(f"{path}: 성능 pass에 실제 측정 필수: {', '.join(missing)}")
+            if result == "fail" and missing and not case.get("measurement_missing_reason"):
+                errors.append(f"{path}: 성능 fail의 결측 측정값 설명 필요: {', '.join(missing)}")
+            if isinstance(trial, dict) and isinstance(trial.get("pair_id"), str):
+                observed_trials.append((index, case, trial))
         if isinstance(measurement, dict):
             chars, size = measurement.get("response_chars"), measurement.get("response_utf8_bytes")
             if isinstance(chars, int) and not isinstance(chars, bool) and isinstance(size, int) and not isinstance(size, bool) and size < chars:
@@ -133,6 +154,23 @@ def validate_records(records: object, schema_path: Path = SCHEMA) -> list[str]:
             cached, total = measurement.get("cached_input_tokens"), measurement.get("input_tokens")
             if isinstance(cached, int) and isinstance(total, int) and not isinstance(cached, bool) and not isinstance(total, bool) and cached > total:
                 errors.append(f"{path}: cached input token이 input token보다 큼")
+    for index, case, trial in observed_trials:
+        if case.get("result") != "pass":
+            continue
+        peers = [
+            (other, other_trial) for other_index, other, other_trial in observed_trials
+            if other_index != index and other.get("host") == case.get("host")
+            and other_trial.get("pair_id") == trial.get("pair_id")
+            and isinstance(other_trial.get("arm"), str) and other_trial["arm"] in {"baseline", "candidate"}
+            and other_trial.get("arm") != trial.get("arm")
+        ]
+        if len(peers) != 1:
+            errors.append(f"cases[{index}]: 성능 pass에는 같은 host/pair의 반대 arm 관측 1건 필요")
+            continue
+        peer, peer_trial = peers[0]
+        conditions = ("model", "input_sha256", "cache_condition", "session_condition", "tool_search_condition", "other_plugins_condition")
+        if case.get("server_revision") != peer.get("server_revision") or any(trial.get(field) != peer_trial.get(field) for field in conditions):
+            errors.append(f"cases[{index}]: paired 성능 arm의 server/model/input/cache/session/tool 조건 불일치")
     return errors
 
 

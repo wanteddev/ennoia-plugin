@@ -22,6 +22,8 @@
 
 신규 M additive output label과 strict 구 M schema는 M-first 적용 순서를 지킵니다. 신규 P2 read 인자와 구 O strict schema의 `INVALID_REQUEST`에서는 실제 사용한 schema/정확히 같은 읽기 ID에만 한정된 fallback을 평가합니다. 현재 O의 canonical edit CAS 및 USER OAuth discovery upstream 지원은 각각 여전히 미확인/미지원 경계입니다. 직접 App와 SuperApp 경로는 필수 업무 gate이고 선택 mutation이 미실행이라는 이유로 제외하지 않습니다.
 
+[`독립 필수 host 업무·호환성 176건`](../evals/results/2026-09-15-mandatory-host-cases.json)을 네 host에 추가했으며 전부 `not_tested`입니다. 기존 96건 중 native 설치/Skill 2건만 확인된 상태는 그대로입니다. 직접 P/M App, Graph 각 단계, Knowledge index/ready/preview, Diagnose trace·usage·cost·budget, Integrations discovery, Publish 각 단계와 P1/old·P2/old·P2/new·old-client/new-server·선택 unavailable/not_selected를 별도 판정합니다. 구 App 여섯 설정 경계도 독립 case입니다. Composite 1건의 성공이나 합성 source-qualified 점수로 실제 host 업무·계약 gate를 닫지 않습니다.
+
 구 schema App에서 관측된 기존 여섯 설정이 완전해도 새 `welcome_message_enabled` field를 무조건 요구하는 후보 source의 F5 문제가 남아 있습니다. Source-qualified 합성 fail 0건이 기존 App 설정 수정의 성공을 증명하지 않으며, 이 경로는 수정과 회귀 검증 후 별도 판단해야 합니다.
 
 ## 2026-09-15 · 1.1.0 후보 계약

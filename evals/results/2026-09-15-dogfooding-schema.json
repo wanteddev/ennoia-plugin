@@ -26,6 +26,7 @@
     "result": {"enum": ["pass", "fail", "not_tested", "blocked"]},
     "evidence_kind": {"enum": ["native_host", "current_session", "none"]},
     "evidence_note": {"type": "string", "minLength": 1},
+    "measurement_missing_reason": {"type": ["string", "null"], "minLength": 1},
     "trial": {
       "type": ["object", "null"],
       "additionalProperties": false,
