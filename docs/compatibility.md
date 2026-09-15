@@ -12,9 +12,12 @@
 
 - 공통 응답 reference를 7개 Skill에 연결하고 현재 설정·실제 대상, 인증 실패의 잔여 context, 이전 서버, 진행 중·부분 결과를 처리합니다. 원격 MCP endpoint와 설치 방식은 동일합니다.
 - manifest 동기화, 패키지 검증, 회귀 테스트 8개, 두 official host validator와 7개 Skill validator를 통과했습니다. 응답 해석·표시는 기존 버전과 비교한 [11개 합성 사례](../evals/2026-09-15-presentation-summary.md)로 평가했습니다.
+- GitHub payload revision `1ddca02c630b6d0943e0bd3c3b52eb31133a5a7d`의 [Plugin CI](https://github.com/wanteddev/ennoia-plugin/actions/runs/34919561939)가 통과했습니다. Codex CLI `0.153.4`와 Claude CLI `2.1.271`에서 Git Marketplace를 업데이트하고 1.0.1 설치·활성화를 확인했습니다. 두 host cache의 payload 25개 파일이 원본과 일치하고 7개 Skill의 공통 reference 경로가 해석됩니다. Claude inventory는 7 Skills + 1 MCP입니다.
 - Tool-name 계약은 Ennoia MCP server revision `855ea256e8055dc5152c1e5ab787c6d4ed3eefa4`의 70개 도구와 대조했습니다. 새 서버의 `selection_context`를 사용하며 해당 필드가 없는 이전 응답도 지원합니다.
 - 이 변경은 Plugin의 응답 지침과 [MCP server #109](https://github.com/wanteddev/ennoia-mcp-server/pull/109)의 중복 instruction 정리입니다. backend의 권한·프로젝트 선택 보호, tool title, 기본 요약·원본 JSON 생성은 변경하지 않습니다. 서버 PR의 merge와 운영 rollout은 Plugin 릴리스와 별도입니다.
+- 서버 PR의 [CI](https://github.com/wanteddev/ennoia-mcp-server/actions/runs/34919518371)에서 Ruff·mypy와 전체 테스트 315개가 통과했습니다. 기존 Starlette/httpx deprecation 경고 1건이 있습니다.
 - App 화면·새 계정 OAuth·실제 쓰기 작업에 대한 아래 1.0.0 기록의 미확인 범위는 그대로 남아 있습니다.
+- 1.0.1 검증에서는 새 실제 MCP 호출을 반복하지 않았습니다. endpoint·연결 설정은 변경되지 않았으며, 마지막 실제 읽기 호출의 근거는 아래 1.0.0 기록입니다. 새 Skill 지침은 host를 재시작하거나 새 작업에서 사용합니다.
 
 ## 2026-09-14 · 1.0.0 확인 기준
 
