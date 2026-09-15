@@ -72,6 +72,8 @@ claude plugin install ennoia@ennoia
 
 작업은 로그인 사용자의 Ennoia 권한과 프로젝트 범위에서 수행합니다. 기본 프로젝트가 자동 선택됐다면 변경 전에 대상을 명시해야 합니다. 이미 지정한 대상과 승인한 작업은 반복 승인하지 않습니다. Credential은 host의 인증 저장소에 두고 Plugin repo에 저장하지 않습니다.
 
+결과는 그룹·프로젝트 이름으로 안내합니다. 현재 설정과 이번 요청 대상이 다르면 둘을 구분하고, 코드·ID는 기술 상세 요청이나 대상 구분·조회 재개에 필요할 때 표시합니다. 진행 중·부분 실패·미확인 비용을 완료나 0으로 바꾸지 않으며, 실제 App 답변은 관리 요약으로 대체하지 않습니다. 이 규칙은 7개 Skill이 [공통 참고자료](plugins/ennoia/references/response-guide.md)를 함께 사용합니다.
+
 이미 같은 endpoint를 수동 MCP로 사용 중이라면 기존 연결을 바로 삭제할 필요는 없습니다. 설치 후 새 세션에서 Skill 로딩과 실제 Ennoia 연결을 확인합니다. host마다 중복 서버 처리 방식이 달라 기존 연결과 Plugin 연결이 항상 하나로 합쳐진다고 가정하지 않습니다.
 
 파일 첨부가 곧 Ennoia 업로드 완료를 의미하지 않습니다. 문서는 업로드·인덱싱 준비·에이전트 연결을 각각 확인합니다. host에 binary 전송 기능이 없는 경우 Skill이 Ennoia 업로드 화면 경로를 안내합니다.
@@ -104,6 +106,7 @@ plugins/ennoia/
   .claude-plugin/plugin.json         # Claude manifest
   .mcp.json                         # 두 host의 호환 MCP 설정
   skills/                           # 공유 Skill 원본 7개
+  references/                       # 공통 응답 해석·표시 규칙
 scripts/                            # 작성자용 sync·검증 도구
 tests/                              # 배포 회귀 검증과 tool 계약 snapshot
 evals/                              # 모델 동작 검증 시나리오

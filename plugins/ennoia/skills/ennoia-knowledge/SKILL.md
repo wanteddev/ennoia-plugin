@@ -7,9 +7,11 @@ description: "Ennoia 지식 컬렉션에 문서·파일·URL을 추가하거나 
 
 문서를 등록하고 검색 가능한 상태인지 확인한 뒤, 요청에 포함된 경우 에이전트에 연결한다.
 
+응답 해석과 최종 안내는 [공통 응답 규칙](../../references/response-guide.md)을 적용한다.
+
 ## 컬렉션과 업로드
 
-Ennoia MCP의 현재 input schema를 확인하고 `get_current_ennoia_project`로 대상 이름·코드를 알린다. 생성·업로드·실행·변경은 사용자가 정한 단일 프로젝트에서 수행한다. `auto_selected`이면 명시 선택을 먼저 확보한다.
+Ennoia MCP의 현재 input schema를 확인하고 `get_current_ennoia_project`로 대상 이름을 알린다. 생성·업로드·실행·변경은 사용자가 정한 단일 프로젝트에서 수행한다. `auto_selected`이면 명시 선택을 먼저 확보한다.
 
 1. `list_multi_agent_rag_collections`로 기존 컬렉션을 query 검색하고 필요한 경우 `get_rag_collection`을 읽는다. 적합한 기존 컬렉션을 사용한다. 신규가 요청됐거나 필요할 때 `create_rag_collection`을 사용한다.
 2. `get_rag_capabilities`로 허용 확장자·크기·업로드 경로를 확인한다. 일반 텍스트는 `upload_rag_text_document`, 로컬 binary는 `prepare_rag_document_upload`, 공개 HTTPS 문서는 `import_rag_document_from_url`을 선택한다.

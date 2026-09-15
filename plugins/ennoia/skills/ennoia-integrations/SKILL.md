@@ -7,9 +7,11 @@ description: "Ennoia에 외부 MCP 서버를 등록·조회·변경하거나 공
 
 외부 MCP의 서버 등록과 사용자 credential 연결을 각각 확인한다.
 
+응답 해석과 최종 안내는 [공통 응답 규칙](../../references/response-guide.md)을 적용한다.
+
 ## 발견
 
-설치된 Ennoia MCP tool의 현재 schema를 사용한다. `get_current_ennoia_project`로 실제 그룹·프로젝트 이름·코드를 알린다. 변경은 사용자가 지정한 단일 프로젝트에서 수행하고, 자동 선택 상태이면 먼저 명시 선택을 받는다.
+설치된 Ennoia MCP tool의 현재 schema를 사용한다. `get_current_ennoia_project`로 실제 그룹·프로젝트 이름을 알린다. 변경은 사용자가 지정한 단일 프로젝트에서 수행하고, 자동 선택 상태이면 먼저 명시 선택을 받는다.
 
 1. `list_multi_agent_mcp_servers`에 query를 넣어 서버 카탈로그를 찾는다. `list_mcp_connections`는 사용자 credential 연결 목록이다. **연결 목록에 없다는 이유로 서버를 새로 등록하지 않는다.**
 2. 카탈로그에서 얻은 `server_id` 또는 지원되는 exact alias로 `get_ennoia_mcp_server`를 조회한다. 임의의 inventory ID를 만들지 않는다.

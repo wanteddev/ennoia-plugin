@@ -7,9 +7,11 @@ description: "Ennoia의 기존 App 또는 SuperApp에 업무를 요청하거나 
 
 이미 준비된 Ennoia App으로 사용자 업무를 처리한다. 간단한 일반 질문에 불필요한 Ennoia 실행을 추가하지 않는다.
 
+응답 해석과 최종 안내는 [공통 응답 규칙](../../references/response-guide.md)을 적용한다.
+
 ## 실행 선택
 
-처음 실행할 때 Ennoia MCP에서 `get_current_ennoia_project`를 확인하고 그룹·프로젝트 이름과 코드를 표시한다. 자동 선택된 프로젝트라면 실행 전에 사용자 선택을 받는다. tool prefix와 input schema는 현재 host에서 발견한 값을 사용한다.
+처음 실행할 때 Ennoia MCP에서 `get_current_ennoia_project`를 확인하고 그룹·프로젝트 이름으로 대상을 표시한다. 자동 선택된 프로젝트라면 실행 전에 사용자 선택을 받는다. tool prefix와 input schema는 현재 host에서 발견한 값을 사용한다.
 
 - 특정 App이 정해져 있으면 `list_ennoia_apps`로 찾고 필요할 때 `get_ennoia_app`을 확인한다. `assistant_hash`를 사용하며 이름을 ID처럼 전달하지 않는다.
 - 특정 App에 직접 질문하려면 `chat_with_ennoia_app`을 사용한다.

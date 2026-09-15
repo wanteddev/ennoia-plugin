@@ -7,6 +7,8 @@ description: "Ennoia 에이전트의 운영 배포, 배포 상태 확인·중지
 
 저장된 에이전트를 요청한 운영 상태로 전환하고 실제 결과를 확인한다.
 
+응답 해석과 최종 안내는 [공통 응답 규칙](../../references/response-guide.md)을 적용한다.
+
 ## 실행 범위
 
 Ennoia MCP의 `get_current_ennoia_project`로 대상 그룹·프로젝트를 확인해 표시한다. 사용자 선택이 없는 `auto_selected` 상태에서는 배포하지 않는다. 이미 승인된 구체적 배포·App 변경은 단계마다 다시 허락을 묻지 않는다. 배포 요청이 App 공개 공유나 기존 배포 중지까지 의미하지는 않는다.

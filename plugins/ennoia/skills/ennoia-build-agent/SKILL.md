@@ -7,9 +7,11 @@ description: "Ennoia multi-agent를 새로 만들거나 기존 graph·draft를 �
 
 사용자가 요청한 업무를 Ennoia graph로 만들고 요청한 단계까지 완료한다. 생성 요청만으로 운영 배포·공유를 추가하지 않는다.
 
+응답 해석과 최종 안내는 [공통 응답 규칙](../../references/response-guide.md)을 적용한다.
+
 ## 대상과 입력
 
-설치된 Ennoia MCP tool을 이름으로 발견하고 최신 input schema를 따른다. 시작할 때 `get_current_ennoia_project`로 대상 이름·코드를 확인한다. `auto_selected`이면 생성·실행·저장 전에 사용자 선택을 확보한다. 이미 지정된 대상·모델·기존 설정은 유지한다. 기존 수정은 `list_multi_agents`의 검색 결과에서 ID를 얻고 `get_multi_agent`로 graph를 읽은 뒤 변경한다. 필요한 입력만 사용자에게 확인한다.
+설치된 Ennoia MCP tool을 이름으로 발견하고 최신 input schema를 따른다. 시작할 때 `get_current_ennoia_project`로 대상 이름을 확인한다. `auto_selected`이면 생성·실행·저장 전에 사용자 선택을 확보한다. 이미 지정된 대상·모델·기존 설정은 유지한다. 기존 수정은 `list_multi_agents`의 검색 결과에서 ID를 얻고 `get_multi_agent`로 graph를 읽은 뒤 변경한다. 필요한 입력만 사용자에게 확인한다.
 
 ## 필요한 것만 발견
 

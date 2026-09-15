@@ -7,9 +7,11 @@ description: "Ennoia 에이전트의 실행 실패, 응답 지연, Trace, 토큰
 
 실제 실행 증거로 실패·지연·사용량을 설명하고 확인된 원인과 추정을 구분한다.
 
+응답 해석과 최종 안내는 [공통 응답 규칙](../../references/response-guide.md)을 적용한다.
+
 ## 조사
 
-Ennoia MCP의 `get_current_ennoia_project`로 현재 그룹·프로젝트 이름과 코드를 알린다. 사용자가 특정 프로젝트를 지정했다면 해당 scope를 사용한다. `all` 조회는 읽기 분석에만 사용하고 각 결과의 실제 프로젝트를 구분한다.
+Ennoia MCP의 `get_current_ennoia_project`로 현재 그룹·프로젝트를 확인해 이름으로 표시한다. 사용자가 특정 프로젝트를 지정했다면 해당 scope를 사용한다. `all` 조회는 읽기 분석에만 사용하고 각 결과의 실제 프로젝트를 구분한다.
 
 1. 에이전트가 불명확하면 `list_multi_agents`로 이름을 검색한다. `list_multi_agent_traces`에는 발견된 `multi_agent_id` 또는 이름 중 하나만 전달한다.
 2. Studio 테스트와 배포 App 실행을 구분해 `sources`를 선택한다. 최근·해당 배포 버전으로 좁혀 요약을 조회한 뒤 관련 `trace_id`만 `get_multi_agent_trace`로 읽는다.

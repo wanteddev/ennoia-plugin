@@ -7,11 +7,13 @@ description: "Ennoia 로그인, OAuth 재인증, 계정 전환 또는 작업할 
 
 Ennoia 계정과 작업 대상을 확인해 다음 업무를 바로 시작할 수 있게 한다.
 
+응답 해석과 최종 안내는 [공통 응답 규칙](../../references/response-guide.md)을 적용한다.
+
 ## 연결 확인
 
 1. 설치된 Ennoia MCP에서 `get_current_ennoia_project`를 발견해 호출한다. host에 따라 tool prefix가 달라지므로 `mcp__ennoia__` 같은 전체 이름을 고정하지 않는다.
 2. 인증·scope 확인이 필요하면 `get_ennoia_context`를 호출한다. 정상 업무에서 이미 확인된 상태를 매 호출마다 중복 조회하지 않는다.
-3. 그룹·프로젝트 이름과 코드를 표시한다. `project_context`가 실제 호출 대상의 근거다. 사용자가 이미 정확한 대상을 정했다면 다시 허락을 묻지 않는다.
+3. 그룹·프로젝트 이름으로 대상을 표시한다. `project_context`가 실제 호출 대상의 근거다. 사용자가 이미 정확한 대상을 정했다면 다시 허락을 묻지 않는다.
 4. 대상을 바꿔야 하면 `list_ennoia_projects`로 exact code를 찾고 `set_current_ennoia_project`로 저장한다. 동명 프로젝트는 그룹까지 비교한다. 사용자가 선택하지 않은 `auto_selected` 값으로 생성·실행·변경을 시작하지 않는다.
 
 `specified` scope는 해당 호출의 대상이다. 이를 기본 프로젝트가 바뀌었다고 설명하지 않는다. 읽기 목적의 `all` 결과는 프로젝트별로 구분한다. 프로젝트 권한이 사라지면 다른 프로젝트로 임의 대체하지 않는다.
