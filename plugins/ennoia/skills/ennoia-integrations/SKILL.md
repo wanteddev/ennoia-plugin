@@ -11,13 +11,13 @@ description: "Ennoia에 외부 MCP 서버를 등록·조회·변경하거나 공
 
 ## 발견
 
-설치된 Ennoia MCP tool의 현재 schema를 사용한다. `get_current_ennoia_project`로 실제 그룹·프로젝트 이름을 알린다. 변경은 사용자가 지정한 단일 프로젝트에서 수행하고, 자동 선택 상태이면 먼저 명시 선택을 받는다.
+설치된 Ennoia MCP tool의 현재 schema를 사용한다. 이미 확인한 현재 선택은 재사용하고, 없을 때 `get_current_ennoia_project`로 확인한다. 지정한 프로젝트만 보고할 때 현재 선택을 새로 조회하지 않는다. 변경은 사용자가 지정한 단일 프로젝트에서 수행하고, 자동 선택 상태이면 먼저 명시 선택을 받는다.
 
-1. `list_multi_agent_mcp_servers`에 query를 넣어 서버 카탈로그를 찾는다. `list_mcp_connections`는 사용자 credential 연결 목록이다. **연결 목록에 없다는 이유로 서버를 새로 등록하지 않는다.**
-2. 카탈로그에서 얻은 `server_id` 또는 지원되는 exact alias로 `get_ennoia_mcp_server`를 조회한다. 임의의 inventory ID를 만들지 않는다.
-3. 필요한 도구는 `list_multi_agent_mcp_tools`와 선택한 도구의 `get_multi_agent_mcp_tool_schema`로 확인한다. 도구 목록 존재와 실제 OAuth·도구 실행 성공을 구분한다.
+1. 대상 server ID와 catalog 사실이 이미 확인됐으면 재사용한다. 없을 때 `list_multi_agent_mcp_servers`에 query를 넣어 서버 카탈로그를 찾는다. `list_mcp_connections`는 사용자 credential 연결 목록이다. **연결 목록에 없다는 이유로 서버를 새로 등록하지 않는다.**
+2. 대상의 상세 설정이 필요한데 아직 없을 때만 카탈로그의 `server_id` 또는 지원되는 exact alias로 `get_ennoia_mcp_server`를 조회한다. 임의의 inventory ID를 만들지 않는다.
+3. 실제 사용 가능한 도구 정보가 없고 catalog discovery가 지원될 때 필요한 도구만 `list_multi_agent_mcp_tools`와 선택한 도구의 `get_multi_agent_mcp_tool_schema`로 확인한다. 도구 목록 존재와 실제 OAuth·도구 실행 성공을 구분한다.
 
-동일 endpoint의 user 수동 서버, Plugin 서버, connector가 함께 보이면 source·scope·실제 사용 연결을 구분한다. `input_schema={}`는 확인된 빈 schema, `input_schema=null`이나 field 누락은 미확인이다. `read_only=null`은 자체로 인증 실패를 뜻하지 않는다. 새 `availability`, `cause`, `source`, `next_action`은 실제 응답에 있을 때만 해석한다. project catalog `ready`는 사용자 OAuth 도구 허가가 아니다. `user_schema_discovery=unsupported`에서는 사용자별 credential/schema cache나 범용 OAuth 실행 경로를 주장하지 않는다. 발견된 서버와 실제 connection·실행 오류를 확인하고 기존 연결을 자동 삭제하거나 credential을 다른 source에 복사하지 않는다.
+동일 endpoint의 user 수동 서버, Plugin 서버, connector가 함께 보이면 source·scope·실제 사용 연결을 구분한다. `input_schema={}`는 확인된 빈 schema, `input_schema=null`이나 field 누락은 미확인이다. `read_only=null`은 자체로 인증 실패를 뜻하지 않는다. 새 `availability`, `cause`, `source`, `next_action`은 실제 응답에 있을 때만 해석한다. project catalog `ready`는 사용자 OAuth 도구 허가가 아니다. `user_schema_discovery=unsupported`에서는 사용자별 credential/schema cache나 범용 OAuth 실행 경로를 주장하지 않는다. 이 사실이 이미 확인됐으면 catalog 재조회로 사용자 권한 확인이 가능하다고 주장하지 않는다. 공식 인증 화면에서 확인하거나, 실제로 노출된 읽기 전용 실행 경로가 요청 범위에서 허용될 때만 제한적으로 확인한다. 발견된 서버와 실제 connection·실행 오류를 확인하고 기존 연결을 자동 삭제하거나 credential을 다른 source에 복사하지 않는다.
 
 ## 등록과 연결
 
@@ -31,7 +31,7 @@ description: "Ennoia에 외부 MCP 서버를 등록·조회·변경하거나 공
 
 서버 설정 변경은 `update_ennoia_mcp_server`, 프로젝트 사용 여부는 `set_ennoia_mcp_server_enabled`, 사용자 credential 해제는 `disconnect_mcp_server`, 서버 등록 삭제는 `delete_ennoia_mcp_server`다. 요청한 대상만 변경하고 등록 삭제와 개인 연결 해제를 혼동하지 않는다. 쓰기 재시도는 현재 schema의 `operation_id` 계약과 응답의 복구 지시를 따른다.
 
-서버 수정은 전체 설정 교체다. 생략된 `auth`, `static_headers`, `allowed_tools`는 각각 none·빈 object·빈 목록으로 초기화될 수 있다. 이름만 변경해도 기존 URL·설명·인증·header·도구 허용 목록을 보존해야 한다. 상세 조회의 `static_header_names`는 실제 header 값이 아니며 secret도 반환하지 않는다. 기존 값을 안전하게 유지하는 공식 경로가 없으면 `update_ennoia_mcp_server`를 호출하지 말고 Ennoia 서버 설정 화면에서 부분 변경하도록 안내한다. secret 복사 요청이나 인증을 none으로 낮추는 우회는 하지 않는다. 비밀값이 없는 서버도 현재 전체 설정을 확인하고 요청한 수정만 합쳐 전달한 뒤 결과를 재조회한다.
+서버 수정은 전체 설정 교체다. 생략된 `auth`, `static_headers`, `allowed_tools`는 각각 none·빈 object·빈 목록으로 초기화될 수 있다. 이름만 변경해도 기존 URL·설명·인증·header·도구 허용 목록을 보존해야 한다. 상세 조회의 `static_header_names`는 실제 header 값이 아니며 secret도 반환하지 않는다. 기존 값을 안전하게 유지하는 공식 경로가 없다는 점이 이미 확인됐으면 같은 schema·상세 조회를 반복하지 않는다. `update_ennoia_mcp_server`를 호출하지 말고 Ennoia 서버 설정 화면에서 부분 변경하도록 안내한다. secret 복사 요청이나 인증을 none으로 낮추는 우회는 하지 않는다. 비밀값이 없는 서버도 현재 전체 설정을 확인하고 요청한 수정만 합쳐 전달한 뒤 결과를 재조회한다.
 
 ## 결과
 

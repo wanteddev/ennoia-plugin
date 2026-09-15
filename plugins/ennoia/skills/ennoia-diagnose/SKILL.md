@@ -11,12 +11,12 @@ description: "Ennoia 에이전트의 실행 실패, 응답 지연, Trace, 토큰
 
 ## 조사
 
-Ennoia MCP의 `get_current_ennoia_project`로 현재 그룹·프로젝트를 확인해 이름으로 표시한다. 사용자가 특정 프로젝트를 지정했다면 해당 scope를 사용한다. `all` 조회는 읽기 분석에만 사용하고 각 결과의 실제 프로젝트를 구분한다.
+이미 확인한 현재 그룹·프로젝트는 재사용한다. 사용자가 특정 프로젝트를 지정했다면 해당 scope를 사용하며, 보고 문구만을 위해 현재 선택을 다시 조회하지 않는다. `all` 조회는 읽기 분석에만 사용하고 각 결과의 실제 프로젝트를 구분한다.
 
 1. 에이전트가 불명확하면 `list_multi_agents`로 이름을 검색한다. `list_multi_agent_traces`에는 발견된 `multi_agent_id` 또는 이름 중 하나만 전달한다.
 2. Studio 테스트와 배포 App 실행을 구분해 `sources`를 선택한다. 최근·해당 배포 버전으로 좁혀 요약을 조회한 뒤 관련 `trace_id`만 `get_multi_agent_trace`로 읽는다.
 3. 최초 실패 observation, 부모·자식 관계, 상태·오류, duration, model, input/output, token·cost를 연결한다. 전체 graph·모든 trace를 먼저 가져오지 않는다.
-4. 사용량은 `get_project_usage`, 비용은 `get_project_cost`, 남은 예산은 `get_project_budget_status`를 사용한다. 기간·timezone·프로젝트 범위를 맞춰 비교하고 실제 응답의 단위·field 의미를 따른다. 새 `resource_count`는 일별 resource count이지 LLM 요청 수가 아니다. `applied_agent_scope=project`면 agent 조건을 적용한 비용이라고 말하지 않는다. 이전 응답에 새 field가 없으면 scope·통화·producer timezone·반영 지연을 unknown으로 남긴다.
+4. 사용량은 `get_project_usage`, 비용은 `get_project_cost`, 남은 예산은 `get_project_budget_status`를 사용한다. 호출 전에는 실제 host input schema에서 지원하는 인자만 확인한다. 기존 또는 반환된 결과의 source·field 의미가 요청한 지표와 필터를 지원하는지도 별도로 확인한다. 기간·timezone·프로젝트 범위는 지원하는 인자와 반환된 의미 안에서만 맞춰 비교한다. 에이전트별 LLM 요청 수·비용을 도구 이름이나 일반 사용량에서 추론하지 않는다. 해당 지표·필터를 지원한다는 source 계약이 확인되지 않으면 이를 얻기 위한 인자를 넣거나 결과를 약속하지 않는다. 확인된 프로젝트 범위의 값만 보고 요청 지표는 미확인으로 남긴다. 새 `resource_count`는 일별 resource count이지 LLM 요청 수가 아니다. `applied_agent_scope=project`면 agent 조건을 적용한 비용이라고 말하지 않는다. 이전 응답에 새 field가 없으면 scope·통화·producer timezone·반영 지연을 unknown으로 남긴다.
 
 ## 해석
 

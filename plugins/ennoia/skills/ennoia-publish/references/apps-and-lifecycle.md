@@ -11,7 +11,7 @@
 | 에이전트 이름 변경·복제·삭제 | `rename_multi_agent`, `clone_multi_agent`, `delete_multi_agent`; exact ID와 영향 범위 확인 |
 | 배포 중지·삭제 | `stop_multi_agent_deployment`, `delete_multi_agent_deployment`; 버전과 선행 실행 상태 확인 |
 
-App 수정은 부분 patch가 아니다. `name`, `description`, `welcome_message`, `history_count`, `allow_file_upload`, `recommended_questions`의 기존 값을 모두 읽고 요청한 값만 교체한 전체 settings를 보낸다. 생략된 값은 기본값으로 초기화될 수 있다. 이름만 바꾸더라도 설명·history·파일 업로드·추천 질문을 유지한다. 필수 기존 값이 누락되거나 null이라 현재 설정을 안전하게 재구성할 수 없으면 임의 기본값을 넣지 말고 Ennoia App 설정 화면에서 변경하도록 안내한다. 저장 후 설정을 다시 조회해 요청 범위만 바뀌었는지 확인한다.
+App 수정은 부분 patch가 아니다. `name`, `description`, `welcome_message`, `welcome_message_enabled`, `history_count`, `allow_file_upload`, `recommended_questions`의 기존 값을 모두 읽고 요청한 값만 교체한 전체 settings를 보낸다. 생략된 값은 기본값으로 초기화될 수 있다. 이름만 바꾸더라도 설명·history·파일 업로드·추천 질문을 유지한다. 필수 기존 값이 누락되거나 null이라 현재 설정을 안전하게 재구성할 수 없으면 임의 기본값을 넣지 말고 Ennoia App 설정 화면에서 변경하도록 안내한다. 저장 후 설정을 다시 조회해 요청 범위만 바뀌었는지 확인한다. 동시 수정 방지(CAS)가 없으므로 GET과 전체 PUT 사이의 다른 변경은 보장할 수 없다고 결과에 짧게 밝힌다.
 
 새 상세의 `settings_readiness=detail_required`는 상세 조회 필요, `explicit_input_required`는 표시된 `settings_input_required`의 전체 교체 값을 사용자가 명시해야 함, `builder_unavailable`은 안전한 수정 경로 없음이다. `settings_field_states=absent|null|value`와 실제 값으로 보존 범위를 확인한다. `complete`도 GET→full PUT 사이의 동시 변경을 막지 않는다. legacy 이름만 입력은 여전히 전체 교체이며 생략한 유효 field도 defaults로 바뀐다. 이름만 보냈다고 다른 설정이 보존된 것으로 설명하지 않는다.
 

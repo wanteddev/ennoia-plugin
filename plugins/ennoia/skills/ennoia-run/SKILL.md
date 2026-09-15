@@ -11,7 +11,7 @@ description: "Ennoia의 기존 App 또는 SuperApp에 업무를 요청하거나 
 
 ## 실행 선택
 
-처음 실행할 때 Ennoia MCP에서 `get_current_ennoia_project`를 확인하고 그룹·프로젝트 이름으로 대상을 표시한다. 자동 선택된 프로젝트라면 실행 전에 사용자 선택을 받는다. tool prefix와 input schema는 현재 host에서 발견한 값을 사용한다.
+처음 실행할 때 Ennoia MCP에서 `get_current_ennoia_project`를 확인하고 그룹·프로젝트 이름으로 대상을 표시한다. 자동 선택된 프로젝트라면 실행 전에 사용자 선택을 받는다. tool prefix와 input schema는 현재 host에서 발견한 값을 사용한다. 이번 작업에 이미 제공되거나 확인된 유효한 schema와 식별자는 재사용하고, 필요한 정보가 빠지거나 계약이 바뀐 경우에만 다시 발견한다.
 
 - 특정 App이 정해져 있으면 `list_ennoia_apps`로 찾고 필요할 때 `get_ennoia_app`을 확인한다. `assistant_hash`를 사용하며 이름을 ID처럼 전달하지 않는다.
 - 특정 App에 직접 질문하려면 `chat_with_ennoia_app`을 사용한다.
