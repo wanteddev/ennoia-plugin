@@ -12,7 +12,7 @@
       "name": "ennoia",
       "source": "./plugins/ennoia",
       "description": "Ennoia에서 에이전트 생성, 문서 지식 연결, App 실행과 운영 진단을 수행합니다.",
-      "version": "1.1.0"
+      "version": "1.1.1"
     }
   ]
 }

@@ -1,0 +1,279 @@
+[
+  {
+    "id": "saved-current",
+    "skill": "ennoia-build-agent",
+    "prompt": "업무 도우미 초안을 만든 결과를 짧게 알려줘.",
+    "observations": [
+      {
+        "tool": "save_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "multi_agent_id": "agent-new",
+            "name": "업무 도우미",
+            "created": true,
+            "stage": "D"
+          },
+          "project_context": {
+            "scope": "current",
+            "projects": [
+              {
+                "group_code": "g-current",
+                "group_name": "데모팀",
+                "project_code": "p-current",
+                "project_name": "업무"
+              }
+            ],
+            "selection_source": "user_selected",
+            "requires_confirmation": false
+          }
+        }
+      }
+    ],
+    "environment": "운영 Ennoia Plugin의 합성 평가 입력이다. Tool envelope는 축약되어 있으며 실제 호출이나 계정 데이터가 아니다. 제공된 관측만 사용하고 실제 도구는 호출하지 않는다. 최종 한국어 응답과 필요한 다음 행동을 작성한다. "
+  },
+  {
+    "id": "saved-specified",
+    "skill": "ennoia-build-agent",
+    "prompt": "지정한 프로젝트에 저장한 결과를 알려줘. 기본 프로젝트 설정은 그대로 둬.",
+    "observations": [
+      {
+        "tool": "save_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "multi_agent_id": "agent-target",
+            "name": "업무 도우미",
+            "created": true,
+            "stage": "D"
+          },
+          "project_context": {
+            "scope": "specified",
+            "projects": [
+              {
+                "group_code": "g-target",
+                "group_name": "데모팀",
+                "project_code": "p-target",
+                "project_name": "업무"
+              }
+            ],
+            "selection_source": "specified",
+            "requires_confirmation": false
+          },
+          "selection_context": {
+            "status": "selected",
+            "project": {
+              "group_code": "g-default",
+              "group_name": "기본팀",
+              "project_code": "p-default",
+              "project_name": "운영",
+              "selection_source": "user_selected"
+            }
+          }
+        }
+      }
+    ],
+    "environment": "운영 Ennoia Plugin의 합성 평가 입력이다. Tool envelope는 축약되어 있으며 실제 호출이나 계정 데이터가 아니다. 제공된 관측만 사용하고 실제 도구는 호출하지 않는다. 최종 한국어 응답과 필요한 다음 행동을 작성한다. "
+  },
+  {
+    "id": "legacy-update",
+    "skill": "ennoia-build-agent",
+    "prompt": "지금 프로젝트의 업무 도우미 초안 수정 결과를 알려줘.",
+    "observations": [
+      {
+        "tool": "get_current_ennoia_project",
+        "result": {
+          "ok": true,
+          "data": {
+            "group_code": "g-legacy",
+            "group_name": "데모팀",
+            "project_code": "p-legacy",
+            "project_name": "업무",
+            "selection_source": "user_selected"
+          }
+        }
+      },
+      {
+        "tool": "save_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "multi_agent_id": "agent-existing",
+            "name": "업무 도우미",
+            "created": false,
+            "stage": "D"
+          }
+        }
+      }
+    ],
+    "environment": "운영 Ennoia Plugin의 합성 평가 입력이다. Tool envelope는 축약되어 있으며 실제 호출이나 계정 데이터가 아니다. 제공된 관측만 사용하고 실제 도구는 호출하지 않는다. 최종 한국어 응답과 필요한 다음 행동을 작성한다. 선행 조회에서 확인한 동일 프로젝트에 update 저장했다. 그 사이 대상 변경이나 인증 오류는 없고 이전 서버의 저장 응답에는 project_context가 없다."
+  },
+  {
+    "id": "validation-only",
+    "skill": "ennoia-build-agent",
+    "prompt": "그래프 검증까지만 하고 결과를 알려줘.",
+    "observations": [
+      {
+        "tool": "validate_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "valid": true,
+            "validation_id": "validation-demo-123"
+          }
+        }
+      }
+    ],
+    "environment": "운영 Ennoia Plugin의 합성 평가 입력이다. Tool envelope는 축약되어 있으며 실제 호출이나 계정 데이터가 아니다. 제공된 관측만 사용하고 실제 도구는 호출하지 않는다. 최종 한국어 응답과 필요한 다음 행동을 작성한다. "
+  },
+  {
+    "id": "save-failed",
+    "skill": "ennoia-build-agent",
+    "prompt": "에이전트 생성 결과를 알려줘.",
+    "observations": [
+      {
+        "tool": "save_multi_agent",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "PROJECT_FORBIDDEN",
+            "message": "지정한 프로젝트 접근 거절"
+          },
+          "project_context": {
+            "scope": "specified",
+            "projects": [
+              {
+                "group_code": "g-target",
+                "group_name": "데모팀",
+                "project_code": "p-target",
+                "project_name": "업무"
+              }
+            ],
+            "selection_source": "specified",
+            "requires_confirmation": false
+          },
+          "selection_context": {
+            "status": "selected",
+            "project": {
+              "group_code": "g-default",
+              "group_name": "기본팀",
+              "project_code": "p-default",
+              "project_name": "운영",
+              "selection_source": "user_selected"
+            }
+          }
+        }
+      }
+    ],
+    "environment": "운영 Ennoia Plugin의 합성 평가 입력이다. Tool envelope는 축약되어 있으며 실제 호출이나 계정 데이터가 아니다. 제공된 관측만 사용하고 실제 도구는 호출하지 않는다. 최종 한국어 응답과 필요한 다음 행동을 작성한다. "
+  },
+  {
+    "id": "saved-test-failed",
+    "skill": "ennoia-build-agent",
+    "prompt": "업무 도우미를 저장하고 실행 테스트한 결과를 알려줘.",
+    "observations": [
+      {
+        "tool": "save_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "multi_agent_id": "agent-test",
+            "name": "업무 도우미",
+            "created": true,
+            "stage": "D"
+          },
+          "project_context": {
+            "scope": "current",
+            "projects": [
+              {
+                "group_code": "g-test",
+                "group_name": "데모팀",
+                "project_code": "p-test",
+                "project_name": "업무"
+              }
+            ],
+            "selection_source": "user_selected",
+            "requires_confirmation": false
+          }
+        }
+      },
+      {
+        "tool": "get_multi_agent_test",
+        "result": {
+          "ok": true,
+          "data": {
+            "test_id": "test-demo",
+            "status": "failed",
+            "error": {
+              "message": "연결된 도구 실행 실패"
+            }
+          }
+        }
+      }
+    ],
+    "environment": "운영 Ennoia Plugin의 합성 평가 입력이다. Tool envelope는 축약되어 있으며 실제 호출이나 계정 데이터가 아니다. 제공된 관측만 사용하고 실제 도구는 호출하지 않는다. 최종 한국어 응답과 필요한 다음 행동을 작성한다. "
+  },
+  {
+    "id": "missing-target",
+    "skill": "ennoia-build-agent",
+    "prompt": "별도로 지정했던 분석 프로젝트에 저장한 결과를 알려줘.",
+    "observations": [
+      {
+        "tool": "save_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "multi_agent_id": "agent-missing-target",
+            "name": "업무 도우미",
+            "created": true,
+            "stage": "D"
+          },
+          "selection_context": {
+            "status": "selected",
+            "project": {
+              "group_code": "g-default",
+              "group_name": "기본팀",
+              "project_code": "p-default",
+              "project_name": "운영",
+              "selection_source": "user_selected"
+            }
+          }
+        }
+      }
+    ],
+    "environment": "운영 Ennoia Plugin의 합성 평가 입력이다. Tool envelope는 축약되어 있으며 실제 호출이나 계정 데이터가 아니다. 제공된 관측만 사용하고 실제 도구는 호출하지 않는다. 최종 한국어 응답과 필요한 다음 행동을 작성한다. 이전 저장 요청의 실제 그룹·프로젝트 코드는 제공되지 않았다. selection_context는 기본 설정이며 이번 저장 대상과 다르다."
+  },
+  {
+    "id": "encoded-query",
+    "skill": "ennoia-build-agent",
+    "prompt": "업무 도우미 생성 결과를 알려줘.",
+    "observations": [
+      {
+        "tool": "save_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "multi_agent_id": "agent(1)&x=2",
+            "name": "업무 도우미",
+            "created": true,
+            "stage": "D"
+          },
+          "project_context": {
+            "scope": "current",
+            "projects": [
+              {
+                "group_code": "g/a&b",
+                "group_name": "데모팀",
+                "project_code": "p q?#",
+                "project_name": "업무"
+              }
+            ],
+            "selection_source": "user_selected",
+            "requires_confirmation": false
+          }
+        }
+      }
+    ],
+    "environment": "운영 Ennoia Plugin의 합성 평가 입력이다. Tool envelope는 축약되어 있으며 실제 호출이나 계정 데이터가 아니다. 제공된 관측만 사용하고 실제 도구는 호출하지 않는다. 최종 한국어 응답과 필요한 다음 행동을 작성한다. 식별자는 encoding 경계를 검증하기 위한 합성 값이며 그대로 보존한다."
+  }
+]
