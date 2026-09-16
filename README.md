@@ -79,7 +79,7 @@ claude plugin install ennoia@ennoia
 
 결과는 그룹·프로젝트 이름으로 안내합니다. 현재 설정과 이번 요청 대상이 다르면 둘을 구분하고, 코드·ID는 기술 상세 요청이나 대상 구분·조회 재개에 필요할 때 표시합니다. 진행 중·부분 실패·미확인 비용을 완료나 0으로 바꾸지 않으며, 실제 App 답변은 관리 요약으로 대체하지 않습니다. 이 규칙은 7개 Skill이 [공통 참고자료](plugins/ennoia/references/response-guide.md)를 함께 사용합니다.
 
-이미 같은 endpoint를 수동 MCP로 사용 중이라면 기존 연결을 바로 삭제할 필요는 없습니다. 설치 후 새 세션에서 Skill 로딩과 실제 Ennoia 연결을 확인합니다. host마다 중복 서버 처리 방식이 달라 기존 연결과 Plugin 연결이 항상 하나로 합쳐진다고 가정하지 않습니다.
+이미 같은 endpoint를 수동 MCP로 사용 중이라면 각 항목의 source·scope와 실제 요청 연결을 확인합니다. host마다 수동 서버·Plugin·connector가 항상 하나로 합쳐진다고 가정하지 않습니다. 기존 수동 연결의 정리는 사용자가 이전을 요청한 경우에만 선택적으로 진행하며 credential을 다른 source로 복사하지 않습니다.
 
 파일 첨부가 곧 Ennoia 업로드 완료를 의미하지 않습니다. 문서는 업로드·인덱싱 준비·에이전트 연결을 각각 확인합니다. host에 binary 전송 기능이 없는 경우 Skill이 Ennoia 업로드 화면 경로를 안내합니다.
 
@@ -96,6 +96,8 @@ codex plugin add ennoia@ennoia
 claude plugin marketplace update ennoia
 claude plugin update ennoia@ennoia
 ```
+
+업데이트 뒤 새 세션을 열어 Plugin과 7개 Skill 발견 → 실제 Ennoia MCP 서버 인증 → 현재 그룹·프로젝트 선택 확인 → 읽기 도구 1건의 성공 순서로 확인합니다. Claude CLI에서는 `/mcp`에서 Plugin 서버를 선택합니다. Codex CLI에서는 설치 inventory의 실제 서버 이름을 확인하고 host가 제공하는 그 서버의 인증 안내를 따릅니다. 수동 `ennoia` 등록이 없는 계정에 `codex mcp login ennoia`가 반드시 적용되는 것은 아닙니다. Skill이 보이는데 Ennoia tool이 없다면 먼저 Plugin MCP 활성화와 서버 연결을 확인합니다.
 
 제거는 `codex plugin remove ennoia@ennoia` 또는 `claude plugin uninstall ennoia@ennoia`를 사용합니다. Plugin 제거와 Ennoia 계정의 OAuth 권한 철회는 별개이므로 연결 철회까지 필요하면 host의 연결 관리에서 처리합니다.
 

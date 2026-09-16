@@ -20,7 +20,7 @@ Ennoia 계정과 작업 대상을 확인해 다음 업무를 바로 시작할 �
 
 ## 인증 복구
 
-`AUTH_REQUIRED`, `ENNOIA_REAUTH_REQUIRED`, HTTP 401이면 host의 Ennoia MCP OAuth 재인증을 사용한다. Claude CLI는 `/mcp`, Codex CLI는 해당 설치 서버의 인증 명령·안내, 앱은 Ennoia 연결 상세의 로그인/재연결을 사용한다. plugin이 부여한 실제 서버 이름을 먼저 확인한다. 수동 등록 서버가 없는 상태에서 `codex mcp login ennoia`가 반드시 통한다고 가정하지 않는다.
+host의 `needs-auth` 또는 `AUTH_REQUIRED`, `ENNOIA_REAUTH_REQUIRED`, HTTP 401이면 설치된 실제 Ennoia MCP 서버의 host 인증 흐름을 확인한다. host의 Connected 표시는 실제 사용 연결의 인증 오류보다 우선하지 않는다. Tool 자체를 발견하지 못한 상태와 인증 오류는 구분한다. Claude CLI는 `/mcp`, Codex CLI는 해당 설치 서버의 인증 명령·안내, 앱은 Ennoia 연결 상세의 로그인/재연결을 사용한다. plugin이 부여한 실제 서버 이름을 먼저 확인한다. 수동 등록 서버가 없는 상태에서 `codex mcp login ennoia`가 반드시 통한다고 가정하지 않는다.
 
 재인증 뒤 `get_ennoia_context`와 현재 프로젝트를 확인한다. 같은 실패를 반복하면 오류 코드와 host 연결 상태를 보고하고 무한 재시도하지 않는다. 세부 오류 구분은 [인증 복구](references/authentication.md)를 읽는다.
 

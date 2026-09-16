@@ -23,6 +23,7 @@ Ennoia MCP의 `get_current_ennoia_project`로 현재 그룹·프로젝트를 확
 - `FAIL_AGENT_NETWORK` 같은 wrapper만으로 네트워크·Redis·worker 중 하나를 원인으로 확정하지 않는다. 실제 하위 오류와 시간상 선후 관계가 필요하다.
 - `truncated=true`, `is_complete_tree=false`, `partial_failures`가 있으면 증거의 범위를 명시한다. 현재 도구가 제공하는 상세만 추가 조회하고 존재하지 않는 pagination·로그 API를 만들지 않는다.
 - `null` token·cost·latency는 미확인 값이다. 0으로 계산하거나 합계가 완전하다고 주장하지 않는다. 누락 범위를 함께 보고한다.
+- duration/latency의 단위나 집계 범위가 충돌하면 각각의 출처와 불일치를 보고한다. 예를 들어 요약의 81ms와 root trace의 81,588ms를 같은 확정 latency로 취급하지 않는다. cost=0도 coverage가 불명확하면 전체 비용이 0 또는 무료라는 뜻이 아니다.
 - LLM 추론, MCP 호출, 대기, 재시도 중 어디에 시간이 쓰였는지 나눈다. 한 번의 호출을 p95 성능이나 전체 서비스 상태로 일반화하지 않는다.
 
 오류 처리와 재시도는 응답의 `error.next_action`, `repair_hint`, `retryable`을 따른다. 조회 실패를 해결하려고 에이전트 재실행·삭제·배포를 시작하지 않는다. 수정이 요청됐다면 근거가 가리키는 범위에서 해당 작업 Skill로 이어간다.

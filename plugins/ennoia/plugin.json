@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ennoia",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Ennoia에서 에이전트 생성, 문서 지식 연결, App 실행과 운영 진단을 수행합니다.",
   "author": {"name": "Wantedlab", "url": "https://github.com/wanteddev"},
   "homepage": "https://ennoia.so",

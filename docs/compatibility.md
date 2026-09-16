@@ -8,6 +8,12 @@
 - Claude Marketplace와 Codex Marketplace가 각각 repo 루트에서 발견되며 같은 payload를 가리킵니다.
 - Portable manifest 원본과 Claude/Codex 호환 manifest를 함께 제공하며 transport 표기는 각 규격으로 생성합니다.
 
+## 2026-09-15 · 1.0.3 후보 로컬 검증
+
+- 기존 70-tool 서버의 schema·error contract를 대상으로 Skill 판단과 설치 안내만 보강했습니다. 새로운 API field나 실제 서버 배포를 전제하지 않습니다.
+- [16개 합성 dogfooding 입력](../evals/dogfooding-scenarios.json)과 [분리된 rubric](../evals/dogfooding-rubric.md)을 제공합니다. 작성자의 입력 점검과 독립 blind 모델 비교는 별도이며, 합성 입력은 실서비스 검증이 아닙니다.
+- 새 계정 OAuth, 앱 UI와 실제 RAG·대화·쓰기 작업은 이 변경에서 확인하지 않았습니다. 로컬 검증 결과는 작업 보고서에 기록하며 native host 인증과 실제 실행은 별도 단계입니다.
+
 ## 2026-09-15 · 1.0.2 PR 검증
 
 - [브랜드 자산](branding.md)을 추가한 PR 버전입니다. Codex Plugin과 7개 Skill UI에 아이콘·색상을 설정하고, Plugin 로고의 밝은·어두운 배경 표시를 브라우저 미리보기로 확인했습니다.

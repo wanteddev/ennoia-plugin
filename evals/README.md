@@ -1,5 +1,9 @@
 # Skill 동작 평가
 
+## 기존 서버 안전 경계
+
+[`dogfooding-scenarios.json`](dogfooding-scenarios.json)은 16개 합성 입력의 prompt·observations·environment만 제공합니다. [`dogfooding-rubric.md`](dogfooding-rubric.md)는 기대 행동을 별도로 둡니다. 평가자는 기존 1.0.2와 후보에 동일 입력을 주고 다음 도구·질문·완료 표현과 실제 읽은 Skill/reference를 기록합니다. baseline도 이미 처리한 case는 개선으로 계산하지 않습니다. 추측 ID, 불확실한 쓰기 중복, 설정 손실이 한 건이라도 있으면 실패입니다. 이 입력은 API 실행이나 independent blinded 모델 판정 결과를 제공하지 않습니다.
+
 `scenarios.json`은 합성된 사용자 요청과 축약한 MCP 결과를 제공합니다. 실제 회사 문서·credential·계정 데이터를 포함하지 않습니다. 실제 backend를 실행하는 테스트가 아닙니다.
 
 독립 평가자에게 각 case의 prompt·observations·environment만 주고 다음 tool 호출, 필요한 사용자 입력, 정당한 완료 표현을 작성하게 합니다. Plugin 없이 실행한 baseline과 적용한 실행을 비교합니다. 적용 평가자는 필요한 Skill·reference만 읽고 읽은 경로를 기록합니다. 기대 답안을 먼저 보여주지 않습니다.

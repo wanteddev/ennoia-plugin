@@ -11,4 +11,6 @@
 
 검증 만료·schema/capability 변경 오류면 관련 자원을 갱신하고 재검증한다. `error.next_action`, `repair_hint`, `retryable`을 먼저 확인한다. 결과가 불명확한 쓰기는 `list_multi_agents`/`get_multi_agent`로 현재 상태를 조회하고, backend가 지시하는 idempotent 재시도만 한다. 같은 요청을 새 `operation_id`로 무작정 반복하지 않는다.
 
+정상적인 같은 대상·graph의 `validation_id`는 재사용한다. 만료를 추측해 미리 반복 검증하지 않는다. `MAB_COMPILE_DEFERRED`이면 저장 가능성과 실행 검증을 분리한다. 저장 결과가 나와도 compile/test 실행 성공은 확인된 상태가 아니며, 실제 실행 또는 검증 결과를 별도 확인한다.
+
 저장 결과의 draft/stage는 운영 배포 상태와 다르다. 사용자가 저장까지만 요청했다면 그 단계에서 종료한다.
