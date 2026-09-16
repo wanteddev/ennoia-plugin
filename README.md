@@ -133,6 +133,10 @@ python3 -m unittest discover -s tests -v
 
 Metadata·version은 `plugins/ennoia/plugin.json`, MCP 설정은 `plugins/ennoia/mcp.json`에서 수정한 뒤 `python3 scripts/sync_manifests.py`로 호환 파일을 생성합니다. 이 명령은 공식 asset 원본에서 다크 모드 로고와 Skill별 아이콘 복사본도 생성합니다. Skill은 `plugins/ennoia/skills` 원본에서 수정합니다. 동일한 버전을 덮어쓰지 말고 릴리스 시 version을 올려 host cache를 갱신합니다.
 
+`main`에 반영되면 **Validate plugin** workflow의 검증 성공 후 manifest version으로 `v<version>` 태그와 GitHub Release를 자동 생성합니다. 현재 `1.1.0`이면 `v1.1.0`을 발행하며, 릴리스 노트는 [GitHub Release API](https://docs.github.com/en/rest/releases/releases#create-a-release)가 병합 PR 기준으로 생성합니다. `1.2.0-rc.1` 같은 사전 버전은 prerelease로 표시합니다. 별도 PAT 없이 발행 job의 `GITHUB_TOKEN`에만 `contents: write` 권한을 부여합니다.
+
+이미 발행된 버전은 태그와 Release를 변경하지 않습니다. 태그만 생성되고 Release 생성이 실패했다면 Actions → **Validate plugin** → **Run workflow**에서 `main`을 선택해 같은 태그의 Release를 복구할 수 있습니다. 기존 태그의 version·main 이력이 맞지 않거나 기존 draft Release가 있으면 중단합니다. PR·다른 branch·tag push에서는 발행하지 않으며, 자동화 도입 전 태그를 일괄 발행하지 않습니다. 앱 설치는 계속 Git repo Marketplace를 사용합니다.
+
 아이콘·로고 출처, 브랜드 색상과 host별 표시 범위는 [브랜드 자산](docs/branding.md)을 참고합니다.
 
 [기여·검증 기준](CONTRIBUTING.md)과 [동작 평가](evals/README.md)를 따라 검증합니다. CI는 credential 없이 패키지 구조와 회귀 테스트를 실행합니다. Native client 검증, OAuth, 실제 MCP 업무 결과와 latency 개선은 별도로 확인해야 합니다.
