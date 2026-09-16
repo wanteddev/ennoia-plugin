@@ -12,6 +12,14 @@
 README의 Python 검증에 더해 설치된 native client로 아래를 확인합니다.
 
 ```bash
+python3 scripts/validate_results.py
+```
+
+공개 결과 case는 [`evals/results/2026-09-15-dogfooding-schema.json`](evals/results/2026-09-15-dogfooding-schema.json)의 필수 field와 host·surface·Plugin/source SHA·Skill 로딩/연결 source를 따릅니다. 미측정 수치는 `null`, 미실행 호출 수는 0으로 기록하고 합성 판정을 실제 host `pass`로 재분류하지 않습니다. Host 원본 log·UI·credential은 commit에서 제외합니다. Native Git 설치, 새 세션 Skill 로딩, 인증/연결 source, App/CLI 실행, 성능을 각기 독립 gate로 기록합니다.
+
+[`독립 필수 행렬`](evals/results/2026-09-15-mandatory-host-cases.json)의 각 업무·신구 계약 case를 별도로 판정합니다. Composite case는 여러 경로의 성공을 대체하지 않습니다. 성능 `pass`에는 실제 관측된 전체 시간·MCP 시간·응답 크기·모델/cache token 및 reference/추가 확인/재시도 수를 요구하고, 실패 sample의 결측은 이유를 기록합니다. 한 arm이나 무측정 결과에서 비교 우위를 주장하지 않습니다.
+
+```bash
 claude plugin validate --strict .claude-plugin/marketplace.json
 claude plugin validate --strict plugins/ennoia
 ```
@@ -27,7 +35,7 @@ Claude validator의 성공은 Skill 행동이나 OAuth 성공을 증명하지 �
 1. portable manifest의 version을 갱신하고 `scripts/sync_manifests.py`를 실행합니다.
 2. 정적 검증·회귀 검사·변경된 workflow의 동작 평가를 통과시킵니다.
 3. main 변경의 GitHub Actions 성공을 확인합니다.
-4. 두 앱·두 CLI에서 repo 동기화/업데이트 후 설치·발견·OAuth 상태를 확인합니다.
+4. 두 앱·두 CLI에서 repo 동기화/업데이트 후 설치·새 세션 Skill 발견·OAuth와 연결 source·직접 App/SuperApp 업무 상태를 각각 확인합니다. 수동 MCP가 공존할 때 같은 이름 도구의 성공만으로 Plugin 전용 연결이라 주장하지 않습니다.
 5. 검증한 client 버전, repo commit, MCP 환경, 완료 범위와 제한을 `docs/compatibility.md`에 기록합니다.
 
 Ennoia MCP의 model 실행·저장·배포 검증은 별도 승인된 테스트 프로젝트에서 수행합니다. 로컬 validator 통과를 운영 배포 승인으로 표현하지 않습니다.

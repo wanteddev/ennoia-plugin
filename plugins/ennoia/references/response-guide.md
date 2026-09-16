@@ -21,15 +21,31 @@
 
 인증·권한 실패(`AUTH_REQUIRED`, `ENNOIA_REAUTH_REQUIRED`, `INSUFFICIENT_SCOPE`, `PROJECT_FORBIDDEN`, HTTP 401/403) 응답에 남은 context를 현재 설정이나 실제 실행의 증거로 표시하지 않는다. 현재 설정은 확인 불가로 안내하고 해당 Skill의 인증·권한 복구 절차를 따른다.
 
-부분 결과의 `PROJECT_FORBIDDEN`이나 삭제된 대상은 지정한 target의 존재·권한만 제한해서 확인한다. 다른 프로젝트에 같은 이름의 대상을 찾거나 다른 scope로 재실행해 우회하지 않는다. host Connected와 실제 호출의 재인증 오류가 충돌하면 실제 사용 연결의 인증 결과를 따른다.
+부분 결과의 `PROJECT_FORBIDDEN`이나 삭제된 대상은 지정한 target의 존재·권한만 제한해서 확인한다. 지정한 target의 결과를 보고하기 위해 현재 선택을 새로 조회하지 않는다. 다른 프로젝트에 같은 이름의 대상을 찾거나 다른 scope로 재실행해 우회하지 않는다. host Connected와 실제 호출의 재인증 오류가 충돌하면 실제 사용 연결의 인증 결과를 따른다.
 
 ## 이전 서버 응답
 
 `selection_context`가 **없는** 응답도 지원한다. 이번 작업에서 성공적으로 확인한 현재 선택을 사용할 수 있고, 그런 근거가 없다면 `project_context.scope=current`에 단일 대상이 있을 때만 현재 설정으로 해석한다. `specified`·`all`의 대상만으로 현재 설정을 추측하지 않는다. 명시적인 `unavailable`·`not_selected`를 이전 값으로 덮어쓰지 않는다.
 
-같은 작업에서 이미 확인한 유효한 scope는 재사용한다. 사용자가 대상을 바꾸거나 재인증·권한 오류가 생기면 다시 확인한다. 문장 표시만을 위해 추가 조회나 요약용 LLM·MCP 호출을 만들지 않는다.
+같은 작업에서 이미 확인한 유효한 scope·schema·대상 ID는 재사용한다. 필요한 필드가 빠졌거나 계약·권한 상태가 변했을 때만 관련 조회를 다시 한다. 사용자가 대상을 바꾸거나 재인증·권한 오류가 생기면 다시 확인한다. 문장 표시만을 위해 추가 조회나 요약용 LLM·MCP 호출을 만들지 않는다.
 
 ## 상태와 답변
+
+서로 다른 upstream domain의 한 글자 code를 섞어 해석하지 않는다. multi-agent `stage` D/P는 Draft/Published, 해당 deployment `status` W/R/D/F/S/E는 Waiting/Running/Deploying/Failed/Stop/Editing이다. RAG 파일 `status` W/R/C/F는 Waiting/Running/Complete/Failed이며 App `assistant_type` P/S/C/M은 Preset/System/Custom/Multi Agent이다. `*_label`이 있으면 raw code도 함께 보존한다. 새 label이 없는 이전 서버에서는 해당 domain의 code만 해석하고 모르는 값은 unknown으로 남긴다. Builder conversation의 BUILDING/COMPLETED/ARCHIVED는 runtime 실행 상태가 아니다.
+
+Ennoia Knowledge Skill의 RAG 준비 후에는 확인된 `collection_name`을 `ragConfig.index_names`에 연결한다. 생성·수정 요청이 포함됐다면 Build Agent Skill의 `validate_multi_agent` → `save_multi_agent` → `test_multi_agent` 계약을 따른다. 준비 상태 조회만 요청됐다면 graph 저장·실행을 추가하지 않는다.
+
+App builder 상세는 OAuth 인증된 사용자 권한으로 조회하며 응답에 credential/secret이 포함되지 않는다. App update는 upstream full PUT이고 생략한 유효 필드도 기본값으로 교체될 수 있다. 상세의 `settings_field_states`와 `settings_input_required`로 보존할 전체 입력을 확인한다. CAS가 없어 읽기·수정 사이 동시 변경은 보장하지 않는다.
+
+새 MCP 연결의 initialize `serverInfo.version`과 `instructions`에 있는 `source_revision`, `description_sha256`을 같은 세션에서 기록하고 실제 배포 image source revision과 대조한다. `unknown`은 로컬 빌드 revision이 확인되지 않았다는 뜻이다. 기존 연결 metadata나 캐시된 tool 설명은 새 서버의 runtime 반영을 증명하지 않는다. hash는 tool 이름과 description 문자열만의 SHA-256이며 schema, annotations 또는 사용 모델의 token 측정값이 아니다.
+
+## 신·구 서버 기능 선택
+
+현재 **실제로 호출할 host 연결**의 tool input schema를 확인한다. `get_ennoia_conversation`의 request에 `view=summary|messages`, `limit`, `cursor`가 보일 때만 해당 읽기 옵션을 사용한다. 없으면 기존 인자만 보낸다. `get_multi_agent`의 request에 `format=agent_config`가 보일 때만 해당 형식을 요청한다. 다른 연결의 schema, cached 설명, Plugin 버전 또는 initialize revision만으로 O backend 배포까지 확정하지 않는다. 새 MCP와 이전 O의 혼합 배포에서 새 읽기 옵션이 거절되면 정확히 같은 ID·지원 schema에 맞춘 입력인지 확인한다. 새 옵션 직후의 `INVALID_REQUEST`/HTTP 422처럼 입력 schema와 구 backend 계약 차이에 부합할 때만 새 옵션을 제거한 같은 ID의 legacy 읽기를 한 번 시도한다. legacy 읽기도 거절되면 입력 오류를 그대로 보고하며 모든 `INVALID_REQUEST`를 구 backend로 단정하지 않는다. 이 fallback은 새 질문·테스트·저장·배포의 재전송을 허가하지 않는다. 입력 schema가 비어 있거나 불명확하면 capability를 추측하지 않는다.
+
+상태·비용·MCP discovery의 새 field가 없는 응답은 없는 그대로 해석한다. 명시적 `null`과 field 부재를 임의 값으로 채우지 않는다. 실제 응답에 `execution_status`, `settings_readiness`, `settings_field_states`, `settings_input_required`, `resource_count`, `applied_agent_scope`, `source`, `completeness`, `availability`, `cause`, `user_schema_discovery`가 있을 때 그 domain의 의미로만 쓴다. 없는 이전 응답에서는 기존 상태·unknown·재인증·제한 조회 절차를 따른다. MCP catalog의 `availability=ready`는 사용자 OAuth schema/실행 권한이 아니다. `input_schema={}`는 제약이 없는 빈 schema가 반환됐다는 뜻이며 no-args 도구라는 증거가 아니다. 이것만으로 정확한 인자 구조·read-only 여부·인증 완료를 확정하지 않는다. `input_schema=null`이나 field 누락은 schema 미확인이다. `user_schema_discovery=unsupported`는 사용자별 schema API 미지원이며 credential cache가 있다는 뜻이 아니다.
+
+`get_project_cost`의 `resource_count`는 일별 resource row의 count 합계이며 LLM 요청 수나 에이전트 비용이 아니다. `request_count=null`, `applied_agent_scope=project`이면 agent 필터가 적용됐다고 설명하지 않는다. 통화·producer bucket timezone·반영 지연이 unknown이면 비용의 전체성이나 정확한 시간 범위를 확정하지 않는다. Trace·사용량·비용은 각각 source와 단위를 보존해 대조한다.
 
 1. host가 제공한 `structuredContent` 또는 원본 JSON text를 읽는다. 첫 번째 text는 한국어 요약일 수 있으므로 항상 JSON이라고 가정하지 않는다. 요약과 원본이 충돌하면 원본의 `ok`, `error`, `data` 상태를 우선하고 불일치를 짧게 알린다.
 2. `ok=true`는 요청 처리 성공이며 업무 완료의 충분한 근거가 아니다. `running`, `pending`, `completed=false`, `ready_for_agent=false`, 검증 결과의 `valid=false`를 각각 실제 상태로 설명한다. 완료 근거가 부족하면 미확인으로 표시한다.

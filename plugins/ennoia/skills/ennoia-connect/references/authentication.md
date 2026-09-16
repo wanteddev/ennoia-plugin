@@ -3,7 +3,7 @@
 | 관찰 | 다음 행동 |
 | --- | --- |
 | Plugin/Skill 자체가 없음 | host의 Marketplace 설치 상태와 활성화 상태 확인. repo 설치와 Ennoia OAuth는 별도 단계다. |
-| MCP tool이 발견되지 않음 | 설치된 Plugin의 MCP 활성화·서버 inventory·host 연결 상태를 확인한다. 도구 부재만으로 미인증을 단정하거나 관계없는 tool 검색을 반복하지 않는다. |
+| MCP tool이 발견되지 않음 | host의 전체 Plugin·MCP 서버 inventory에서 실제 Plugin ID/서버 이름을 먼저 식별하고 그 항목의 MCP 활성화·연결 상태를 확인한다. Skill 이름은 Plugin ID나 서버 이름의 filter로 쓰지 않는다. 도구 부재만으로 미인증을 단정하거나 관계없는 tool 검색을 반복하지 않는다. |
 | host init `needs-auth` / `AUTH_REQUIRED` / 401 | 실제 설치 서버 이름에 대한 host OAuth 인증을 안내하고 원래 읽기 요청을 다시 확인한다. |
 | host Connected + `ENNOIA_REAUTH_REQUIRED` | 실제 호출에 사용된 Ennoia linked session이 만료됐다. 그 연결의 host 재인증을 안내한다. Connected 표시만 신뢰해 조회를 반복하거나 서버를 삭제하지 않는다. |
 | `INSUFFICIENT_SCOPE` / 403 | 필요한 scope와 현재 권한을 비교한다. 같은 로그인 반복으로 권한이 확대된다고 가정하지 않는다. |

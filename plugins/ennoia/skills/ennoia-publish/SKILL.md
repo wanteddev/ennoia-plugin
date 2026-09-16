@@ -27,6 +27,8 @@ timeout 또는 응답 유실은 배포 실패 확정이 아니다. 같은 에이
 
 App 생성·수정·복제·공유·삭제 요청은 [App 관리](references/apps-and-lifecycle.md)를 읽는다. 특정 App이 있으면 그 `assistant_hash`를 먼저 발견한다. 단순 에이전트 배포를 위해 App이나 공개 링크를 자동 생성하지 않는다.
 
+새 `settings_readiness`·`settings_field_states`·`settings_input_required`는 실제 상세 응답에 있을 때만 사용한다. `complete`는 관측된 field가 충분하다는 뜻이며 원자적 PATCH·CAS가 있다는 뜻이 아니다. 이전 응답에는 새 field를 채워 넣지 않고 전체 설정 보존 여부를 제한 조회로 판단한다.
+
 중지·삭제는 사용자 요청의 exact 대상·버전만 처리한다. 필요한 `confirm=true`는 서버 계약을 충족하기 위한 값이며 사용자의 실제 삭제 요청을 대신하지 않는다. `stop_multi_agent_deployment`와 `delete_multi_agent_deployment`의 선행 상태를 확인한다.
 
 ## 결과
