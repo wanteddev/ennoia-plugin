@@ -22,7 +22,7 @@ plugins/ennoia/
   .codex-plugin/plugin.json          # Codex 호환 manifest
   .claude-plugin/plugin.json         # Claude manifest
   .mcp.json                         # 두 host의 호환 MCP 설정
-  skills/                           # 공유 Skill 원본 7개
+  skills/                           # 공유 Skill 원본 8개
   references/                       # 공통 응답 해석·표시 규칙
   assets/                           # 공식 아이콘·로고, 다크 모드용 로고
 scripts/                            # 작성자용 sync·검증 도구
@@ -66,7 +66,7 @@ claude plugin validate --strict .claude-plugin/marketplace.json
 claude plugin validate --strict plugins/ennoia
 ```
 
-Claude validator의 성공은 Skill 행동이나 OAuth 성공을 증명하지 않습니다. 설치 후 실제 inventory에서 Skill 7개와 Ennoia Remote MCP 1개를 확인하고, 읽기 호출로 인증과 project context를 확인합니다. Codex는 해당 버전의 plugin validator 또는 native `plugin list`/`plugin add`로 설치를 검증합니다.
+Claude validator의 성공은 Skill 행동이나 OAuth 성공을 증명하지 않습니다. 설치 후 실제 inventory에서 Skill 8개와 Ennoia Remote MCP 1개를 확인하고, 읽기 호출로 인증과 project context를 확인합니다. Codex는 해당 버전의 plugin validator 또는 native `plugin list`/`plugin add`로 설치를 검증합니다.
 
 문서 본문 문구를 정규식으로 맞추는 테스트 대신 broken reference, package 밖 경로, manifest version drift, MCP credential 포함, 미확인 tool 같은 배포 실패를 검사합니다. 모델 동작은 `evals/scenarios.json`을 별도로 사용합니다.
 

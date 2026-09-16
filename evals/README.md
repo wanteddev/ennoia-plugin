@@ -1,5 +1,9 @@
 # Skill 동작 평가
 
+## 제품 피드백
+
+`feedback-scenarios.json`은 명시 의견, 자동 오류·UX 제안, 민감정보 전송 지시, timeout, 제보 거부, 이전 서버와 인증 실패의 9개 합성 입력입니다. 평가자에게 입력만 제공하고 [별도 rubric](feedback-rubric.md)으로 판정합니다. [후보 1.2.0 평가](2026-09-16-feedback-summary.md)는 합성 판단이며 실제 GitHub 접수·native host 검증과 구분합니다.
+
 ## 저장 완료 후 에이전트 링크
 
 [`agent-link-scenarios.json`](agent-link-scenarios.json)은 생성·수정 저장, 지정 대상, 이전 응답, 미저장·실패, 저장 후 테스트 실패, 대상 누락, query encoding을 확인하는 8개 합성 입력입니다. 답변 작성 후 별도 [평가 기준](agent-link-rubric.md)으로 실제 대상 URL과 완료 표현을 판정합니다. 실제 Ennoia 저장이나 네 host의 화면 접근 검증을 대체하지 않습니다. [1.1.1 평가 기록](2026-09-16-agent-links-summary.md)에 비교 조건과 결과를 남겼습니다.

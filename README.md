@@ -7,9 +7,9 @@
 
 **대화로 Ennoia 에이전트를 만들고, 문서를 연결하고, 업무를 실행하세요.**
 
-Codex App · Claude App · Codex CLI · Claude Code에서 같은 플러그인을 사용합니다. 작업별 Skill 7개와 Ennoia MCP를 함께 설치하며, 별도 서버 실행이나 ZIP 업로드는 필요하지 않습니다.
+Codex App · Claude App · Codex CLI · Claude Code에서 같은 플러그인을 사용합니다. 작업별 Skill 8개와 Ennoia MCP를 함께 설치하며, 별도 서버 실행이나 ZIP 업로드는 필요하지 않습니다.
 
-[설치](#설치) · [사용 예시](#사용-예시) · [업데이트](#업데이트) · [문제 해결](#문제-해결) · [릴리스 내역](https://github.com/wanteddev/ennoia-plugin/releases)
+[설치](#설치) · [사용 예시](#사용-예시) · [제품 피드백](#제품-피드백) · [업데이트](#업데이트) · [문제 해결](#문제-해결) · [릴리스 내역](https://github.com/wanteddev/ennoia-plugin/releases)
 
 ## 설치
 
@@ -92,6 +92,7 @@ Skill 이름을 외우지 않아도 자연어로 요청할 수 있습니다.
 | 오류·사용량 확인 | “고객응대봇의 실행 실패 원인과 사용량을 확인해줘.” |
 | 배포 | “저장된 고객응대봇을 배포하고 배포 상태를 확인해줘.” |
 | 외부 MCP 연결 확인 | “Ennoia에서 Slack·Atlassian MCP의 등록 여부와 내 연결 상태를 확인해줘.” |
+| 제품 피드백 | “Ennoia Plugin에서 프로젝트를 반복 질문하는 점을 개선 의견으로 남겨줘.” |
 
 **저장 후 바로 확인:** 에이전트를 생성·수정해 저장하면 **에이전트 열기** 링크로 Studio 편집 화면을 안내합니다. 실제 저장된 대상이 확인되어야 링크를 제공하며, 테스트·배포 상태는 별도로 알려줍니다.
 
@@ -111,8 +112,16 @@ Codex에서는 `$스킬이름`, Claude Code에서는 `/ennoia:스킬이름`을 �
 | `ennoia-diagnose` | 실행 실패·Trace·사용량·비용 진단 |
 | `ennoia-publish` | 배포·App 관리 |
 | `ennoia-integrations` | 외부 MCP 등록·연결 관리 |
+| `ennoia-feedback` | 사용자 의견·관찰한 오류·UX 개선 제보 |
 
 </details>
+
+## 제품 피드백
+
+사용자가 명시한 의견과 에이전트가 실제 사용 중 관찰한 오류·UX 개선 제안을 `wanteddev/ennoia-mcp-server`의 비공개 GitHub 이슈로 접수합니다. 자동 관찰은 기본 업무 이후 중요한 1건으로 제한하고 결과 링크를 안내합니다. 사용자가 제보하지 말라고 하거나 host 정책이 외부 전송을 제한하면 이를 우선합니다. 대화·문서 원문, 개인정보와 credential은 제출하지 않습니다.
+
+피드백에는 프로젝트 선택이나 사용자 GitHub 로그인이 필요하지 않습니다. 서버의 `submit_ennoia_feedback` 배포와 전용 GitHub 토큰 설정이 필요하며, 기존 Ennoia OAuth 쓰기 권한을 사용합니다. 이전 서버에서 도구가 없으면 기능을 건너뜁니다. 등록 결과가 불명확할 때 자동으로 다시 보내지 않습니다. 자세한 기준은 [피드백 Skill](plugins/ennoia/skills/ennoia-feedback/SKILL.md)을 따릅니다.
+
 
 ## 업데이트
 
