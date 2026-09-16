@@ -3,6 +3,14 @@
     "ennoia": {
       "type": "http",
       "url": "https://mcp.ennoia.so/mcp"
+    },
+    "ennoia-file-uploader": {
+      "command": "node",
+      "cwd": ".",
+      "args": [
+        "-e",
+        "import(require('node:url').pathToFileURL(require('node:path').join(process.env.CLAUDE_PLUGIN_ROOT || process.cwd(), 'mcp/file-uploader.mjs')).href).then(m => m.serve()).catch(() => { process.exitCode = 1; })"
+      ]
     }
   }
 }

@@ -25,6 +25,24 @@ class ValidationTests(unittest.TestCase):
     def test_valid_repository(self):
         self.assertEqual(self.validate(self.root), [])
 
+    def test_local_uploader_is_packaged_and_contract_changes_are_rejected(self):
+        plugin = self.root / "plugins/ennoia"
+        self.assertTrue((plugin / "mcp/file-uploader.mjs").is_file())
+        for filename in ("mcp.json", ".mcp.json"):
+            path = plugin / filename
+            original = json.loads(path.read_text())
+            self.assertEqual(original["mcpServers"]["ennoia-file-uploader"], {
+                "command": "node", "cwd": ".", "args": ["-e", "import(require('node:url').pathToFileURL(require('node:path').join(process.env.CLAUDE_PLUGIN_ROOT || process.cwd(), 'mcp/file-uploader.mjs')).href).then(m => m.serve()).catch(() => { process.exitCode = 1; })"],
+            })
+            for key, value in (("command", "sh"), ("cwd", ".."), ("args", ["./other.mjs"]), ("env", {"TOKEN": "secret"})):
+                data = json.loads(json.dumps(original))
+                data["mcpServers"]["ennoia-file-uploader"][key] = value
+                path.write_text(json.dumps(data))
+                self.assertTrue(any("MCP" in e for e in self.validate(self.root)))
+            path.write_text(json.dumps(original))
+        (plugin / "mcp/file-uploader.mjs").unlink()
+        self.assertTrue(any("MCP" in e for e in self.validate(self.root)))
+
     def test_missing_reference_is_rejected(self):
         (self.root / "plugins/ennoia/skills/ennoia-knowledge/references/uploads.md").unlink()
         self.assertTrue(any("reference" in e for e in self.validate(self.root)))

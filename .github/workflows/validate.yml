@@ -26,6 +26,8 @@ jobs:
         run: python scripts/sync_manifests.py --check
       - name: Validate packaged paths, skills and MCP contracts
         run: python scripts/validate.py
+      - name: Local file uploader regression tests
+        run: node --test tests/test_file_uploader*.mjs
       - name: Regression tests
         run: python -m unittest discover -s tests -v
       - name: Check whitespace
