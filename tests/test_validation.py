@@ -47,6 +47,28 @@ class ValidationTests(unittest.TestCase):
         (self.root / "plugins/ennoia/skills/ennoia-knowledge/references/uploads.md").unlink()
         self.assertTrue(any("reference" in e for e in self.validate(self.root)))
 
+    def test_knowledge_skill_has_file_upload_recovery_guidance(self):
+        skill = (ROOT / "plugins/ennoia/skills/ennoia-knowledge/SKILL.md").read_text()
+        uploads = (ROOT / "plugins/ennoia/skills/ennoia-knowledge/references/uploads.md").read_text()
+        combined = skill + uploads
+        for fragment in (
+            "upload_ennoia_rag_file",
+            "FILE_NOT_FOUND_ON_UPLOADER_HOST",
+            "https://ennoia.so/studio/rag/files-detail",
+            "https://dev.ennoia.so/studio/rag/files-detail",
+            "group_code",
+            "project_code",
+            "collection_code",
+            "percent-encoding",
+            "ASCII",
+            "한글",
+        ):
+            self.assertIn(fragment, combined)
+        self.assertIn("도구 목록", combined)
+        self.assertIn("세션을 다시 시작", combined)
+        self.assertIn("cloud path", combined)
+        self.assertIn("웹 업로드", combined)
+
     def test_reference_outside_plugin_cache_is_rejected(self):
         skill = self.root / "plugins/ennoia/skills/ennoia-run/SKILL.md"
         skill.write_text(skill.read_text() + "\n[local](../../../../README.md)\n")

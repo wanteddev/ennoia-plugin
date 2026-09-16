@@ -15,12 +15,48 @@ const UPLOAD_TIMEOUT_MS = 120000;
 const EXTENSIONS = new Set(['.csv', '.txt', '.md', '.pdf', '.docx', '.pptx', '.xlsx', '.xls', '.zip']);
 const HOSTS = new Set(['mcp.ennoia.so', 'dev-mcp-server.ennoia.so']);
 const REQUIRED_HEADERS = new Set(['content-length', 'content-type', 'x-ennoia-upload-token']);
-class UploadError extends Error {}
+const ERROR_DETAILS = Object.freeze({
+  ARGUMENTS_INVALID: ['업로드 인자 형식이 올바르지 않습니다.', 'local_path, upload_url, headers만 전달하세요.'],
+  UPLOAD_URL_INVALID: ['업로드 URL을 사용할 수 없습니다.', 'prepare_rag_document_upload로 새 upload ticket을 발급하세요.'],
+  FILE_TYPE_UNSUPPORTED: ['지원하지 않는 파일 형식입니다.', 'get_rag_capabilities에서 지원 확장자를 확인하세요.'],
+  HEADERS_INVALID: ['업로드 header가 올바르지 않습니다.', 'prepare_rag_document_upload가 반환한 headers를 수정 없이 전달하세요.'],
+  FILE_NOT_FOUND_ON_UPLOADER_HOST: [
+    '업로더가 실행되는 device host에서 파일을 찾을 수 없습니다.',
+    'device host에 연결된 로컬 폴더의 경로로 다시 시도하거나 Ennoia 웹 업로드를 사용하세요.',
+  ],
+  FILE_ACCESS_DENIED: [
+    '업로더가 실행되는 device host에서 파일을 읽을 권한이 없습니다.',
+    'device host에서 읽을 수 있는 위치로 파일을 옮기거나 Ennoia 웹 업로드를 사용하세요.',
+  ],
+  FILE_NOT_REGULAR: [
+    '업로드 대상은 symlink나 디렉터리가 아닌 일반 파일이어야 합니다.',
+    'device host에서 읽을 수 있는 일반 파일을 선택하거나 Ennoia 웹 업로드를 사용하세요.',
+  ],
+});
+class UploadError extends Error {
+  constructor(code) { super(code); this.code = code; }
+}
 const fail = code => { throw new UploadError(code); };
+
+function errorDetail(error) {
+  const code = error instanceof UploadError ? error.code : 'UPLOAD_FAILED';
+  const [message, next_action] = ERROR_DETAILS[code] ?? [
+    '파일 업로드를 완료하지 못했습니다.',
+    '업로드 정보를 다시 확인하고 계속 실패하면 Ennoia 웹 업로드를 사용하세요.',
+  ];
+  return { code, message, next_action };
+}
+
+function fileSystemError(error) {
+  if (error?.code === 'ENOENT' || error?.code === 'ENOTDIR') return 'FILE_NOT_FOUND_ON_UPLOADER_HOST';
+  if (error?.code === 'EACCES' || error?.code === 'EPERM') return 'FILE_ACCESS_DENIED';
+  if (error?.code === 'ELOOP') return 'FILE_NOT_REGULAR';
+  return 'FILE_INVALID';
+}
 
 export const uploadTool = {
   name: 'upload_ennoia_rag_file',
-  description: 'prepare_rag_document_upload가 반환한 upload_url과 exact headers로 로컬 파일을 PUT합니다. local_path만 지정하고 파일 byte/base64는 MCP JSON에 넣지 않습니다. 성공 후 collection_code/file_seq로 처리 상태를 확인하세요.',
+  description: 'prepare_rag_document_upload가 반환한 upload_url과 exact headers로 로컬 파일을 PUT합니다. 이 도구가 실행되는 device host에서 보이는 local_path만 읽을 수 있으며, 채팅 첨부의 cloud path는 device host에서 보이지 않을 수 있습니다. 경로를 읽을 수 없으면 연결된 로컬 폴더의 파일을 사용하거나 Ennoia 웹 업로드 링크를 안내하세요. 파일 byte/base64는 MCP JSON에 넣지 않습니다. 성공 후 collection_code/file_seq로 처리 상태를 확인하세요.',
   inputSchema: {
     type: 'object', additionalProperties: false,
     properties: {
@@ -89,14 +125,20 @@ export async function uploadFile(args, request = httpsRequest, { signal, openFil
   let file;
   try {
     checkCancellation();
-    const before = await lstat(args.local_path);
-    if (!before.isFile() || before.isSymbolicLink()) fail('FILE_INVALID');
+    let before;
+    try { before = await lstat(args.local_path); }
+    catch (error) { fail(fileSystemError(error)); }
+    if (!before.isFile() || before.isSymbolicLink()) fail('FILE_NOT_REGULAR');
     checkCancellation();
     // NOFOLLOW와 fd 검증으로 lstat/open 사이의 symlink 교체도 거부한다.
-    file = await openFile(args.local_path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
-    const stat = await file.stat();
+    try { file = await openFile(args.local_path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK); }
+    catch (error) { fail(fileSystemError(error)); }
+    let stat;
+    try { stat = await file.stat(); }
+    catch (error) { fail(fileSystemError(error)); }
     checkCancellation();
-    if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) fail('FILE_INVALID');
+    if (!stat.isFile()) fail('FILE_NOT_REGULAR');
+    if (stat.dev !== before.dev || stat.ino !== before.ino) fail('FILE_INVALID');
     if (stat.size < 1 || stat.size > MAX_FILE_SIZE) fail('FILE_SIZE_INVALID');
     if (length !== String(stat.size)) fail('CONTENT_LENGTH_MISMATCH');
     let req, source, incoming, timer, transfer, rejectResponse;
@@ -143,7 +185,7 @@ export async function uploadFile(args, request = httpsRequest, { signal, openFil
   } catch (error) {
     checkCancellation();
     if (error instanceof UploadError) throw error;
-    fail('FILE_INVALID');
+    fail(fileSystemError(error));
   } finally {
     await file?.close().catch(() => {});
   }
@@ -157,7 +199,7 @@ async function handleRpc(message, upload = uploadFile) {
   const reply = result => ({ jsonrpc: '2.0', id, result });
   if (message.method === 'initialize') return reply({
     protocolVersion: ['2024-11-05', '2025-03-26', '2025-06-18'].includes(message.params?.protocolVersion) ? message.params.protocolVersion : '2025-06-18',
-    capabilities: { tools: {} }, serverInfo: { name: 'ennoia-file-uploader', version: '1.4.0' },
+    capabilities: { tools: {} }, serverInfo: { name: 'ennoia-file-uploader', version: '1.4.1' },
   });
   if (message.method === 'ping') return reply({});
   if (message.method === 'tools/list') return reply({ tools: [uploadTool] });
@@ -167,7 +209,8 @@ async function handleRpc(message, upload = uploadFile) {
     const result = await upload(message.params.arguments);
     return reply({ content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: result });
   } catch (err) {
-    return reply({ isError: true, content: [{ type: 'text', text: err instanceof UploadError ? err.message : 'UPLOAD_FAILED' }] });
+    const detail = errorDetail(err);
+    return reply({ isError: true, content: [{ type: 'text', text: JSON.stringify(detail) }], structuredContent: detail });
   }
 }
 

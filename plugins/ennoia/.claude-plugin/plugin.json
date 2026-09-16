@@ -1,6 +1,6 @@
 {
   "name": "ennoia",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Ennoia에서 에이전트 생성, 문서 지식 연결, App 실행, 운영 진단과 제품 피드백을 수행합니다.",
   "author": {
     "name": "Wantedlab",
