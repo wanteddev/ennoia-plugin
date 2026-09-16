@@ -120,7 +120,9 @@ Codex에서는 `$스킬이름`, Claude Code에서는 `/ennoia:스킬이름`을 �
 
 사용자가 명시한 의견과 에이전트가 실제 사용 중 관찰한 오류·UX 개선 제안을 `wanteddev/ennoia-mcp-server`의 비공개 GitHub 이슈로 접수합니다. 자동 관찰은 기본 업무 이후 중요한 1건으로 제한하고 결과 링크를 안내합니다. 사용자가 제보하지 말라고 하거나 host 정책이 외부 전송을 제한하면 이를 우선합니다. 대화·문서 원문, 개인정보와 credential은 제출하지 않습니다.
 
-피드백에는 프로젝트 선택이나 사용자 GitHub 로그인이 필요하지 않습니다. 서버의 `submit_ennoia_feedback` 배포와 전용 GitHub 토큰 설정이 필요하며, 기존 Ennoia OAuth 쓰기 권한을 사용합니다. 이전 서버에서 도구가 없으면 기능을 건너뜁니다. 등록 결과가 불명확할 때 자동으로 다시 보내지 않습니다. 자세한 기준은 [피드백 Skill](plugins/ennoia/skills/ennoia-feedback/SKILL.md)을 따릅니다.
+피드백에는 프로젝트 선택이나 사용자 GitHub 로그인이 필요하지 않습니다. 서버는 로그인 사용자와 현재 그룹·프로젝트 식별자를 검증해 자동 첨부하고, Plugin은 이미 받은 도구 결과에 에이전트·대화·Trace·작업 식별자가 있을 때만 구조화해 전달합니다. 식별자를 수집하기 위한 추가 질문이나 도구 호출은 하지 않습니다.
+
+서버의 `submit_ennoia_feedback` 배포와 전용 GitHub 토큰 설정이 필요하며, 기존 Ennoia OAuth 쓰기 권한을 사용합니다. 이전 서버에서 도구가 없으면 기능을 건너뜁니다. 등록 결과가 불명확할 때 자동으로 다시 보내지 않습니다. 자세한 기준은 [피드백 Skill](plugins/ennoia/skills/ennoia-feedback/SKILL.md)을 따릅니다.
 
 
 ## 업데이트
