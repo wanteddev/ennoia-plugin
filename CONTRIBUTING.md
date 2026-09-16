@@ -36,6 +36,6 @@ Claude validator의 성공은 Skill 행동이나 OAuth 성공을 증명하지 �
 2. 정적 검증·회귀 검사·변경된 workflow의 동작 평가를 통과시킵니다.
 3. main 변경의 **Validate plugin** Actions에서 검증과 `release` job의 성공, `v<version>` 태그 및 GitHub Release를 확인합니다. 같은 버전은 재발행하지 않으며, 실패 복구는 해당 workflow를 `main`에서 수동 실행합니다. 태그를 강제로 이동하지 않습니다.
 4. 두 앱·두 CLI에서 repo 동기화/업데이트 후 설치·새 세션 Skill 발견·OAuth와 연결 source·직접 App/SuperApp 업무 상태를 각각 확인합니다. 수동 MCP가 공존할 때 같은 이름 도구의 성공만으로 Plugin 전용 연결이라 주장하지 않습니다.
-5. 검증한 client 버전, repo commit, MCP 환경, 완료 범위와 제한을 `docs/compatibility.md`에 기록합니다.
+5. 검증한 client 버전, repo commit, MCP 환경, 완료 범위와 제한을 로컬 `docs/`에 기록합니다. 이 디렉터리는 Git에 포함하지 않습니다.
 
 Ennoia MCP의 model 실행·저장·배포 검증은 별도 승인된 테스트 프로젝트에서 수행합니다. 로컬 validator 통과를 운영 배포 승인으로 표현하지 않습니다.
