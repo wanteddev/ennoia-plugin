@@ -3,6 +3,13 @@
     "ennoia": {
       "type": "http",
       "url": "https://mcp.ennoia.so/mcp"
+    },
+    "ennoia-file-uploader": {
+      "command": "node",
+      "cwd": ".",
+      "args": [
+        "./mcp/file-uploader.mjs"
+      ]
     }
   }
 }

@@ -7,7 +7,7 @@
 - 사용자-facing 문서와 Skill은 간결한 한국어로 작성하고 API 식별자는 그대로 사용합니다.
 - Skill `description`은 발동 조건을 명확하게 쓰고, 특정 업무의 상세 절차는 필요할 때 읽는 reference로 분리합니다.
 - 프로젝트·모델·배포 범위와 기존 사용자 승인을 보존합니다. 일반 작업마다 새로운 승인 단계를 추가하지 않습니다.
-- Credential을 받는 별도 로컬 script, global hook, host 설정 덮어쓰기, 직접 backend 우회 호출을 추가하지 않습니다.
+- OAuth credential을 받는 별도 로컬 script, global hook, host 설정 덮어쓰기, 직접 backend 우회 호출을 추가하지 않습니다. 패키지의 local file uploader는 remote prepare가 발급한 1회용 upload header만 받아 지정된 Ennoia proxy로 전송합니다.
 - Input schema와 실제 결과는 현재 MCP가 기준입니다. `tests/fixtures/ennoia-tools.json`은 작성 시점의 tool-name 회귀 검사 자료이며 runtime schema를 대체하지 않습니다. MCP 계약 변경 시 확인한 server revision과 snapshot을 함께 갱신합니다.
 - Skill/reference는 `plugins/ennoia` 내부에서만 상대 경로로 참조합니다. ZIP 생성과 host별 Skill 복제는 필요하지 않습니다.
 
@@ -18,10 +18,11 @@
 .claude-plugin/marketplace.json      # Claude Marketplace
 plugins/ennoia/
   plugin.json                       # Portable metadata 원본
-  mcp.json                          # Remote MCP 설정 원본
+  mcp.json                          # Remote·local MCP 설정 원본
   .codex-plugin/plugin.json          # Codex 호환 manifest
   .claude-plugin/plugin.json         # Claude manifest
   .mcp.json                         # 두 host의 호환 MCP 설정
+  mcp/file-uploader.mjs              # Node.js local file uploader
   skills/                           # 공유 Skill 원본 8개
   references/                       # 공통 응답 해석·표시 규칙
   assets/                           # 공식 아이콘·로고, 다크 모드용 로고
@@ -30,7 +31,7 @@ tests/                              # 배포 회귀 검증과 tool 계약 snapsh
 evals/                              # 모델 동작 검증 시나리오
 ```
 
-두 Marketplace는 동일한 `./plugins/ennoia`를 설치합니다. Marketplace와 Plugin 이름은 모두 `ennoia`이며 설치 식별자는 `ennoia@ennoia`입니다. MCP는 `https://mcp.ennoia.so/mcp`에 원격 연결합니다. Plugin 밖의 파일이나 symlink를 참조하지 않아 host cache로 복사해도 필요한 자료가 유지됩니다. 사용자는 Python이나 로컬 서버를 실행할 필요가 없습니다.
+두 Marketplace는 동일한 `./plugins/ennoia`를 설치합니다. Marketplace와 Plugin 이름은 모두 `ennoia`이며 설치 식별자는 `ennoia@ennoia`입니다. MCP는 `https://mcp.ennoia.so/mcp`에 원격 연결합니다. Plugin 밖의 파일이나 symlink를 참조하지 않아 host cache로 복사해도 필요한 자료가 유지됩니다. 로컬 파일 업로드에는 Node.js가 필요하며 host가 패키지의 local MCP를 시작합니다. 사용자가 별도 서버를 수동 실행할 필요는 없습니다.
 
 ## 변경하기
 
@@ -51,6 +52,7 @@ python3 scripts/sync_manifests.py
 python3 scripts/sync_manifests.py --check
 python3 scripts/validate.py
 python3 -m unittest discover -s tests -v
+node --test tests/test_file_uploader.mjs
 python3 scripts/validate_results.py
 git diff --check
 ```
@@ -66,7 +68,7 @@ claude plugin validate --strict .claude-plugin/marketplace.json
 claude plugin validate --strict plugins/ennoia
 ```
 
-Claude validator의 성공은 Skill 행동이나 OAuth 성공을 증명하지 않습니다. 설치 후 실제 inventory에서 Skill 8개와 Ennoia Remote MCP 1개를 확인하고, 읽기 호출로 인증과 project context를 확인합니다. Codex는 해당 버전의 plugin validator 또는 native `plugin list`/`plugin add`로 설치를 검증합니다.
+Claude validator의 성공은 Skill 행동이나 OAuth 성공을 증명하지 않습니다. 설치 후 실제 inventory에서 Skill 8개, Ennoia Remote MCP 1개, local file uploader MCP 1개를 확인하고, 읽기 호출로 인증과 project context를 확인합니다. Codex는 해당 버전의 plugin validator 또는 native `plugin list`/`plugin add`로 설치를 검증합니다.
 
 문서 본문 문구를 정규식으로 맞추는 테스트 대신 broken reference, package 밖 경로, manifest version drift, MCP credential 포함, 미확인 tool 같은 배포 실패를 검사합니다. 모델 동작은 `evals/scenarios.json`을 별도로 사용합니다.
 

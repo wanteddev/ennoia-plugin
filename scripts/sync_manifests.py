@@ -13,11 +13,16 @@ def outputs(root: Path) -> dict[Path, dict]:
     manifest = json.loads((plugin / "plugin.json").read_text(encoding="utf-8"))
     mcp = json.loads((plugin / "mcp.json").read_text(encoding="utf-8"))
     identity = {k: v for k, v in manifest.items() if k not in {"$schema", "extensions"}}
-    servers = {}
-    for name, config in mcp["mcpServers"].items():
-        if config["type"] != "streamable-http":
-            raise ValueError("Ennoia 배포는 Remote Streamable HTTP만 지원합니다.")
-        servers[name] = {**config, "type": "http"}
+    expected_servers = {
+        "ennoia": {"type": "streamable-http", "url": "https://mcp.ennoia.so/mcp"},
+        "ennoia-file-uploader": {"command": "node", "cwd": ".", "args": ["./mcp/file-uploader.mjs"]},
+    }
+    if mcp.get("mcpServers") != expected_servers:
+        raise ValueError("Ennoia 배포는 지정한 remote MCP와 local file uploader만 지원합니다.")
+    servers = {
+        **expected_servers,
+        "ennoia": {**expected_servers["ennoia"], "type": "http"},
+    }
     return {
         plugin / ".claude-plugin/plugin.json": identity,
         plugin / ".codex-plugin/plugin.json": {

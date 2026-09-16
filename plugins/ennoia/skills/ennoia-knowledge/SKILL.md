@@ -14,8 +14,9 @@ description: "Ennoia 지식 컬렉션에 문서·파일·URL을 추가하거나 
 Ennoia MCP의 현재 input schema를 확인하고 `get_current_ennoia_project`로 대상 이름을 알린다. 생성·업로드·실행·변경은 사용자가 정한 단일 프로젝트에서 수행한다. `auto_selected`이면 명시 선택을 먼저 확보한다.
 
 1. 대상 프로젝트와 정확한 `collection_code`를 이미 알면 그 code로 `get_rag_collection`을 우선 조회한다. 표시 이름이나 목록을 다시 찾지 않는다. code를 모를 때만 `list_multi_agent_rag_collections`로 query 검색하고 필요한 단건을 읽는다. 적합한 기존 컬렉션을 사용한다. 신규가 요청됐거나 필요할 때 `create_rag_collection`을 사용한다.
-2. `get_rag_capabilities`로 허용 확장자·크기·업로드 경로를 확인한다. 일반 텍스트는 `upload_rag_text_document`, 로컬 binary는 `prepare_rag_document_upload`, 공개 HTTPS 문서는 `import_rag_document_from_url`을 선택한다.
-3. binary/URL의 추가 제약은 [업로드 경로](references/uploads.md)를 읽는다. MCP 서버에 로컬 파일 경로를 넘기는 것만으로 업로드되지는 않는다.
+2. `get_rag_capabilities` 응답의 `allowed_extensions`와 `max_file_size_bytes`로 허용 확장자·크기를 확인하고 업로드 경로를 선택한다. 대화에 제공된 텍스트 내용은 `upload_rag_text_document`, 공개 HTTPS 문서는 `import_rag_document_from_url`을 사용한다. 사용자 PC의 파일은 확장자와 관계없이 아래 local upload 순서를 따른다.
+3. 로컬 파일은 [업로드 경로](references/uploads.md)를 읽고, 이름·실제 byte 크기·content type만 확인해 `prepare_rag_document_upload(collection_code, file_name, size_bytes, content_type)`를 호출한다. 성공 응답의 `upload_url`과 `headers`를 그대로 `upload_ennoia_rag_file(local_path, upload_url, headers)`에 전달한다. 로컬 tool이 파일을 디스크에서 읽어 PUT한다. 파일 byte·base64·전체 본문을 모델 context 또는 MCP JSON에 넣지 않는다.
+4. 원격 tool에는 `collection_code`, 파일 조회에는 `file_seq`를 사용한다. `collection_id`·`file_id`·`file_data`는 이 계약의 인자가 아니다. 동일한 프로젝트에서 등록과 상태 확인을 이어간다.
 
 ## 처리 완료와 연결
 

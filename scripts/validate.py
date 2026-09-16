@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TOOL_PATTERN = re.compile(r"`((?:get|set|list|create|update|delete|clone|rename|share|start|continue|stop|deploy|invoke|add|connect|disconnect|import|upload|prepare|retry|validate|test|save|switch|logout)_[a-z_]+)`")
 LINK_PATTERN = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 # API field가 동사 prefix를 공유해도 tool 이름으로 취급하지 않는다.
-FIELD_IDENTIFIERS = {"test_id", "deploy_version"}
+FIELD_IDENTIFIERS = {"test_id", "deploy_version", "upload_url"}
 
 
 def read_json(path: Path) -> dict:
@@ -57,8 +57,15 @@ def validate_repository(root: Path) -> list[str]:
         errors.extend(validate_brand_assets(plugin, interface, ("composerIcon", "logo", "logoDark"), "brandColor"))
         for filename, transport in (("mcp.json", "streamable-http"), (".mcp.json", "http")):
             mcp = read_json(plugin / filename)
-            if mcp.get("mcpServers") != {"ennoia": {"type": transport, "url": "https://mcp.ennoia.so/mcp"}}:
+            expected_servers = {
+                "ennoia": {"type": transport, "url": "https://mcp.ennoia.so/mcp"},
+                "ennoia-file-uploader": {"command": "node", "cwd": ".", "args": ["./mcp/file-uploader.mjs"]},
+            }
+            if mcp.get("mcpServers") != expected_servers:
                 errors.append(f"MCP 설정 오류 또는 credential 포함: {filename}")
+
+        if not (plugin / "mcp/file-uploader.mjs").is_file():
+            errors.append("MCP local file uploader 누락")
 
         a = read_json(root / ".agents/plugins/marketplace.json")
         b = read_json(root / ".claude-plugin/marketplace.json")
@@ -76,6 +83,8 @@ def validate_repository(root: Path) -> list[str]:
                 errors.append("marketplace 설치·인증 policy 오류")
 
         tools = set(read_json(root / "tests/fixtures/ennoia-tools.json")["tools"])
+        # Remote tool fixture는 유지하고 plugin이 제공하는 local tool을 추가한다.
+        tools.add("upload_ennoia_rag_file")
         skills = sorted((plugin / "skills").glob("*/SKILL.md"))
         if not skills:
             errors.append("Skill이 없습니다")

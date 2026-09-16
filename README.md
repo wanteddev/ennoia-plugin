@@ -7,7 +7,7 @@
 
 **대화로 Ennoia 에이전트를 만들고, 문서를 연결하고, 업무를 실행하세요.**
 
-Codex App · Claude App · Codex CLI · Claude Code에서 같은 플러그인을 사용합니다. 작업별 Skill 8개와 Ennoia MCP를 함께 설치하며, 별도 서버 실행이나 ZIP 업로드는 필요하지 않습니다.
+Codex App · Claude App · Codex CLI · Claude Code에서 같은 플러그인을 사용합니다. 작업별 Skill 8개, Ennoia 원격 MCP, 로컬 파일 업로더 MCP를 함께 설치합니다. 로컬 파일 전송은 Node.js를 실행할 수 있는 host에서 지원하며, 업로더는 Plugin이 시작합니다.
 
 [설치](#설치) · [사용 예시](#사용-예시) · [제품 피드백](#제품-피드백) · [업데이트](#업데이트) · [문제 해결](#문제-해결) · [릴리스 내역](https://github.com/wanteddev/ennoia-plugin/releases)
 
