@@ -66,8 +66,8 @@ test('stdio initializes, ignores notification, lists exact tool and returns safe
   assert.equal(tool.name, 'upload_ennoia_rag_file');
   assert.deepEqual(tool.inputSchema.required, ['local_path', 'upload_url', 'headers']);
   assert.deepEqual(Object.keys(tool.inputSchema.properties), ['local_path', 'upload_url', 'headers']);
-  assert.equal(replies[2].result.isError, true);
-  assert.equal(replies[3].error.code, -32602);
+  assert.equal(replies.find(reply => reply.id === 3).result.isError, true);
+  assert.equal(replies.find(reply => reply.id === 4).error.code, -32602);
 });
 
 test('streams actual disk chunks by PUT with exact headers and returns safe file identity', async t => {

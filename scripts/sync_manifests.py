@@ -15,7 +15,7 @@ def outputs(root: Path) -> dict[Path, dict]:
     identity = {k: v for k, v in manifest.items() if k not in {"$schema", "extensions"}}
     expected_servers = {
         "ennoia": {"type": "streamable-http", "url": "https://mcp.ennoia.so/mcp"},
-        "ennoia-file-uploader": {"command": "node", "cwd": ".", "args": ["./mcp/file-uploader.mjs"]},
+        "ennoia-file-uploader": {"command": "node", "cwd": ".", "args": ["-e", "import(require('node:url').pathToFileURL(require('node:path').join(process.env.CLAUDE_PLUGIN_ROOT || process.cwd(), 'mcp/file-uploader.mjs')).href).then(m => m.serve()).catch(() => { process.exitCode = 1; })"]},
     }
     if mcp.get("mcpServers") != expected_servers:
         raise ValueError("Ennoia 배포는 지정한 remote MCP와 local file uploader만 지원합니다.")

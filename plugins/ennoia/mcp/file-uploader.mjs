@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // 로컬 파일 byte는 JSON-RPC를 거치지 않고 HTTPS PUT stream으로 전송한다.
 import { constants } from 'node:fs';
-import { lstat, open } from 'node:fs/promises';
+import { lstat, open, realpath } from 'node:fs/promises';
 import { extname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { request as httpsRequest } from 'node:https';
@@ -83,29 +83,37 @@ async function readResponse(response) {
   return result;
 }
 
-export async function uploadFile(args, request = httpsRequest) {
+export async function uploadFile(args, request = httpsRequest, { signal, openFile = open } = {}) {
   const { url, length } = validateArguments(args);
+  const checkCancellation = () => { if (signal?.aborted) fail('UPLOAD_CANCELLED'); };
   let file;
   try {
+    checkCancellation();
     const before = await lstat(args.local_path);
     if (!before.isFile() || before.isSymbolicLink()) fail('FILE_INVALID');
+    checkCancellation();
     // NOFOLLOW와 fd 검증으로 lstat/open 사이의 symlink 교체도 거부한다.
-    file = await open(args.local_path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+    file = await openFile(args.local_path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
     const stat = await file.stat();
+    checkCancellation();
     if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) fail('FILE_INVALID');
     if (stat.size < 1 || stat.size > MAX_FILE_SIZE) fail('FILE_SIZE_INVALID');
     if (length !== String(stat.size)) fail('CONTENT_LENGTH_MISMATCH');
-    let req, source, timer;
+    let req, source, incoming, timer, transfer, rejectResponse;
+    const abortTransfer = code => {
+      rejectResponse?.(new UploadError(code));
+      source?.destroy(); req?.destroy(); incoming?.destroy();
+    };
+    const cancel = () => abortTransfer('UPLOAD_CANCELLED');
     try {
-      const response = new Promise((resolveResponse, rejectResponse) => {
-        req = request(url, { method: 'PUT', headers: args.headers }, incoming => {
-          readResponse(incoming).then(resolveResponse, rejectResponse);
+      const response = new Promise((resolveResponse, reject) => {
+        rejectResponse = reject;
+        req = request(url, { method: 'PUT', headers: args.headers }, received => {
+          incoming = received;
+          readResponse(incoming).then(resolveResponse, reject);
         });
-        req.once('error', () => rejectResponse(new UploadError('UPLOAD_NETWORK_ERROR')));
-        timer = setTimeout(() => {
-          rejectResponse(new UploadError('UPLOAD_TIMEOUT'));
-          req.destroy();
-        }, UPLOAD_TIMEOUT_MS);
+        req.once('error', () => reject(new UploadError('UPLOAD_NETWORK_ERROR')));
+        timer = setTimeout(() => abortTransfer('UPLOAD_TIMEOUT'), UPLOAD_TIMEOUT_MS);
       });
       let sent = 0;
       const counter = new Transform({
@@ -113,18 +121,27 @@ export async function uploadFile(args, request = httpsRequest) {
         flush(callback) { callback(sent === stat.size ? null : new UploadError('FILE_SIZE_CHANGED')); },
       });
       source = file.createReadStream({ autoClose: false, start: 0, end: stat.size - 1 });
-      const [result] = await Promise.all([response, pipeline(source, counter, req)]);
+      transfer = pipeline(source, counter, req);
+      const completed = Promise.all([response, transfer]);
+      signal?.addEventListener('abort', cancel, { once: true });
+      if (signal?.aborted) cancel();
+      const [result] = await completed;
+      checkCancellation();
       if ((await file.stat()).size !== stat.size) fail('FILE_SIZE_CHANGED');
       return result;
     } catch (error) {
+      checkCancellation();
       if (error instanceof UploadError) throw error;
       fail('UPLOAD_NETWORK_ERROR');
     } finally {
+      signal?.removeEventListener('abort', cancel);
       clearTimeout(timer);
-      source?.destroy();
-      req?.destroy();
+      source?.destroy(); req?.destroy(); incoming?.destroy();
+      // fd close 전에 진행 중인 read와 pipeline 정리를 기다린다.
+      await transfer?.catch(() => {});
     }
   } catch (error) {
+    checkCancellation();
     if (error instanceof UploadError) throw error;
     fail('FILE_INVALID');
   } finally {
@@ -132,7 +149,7 @@ export async function uploadFile(args, request = httpsRequest) {
   }
 }
 
-async function handleRpc(message) {
+async function handleRpc(message, upload = uploadFile) {
   const id = message?.id ?? null;
   const error = (code, text) => ({ jsonrpc: '2.0', id, error: { code, message: text } });
   if (!message || Array.isArray(message) || message.jsonrpc !== '2.0' || typeof message.method !== 'string') return error(-32600, 'Invalid Request');
@@ -147,37 +164,69 @@ async function handleRpc(message) {
   if (message.method !== 'tools/call') return error(-32601, 'Method not found');
   if (message.params?.name !== uploadTool.name) return error(-32602, 'Unknown tool');
   try {
-    const result = await uploadFile(message.params.arguments);
+    const result = await upload(message.params.arguments);
     return reply({ content: [{ type: 'text', text: JSON.stringify(result) }], structuredContent: result });
   } catch (err) {
     return reply({ isError: true, content: [{ type: 'text', text: err instanceof UploadError ? err.message : 'UPLOAD_FAILED' }] });
   }
 }
 
-export async function serve(input = process.stdin, output = process.stdout) {
-  let pending = '', oversized = false;
-  const write = value => { if (value) output.write(JSON.stringify(value) + '\n'); };
+export async function serve(input = process.stdin, output = process.stdout, { request = httpsRequest, openFile = open } = {}) {
+  let pending = '', oversized = false, closed = false;
+  // 업로드는 하나만 허용한다. Parser와 ping은 전송 완료를 기다리지 않는다.
+  const active = new Map();
+  const write = value => { if (value && !closed) output.write(JSON.stringify(value) + '\n'); };
+  const shutdown = () => {
+    closed = true;
+    for (const job of active.values()) job.controller.abort();
+  };
+  const dispatch = message => {
+    if (message?.jsonrpc === '2.0' && message.method === 'notifications/cancelled' && !Object.hasOwn(message, 'id')) {
+      active.get(message.params?.requestId)?.controller.abort();
+      return;
+    }
+    const isUpload = message?.jsonrpc === '2.0' && message.method === 'tools/call'
+      && message.params?.name === uploadTool.name && Object.hasOwn(message, 'id');
+    if (!isUpload) { void handleRpc(message).then(write); return; }
+    if (active.size) {
+      write({ jsonrpc: '2.0', id: message.id, result: { isError: true, content: [{ type: 'text', text: 'UPLOAD_BUSY' }] } });
+      return;
+    }
+    const controller = new AbortController();
+    const job = { controller, promise: undefined };
+    active.set(message.id, job);
+    job.promise = handleRpc(message, args => uploadFile(args, request, { signal: controller.signal, openFile }))
+      .then(value => { if (!controller.signal.aborted) write(value); })
+      .finally(() => active.delete(message.id));
+  };
   input.setEncoding('utf8');
-  for await (const chunk of input) {
-    for (const [index, part] of chunk.split('\n').entries()) {
-      if (index > 0) {
-        if (oversized) write({ jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Request too large' } });
-        else if (pending.trim()) {
-          let message;
-          try { message = JSON.parse(pending); }
-          catch { write({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } }); }
-          if (message !== undefined) write(await handleRpc(message));
+  input.on('end', shutdown); input.on('close', shutdown); input.on('error', shutdown);
+  try {
+    for await (const chunk of input) {
+      for (const [index, part] of chunk.split('\n').entries()) {
+        if (index > 0) {
+          if (oversized) write({ jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Request too large' } });
+          else if (pending.trim()) {
+            let message;
+            try { message = JSON.parse(pending); }
+            catch { write({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } }); }
+            if (message !== undefined) dispatch(message);
+          }
+          pending = ''; oversized = false;
         }
-        pending = ''; oversized = false;
-      }
-      if (!oversized) {
-        pending += part;
-        if (Buffer.byteLength(pending) > MAX_RPC_SIZE) { pending = ''; oversized = true; }
+        if (!oversized) {
+          pending += part;
+          if (Buffer.byteLength(pending) > MAX_RPC_SIZE) { pending = ''; oversized = true; }
+        }
       }
     }
+  } finally {
+    shutdown();
+    await Promise.allSettled([...active.values()].map(job => job.promise));
+    input.off('end', shutdown); input.off('close', shutdown); input.off('error', shutdown);
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(await realpath(resolve(process.argv[1]))).href) {
   serve().catch(() => { process.exitCode = 1; });
 }

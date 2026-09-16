@@ -52,7 +52,7 @@ python3 scripts/sync_manifests.py
 python3 scripts/sync_manifests.py --check
 python3 scripts/validate.py
 python3 -m unittest discover -s tests -v
-node --test tests/test_file_uploader.mjs
+node --test tests/test_file_uploader*.mjs
 python3 scripts/validate_results.py
 git diff --check
 ```

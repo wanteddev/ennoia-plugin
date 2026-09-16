@@ -32,7 +32,7 @@ class ValidationTests(unittest.TestCase):
             path = plugin / filename
             original = json.loads(path.read_text())
             self.assertEqual(original["mcpServers"]["ennoia-file-uploader"], {
-                "command": "node", "cwd": ".", "args": ["./mcp/file-uploader.mjs"],
+                "command": "node", "cwd": ".", "args": ["-e", "import(require('node:url').pathToFileURL(require('node:path').join(process.env.CLAUDE_PLUGIN_ROOT || process.cwd(), 'mcp/file-uploader.mjs')).href).then(m => m.serve()).catch(() => { process.exitCode = 1; })"],
             })
             for key, value in (("command", "sh"), ("cwd", ".."), ("args", ["./other.mjs"]), ("env", {"TOKEN": "secret"})):
                 data = json.loads(json.dumps(original))

@@ -59,7 +59,7 @@ def validate_repository(root: Path) -> list[str]:
             mcp = read_json(plugin / filename)
             expected_servers = {
                 "ennoia": {"type": transport, "url": "https://mcp.ennoia.so/mcp"},
-                "ennoia-file-uploader": {"command": "node", "cwd": ".", "args": ["./mcp/file-uploader.mjs"]},
+                "ennoia-file-uploader": {"command": "node", "cwd": ".", "args": ["-e", "import(require('node:url').pathToFileURL(require('node:path').join(process.env.CLAUDE_PLUGIN_ROOT || process.cwd(), 'mcp/file-uploader.mjs')).href).then(m => m.serve()).catch(() => { process.exitCode = 1; })"]},
             }
             if mcp.get("mcpServers") != expected_servers:
                 errors.append(f"MCP 설정 오류 또는 credential 포함: {filename}")
