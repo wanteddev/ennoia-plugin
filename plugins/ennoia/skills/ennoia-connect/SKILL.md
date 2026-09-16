@@ -11,6 +11,8 @@ Ennoia 계정과 작업 대상을 확인해 다음 업무를 바로 시작할 �
 
 ## 연결 확인
 
+host에서 보이는 Skill 이름(`ennoia-connect`), 설치된 Plugin 식별자, 실제 MCP 서버 이름은 서로 다른 값이다. Skill 목록만 있을 때 그 이름을 Plugin ID나 서버 이름의 조회 filter에 넣지 않는다. Plugin/MCP 도구가 안 보이면 host의 **전체 Plugin·MCP server inventory**에서 실제 식별자를 확인한 뒤 해당 항목의 활성화·연결 상태를 조회한다. host가 이미 정확한 식별자를 제공했다면 그것을 사용하고 불명확하면 미확인으로 남긴다. 설치된 로컬 manifest 이름만으로 현재 host 설치 ID를 추측하지 않는다.
+
 1. 설치된 Ennoia MCP에서 `get_current_ennoia_project`를 발견해 호출한다. host에 따라 tool prefix가 달라지므로 `mcp__ennoia__` 같은 전체 이름을 고정하지 않는다.
 2. 인증·scope 확인이 필요하면 `get_ennoia_context`를 호출한다. 정상 업무에서 이미 확인된 상태를 매 호출마다 중복 조회하지 않는다.
 3. 그룹·프로젝트 이름으로 대상을 표시한다. `project_context`가 실제 호출 대상의 근거다. 사용자가 이미 정확한 대상을 정했다면 다시 허락을 묻지 않는다.
@@ -23,6 +25,8 @@ Ennoia 계정과 작업 대상을 확인해 다음 업무를 바로 시작할 �
 host의 `needs-auth` 또는 `AUTH_REQUIRED`, `ENNOIA_REAUTH_REQUIRED`, HTTP 401이면 설치된 실제 Ennoia MCP 서버의 host 인증 흐름을 확인한다. host의 Connected 표시는 실제 사용 연결의 인증 오류보다 우선하지 않는다. Tool 자체를 발견하지 못한 상태와 인증 오류는 구분한다. Claude CLI는 `/mcp`, Codex CLI는 해당 설치 서버의 인증 명령·안내, 앱은 Ennoia 연결 상세의 로그인/재연결을 사용한다. plugin이 부여한 실제 서버 이름을 먼저 확인한다. 수동 등록 서버가 없는 상태에서 `codex mcp login ennoia`가 반드시 통한다고 가정하지 않는다.
 
 재인증 뒤 `get_ennoia_context`와 현재 프로젝트를 확인한다. 같은 실패를 반복하면 오류 코드와 host 연결 상태를 보고하고 무한 재시도하지 않는다. 세부 오류 구분은 [인증 복구](references/authentication.md)를 읽는다.
+
+새 serverInfo revision을 사용하려면 실제 사용 연결을 새로 initialize한 metadata와 배포 image revision을 대조한다. Plugin 버전·다른 연결의 cached schema만으로 새 backend 기능을 확정하지 않는다. 인증 실패에 남은 이전 `project_context`는 현재 선택의 증거가 아니다.
 
 사용자가 계정 전환을 요청했을 때만 `switch_ennoia_account`, 로그아웃을 요청했을 때만 `logout_ennoia`를 사용한다. 단순 조회 실패를 해결하려고 기존 연결을 삭제하지 않는다.
 

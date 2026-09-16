@@ -6,7 +6,12 @@ __pycache__/
 .ruff_cache/
 .env
 .env.*
-evals/results/
+evals/results/*
+!evals/results/2026-09-15-dogfooding-schema.json
+!evals/results/2026-09-15-host-cases.json
+!evals/results/2026-09-15-current-session-read.json
+!evals/results/2026-09-15-codex-cli-native-read.json
+!evals/results/2026-09-15-mandatory-host-cases.json
 artifacts/
 .claude/settings.local.json
 .codex/
