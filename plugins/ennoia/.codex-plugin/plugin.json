@@ -1,7 +1,7 @@
 {
   "name": "ennoia",
-  "version": "1.1.0",
-  "description": "Ennoia에서 에이전트 생성, 문서 지식 연결, App 실행과 운영 진단을 수행합니다.",
+  "version": "1.2.0",
+  "description": "Ennoia에서 에이전트 생성, 문서 지식 연결, App 실행, 운영 진단과 제품 피드백을 수행합니다.",
   "author": {
     "name": "Wantedlab",
     "url": "https://github.com/wanteddev"
@@ -13,14 +13,15 @@
     "agents",
     "rag",
     "mcp",
-    "workflow"
+    "workflow",
+    "feedback"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Ennoia",
     "shortDescription": "에이전트 생성부터 문서 연결, 업무 실행, 운영 진단까지",
-    "longDescription": "Ennoia MCP와 작업별 Skill을 함께 설치합니다. 로그인한 사용자의 프로젝트 권한으로 에이전트를 만들고 검증하며, 지식 문서를 연결하고, App을 실행하고, 배포와 Trace를 관리합니다.",
+    "longDescription": "Ennoia MCP와 작업별 Skill을 함께 설치합니다. 로그인한 사용자의 프로젝트 권한으로 에이전트를 만들고 검증하며, 지식 문서를 연결하고, App을 실행하고, 배포와 Trace를 관리합니다. 사용자 의견과 사용 중 관찰한 오류·UX 개선점을 GitHub 이슈로 접수합니다.",
     "developerName": "Wantedlab",
     "category": "Productivity",
     "capabilities": [

@@ -1,5 +1,9 @@
 # Skill 동작 평가
 
+## 제품 피드백
+
+`feedback-scenarios.json`은 명시 의견, 자동 오류·UX 제안, 민감정보 전송 지시, timeout, 제보 거부, 이전 서버와 인증 실패의 9개 합성 입력입니다. 평가자에게 입력만 제공하고 [별도 rubric](feedback-rubric.md)으로 판정합니다. [후보 1.2.0 평가](2026-09-16-feedback-summary.md)는 합성 판단이며 실제 GitHub 접수·native host 검증과 구분합니다.
+
 ## V1 native host 결과 기록
 
 [`results/2026-09-15-dogfooding-schema.json`](results/2026-09-15-dogfooding-schema.json)은 case 한 건의 공개 필드 계약입니다. 날짜가 있는 결과 파일은 case 객체 배열이며 [`scripts/validate_results.py`](../scripts/validate_results.py)로 필수 field·type·중복 ID·상태/증거 일관성을 확인합니다. `tool_calls`는 해당 case의 Ennoia MCP tool 호출 수로, native Marketplace 명령이나 Skill 파일 읽기는 포함하지 않습니다. `not_tested`는 실제 미실행이므로 호출·예상치 못한 업무 write·중복 dispatch가 관측된 0이고 시간·응답 크기·token은 미측정 `null`입니다. 실행됐으나 관측하지 못한 counter는 `null`이고 `pass`/`fail`은 관측 시각과 측정된 정수 counter를 요구합니다. `blocked`는 실행 여부와 측정 범위를 note에 설명합니다. 인증·설정 저장은 업무 `unexpected_writes`와 구분합니다. `unexpected_writes`는 요청 범위 밖 Ennoia 업무 자원 변경 횟수이며 host의 Plugin 설치/업데이트나 OAuth 설정 저장 횟수가 아닙니다.

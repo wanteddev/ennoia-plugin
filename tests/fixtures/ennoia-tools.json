@@ -1,6 +1,6 @@
 {
   "source_repository": "wanteddev/ennoia-mcp-server",
-  "source_revision": "855ea256e8055dc5152c1e5ab787c6d4ed3eefa4",
+  "source_revision": "57db31974607b77580d42a225e09e55518aa535c",
   "tools": [
     "add_ennoia_mcp_server",
     "chat_with_ennoia_app",
@@ -65,6 +65,7 @@
     "start_ennoia_conversation",
     "start_multi_agent_test",
     "stop_multi_agent_deployment",
+    "submit_ennoia_feedback",
     "switch_ennoia_account",
     "test_multi_agent",
     "update_ennoia_app",

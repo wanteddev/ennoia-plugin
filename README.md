@@ -67,6 +67,7 @@ claude plugin install ennoia@ennoia
 
 | Skill | 요청 예시 |
 | --- | --- |
+| `ennoia-feedback` | “Ennoia Plugin에서 프로젝트를 반복 질문하는 점을 개선 의견으로 남겨줘.” |
 | `ennoia-connect` | “Ennoia에 연결하고 A팀 운영 프로젝트를 선택해줘.” |
 | `ennoia-build-agent` | “Ennoia 고객응대봇을 수정하고 검증한 뒤 draft까지만 저장해줘.” |
 | `ennoia-knowledge` | “이 문서를 지식 컬렉션에 등록하고 검색 가능한 상태인지 확인해줘.” |
@@ -77,11 +78,17 @@ claude plugin install ennoia@ennoia
 
 작업은 로그인 사용자의 Ennoia 권한과 프로젝트 범위에서 수행합니다. 기본 프로젝트가 자동 선택됐다면 변경 전에 대상을 명시해야 합니다. 이미 지정한 대상과 승인한 작업은 반복 승인하지 않습니다. Credential은 host의 인증 저장소에 두고 Plugin repo에 저장하지 않습니다.
 
-결과는 그룹·프로젝트 이름으로 안내합니다. 현재 설정과 이번 요청 대상이 다르면 둘을 구분하고, 코드·ID는 기술 상세 요청이나 대상 구분·조회 재개에 필요할 때 표시합니다. 진행 중·부분 실패·미확인 비용을 완료나 0으로 바꾸지 않으며, 실제 App 답변은 관리 요약으로 대체하지 않습니다. 이 규칙은 7개 Skill이 [공통 참고자료](plugins/ennoia/references/response-guide.md)를 함께 사용합니다.
+결과는 그룹·프로젝트 이름으로 안내합니다. 현재 설정과 이번 요청 대상이 다르면 둘을 구분하고, 코드·ID는 기술 상세 요청이나 대상 구분·조회 재개에 필요할 때 표시합니다. 진행 중·부분 실패·미확인 비용을 완료나 0으로 바꾸지 않으며, 실제 App 답변은 관리 요약으로 대체하지 않습니다. 이 규칙은 8개 Skill이 [공통 참고자료](plugins/ennoia/references/response-guide.md)를 함께 사용합니다.
 
 이미 같은 endpoint를 수동 MCP로 사용 중이라면 각 항목의 source·scope와 실제 요청 연결을 확인합니다. host마다 수동 서버·Plugin·connector가 항상 하나로 합쳐진다고 가정하지 않습니다. 기존 수동 연결의 정리는 사용자가 이전을 요청한 경우에만 선택적으로 진행하며 credential을 다른 source로 복사하지 않습니다.
 
 파일 첨부가 곧 Ennoia 업로드 완료를 의미하지 않습니다. 문서는 업로드·인덱싱 준비·에이전트 연결을 각각 확인합니다. host에 binary 전송 기능이 없는 경우 Skill이 Ennoia 업로드 화면 경로를 안내합니다.
+
+## 제품 피드백
+
+사용자가 명시한 의견과 에이전트가 실제 사용 중 관찰한 오류·UX 개선 제안을 `wanteddev/ennoia-mcp-server`의 비공개 GitHub 이슈로 접수합니다. 자동 관찰은 기본 업무 이후 중요한 1건으로 제한하고 결과 링크를 안내합니다. 사용자가 제보하지 말라고 하거나 host 정책이 외부 전송을 제한하면 이를 우선합니다. 대화·문서 원문, 개인정보와 credential은 제출하지 않습니다.
+
+피드백에는 프로젝트 선택이나 사용자 GitHub 로그인이 필요하지 않습니다. 서버의 `submit_ennoia_feedback` 배포와 전용 GitHub 토큰 설정이 필요하며, 기존 Ennoia OAuth 쓰기 권한을 사용합니다. 이전 서버에서 도구가 없으면 기능을 건너뜁니다. 등록 결과가 불명확할 때 자동으로 다시 보내지 않습니다. 자세한 기준은 [피드백 Skill](plugins/ennoia/skills/ennoia-feedback/SKILL.md)을 따릅니다.
 
 ## 업데이트·제거
 
@@ -97,7 +104,7 @@ claude plugin marketplace update ennoia
 claude plugin update ennoia@ennoia
 ```
 
-업데이트 뒤 새 세션을 열어 Plugin과 7개 Skill 발견 → 실제 Ennoia MCP 서버 인증 → 현재 그룹·프로젝트 선택 확인 → 읽기 도구 1건의 성공 순서로 확인합니다. Claude CLI에서는 `/mcp`에서 Plugin 서버를 선택합니다. Codex CLI에서는 설치 inventory의 실제 서버 이름을 확인하고 host가 제공하는 그 서버의 인증 안내를 따릅니다. 수동 `ennoia` 등록이 없는 계정에 `codex mcp login ennoia`가 반드시 적용되는 것은 아닙니다. Skill이 보이는데 Ennoia tool이 없다면 먼저 Plugin MCP 활성화와 서버 연결을 확인합니다.
+업데이트 뒤 새 세션을 열어 Plugin과 8개 Skill 발견 → 실제 Ennoia MCP 서버 인증 → 현재 그룹·프로젝트 선택 확인 → 읽기 도구 1건의 성공 순서로 확인합니다. Claude CLI에서는 `/mcp`에서 Plugin 서버를 선택합니다. Codex CLI에서는 설치 inventory의 실제 서버 이름을 확인하고 host가 제공하는 그 서버의 인증 안내를 따릅니다. 수동 `ennoia` 등록이 없는 계정에 `codex mcp login ennoia`가 반드시 적용되는 것은 아닙니다. Skill이 보이는데 Ennoia tool이 없다면 먼저 Plugin MCP 활성화와 서버 연결을 확인합니다.
 
 제거는 `codex plugin remove ennoia@ennoia` 또는 `claude plugin uninstall ennoia@ennoia`를 사용합니다. Plugin 제거와 Ennoia 계정의 OAuth 권한 철회는 별개이므로 연결 철회까지 필요하면 host의 연결 관리에서 처리합니다.
 
@@ -112,7 +119,7 @@ plugins/ennoia/
   .codex-plugin/plugin.json          # Codex 호환 manifest
   .claude-plugin/plugin.json         # Claude manifest
   .mcp.json                         # 두 host의 호환 MCP 설정
-  skills/                           # 공유 Skill 원본 7개
+  skills/                           # 공유 Skill 원본 8개
   references/                       # 공통 응답 해석·표시 규칙
   assets/                           # 공식 아이콘·로고, 다크 모드용 로고
 scripts/                            # 작성자용 sync·검증 도구
@@ -133,7 +140,7 @@ python3 -m unittest discover -s tests -v
 
 Metadata·version은 `plugins/ennoia/plugin.json`, MCP 설정은 `plugins/ennoia/mcp.json`에서 수정한 뒤 `python3 scripts/sync_manifests.py`로 호환 파일을 생성합니다. 이 명령은 공식 asset 원본에서 다크 모드 로고와 Skill별 아이콘 복사본도 생성합니다. Skill은 `plugins/ennoia/skills` 원본에서 수정합니다. 동일한 버전을 덮어쓰지 말고 릴리스 시 version을 올려 host cache를 갱신합니다.
 
-`main`에 반영되면 **Validate plugin** workflow의 검증 성공 후 manifest version으로 `v<version>` 태그와 GitHub Release를 자동 생성합니다. 현재 `1.1.0`이면 `v1.1.0`을 발행하며, 릴리스 노트는 [GitHub Release API](https://docs.github.com/en/rest/releases/releases#create-a-release)가 병합 PR 기준으로 생성합니다. `1.2.0-rc.1` 같은 사전 버전은 prerelease로 표시합니다. 별도 PAT 없이 발행 job의 `GITHUB_TOKEN`에만 `contents: write` 권한을 부여합니다.
+`main`에 반영되면 **Validate plugin** workflow의 검증 성공 후 manifest version으로 `v<version>` 태그와 GitHub Release를 자동 생성합니다. 현재 `1.2.0`이면 `v1.2.0`을 발행하며, 릴리스 노트는 [GitHub Release API](https://docs.github.com/en/rest/releases/releases#create-a-release)가 병합 PR 기준으로 생성합니다. `1.2.0-rc.1` 같은 사전 버전은 prerelease로 표시합니다. 별도 PAT 없이 발행 job의 `GITHUB_TOKEN`에만 `contents: write` 권한을 부여합니다.
 
 이미 발행된 버전은 태그와 Release를 변경하지 않습니다. 태그만 생성되고 Release 생성이 실패했다면 Actions → **Validate plugin** → **Run workflow**에서 `main`을 선택해 같은 태그의 Release를 복구할 수 있습니다. 기존 태그의 version·main 이력이 맞지 않거나 기존 draft Release가 있으면 중단합니다. PR·다른 branch·tag push에서는 발행하지 않으며, 자동화 도입 전 태그를 일괄 발행하지 않습니다. 앱 설치는 계속 Git repo Marketplace를 사용합니다.
 
