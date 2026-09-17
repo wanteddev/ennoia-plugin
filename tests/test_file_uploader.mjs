@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Readable, Writable } from 'node:stream';
 import { spawn } from 'node:child_process';
-import { uploadFile } from '../plugins/ennoia/mcp/file-uploader.mjs';
+import { uploadFile, uploadTool } from '../plugins/ennoia/mcp/file-uploader.mjs';
 
 const server = new URL('../plugins/ennoia/mcp/file-uploader.mjs', import.meta.url);
 const url = 'https://mcp.ennoia.so/rag/uploads/opaque-id_123';
@@ -66,8 +66,20 @@ test('stdio initializes, ignores notification, lists exact tool and returns safe
   assert.equal(tool.name, 'upload_ennoia_rag_file');
   assert.deepEqual(tool.inputSchema.required, ['local_path', 'upload_url', 'headers']);
   assert.deepEqual(Object.keys(tool.inputSchema.properties), ['local_path', 'upload_url', 'headers']);
-  assert.equal(replies.find(reply => reply.id === 3).result.isError, true);
+  assert.match(tool.description, /device host/);
+  assert.match(tool.description, /웹 업로드/);
+  const uploadError = replies.find(reply => reply.id === 3).result;
+  assert.equal(uploadError.isError, true);
+  assert.equal(uploadError.structuredContent.code, 'HEADERS_INVALID');
+  assert.match(uploadError.structuredContent.next_action, /prepare_rag_document_upload/);
+  assert.equal(uploadError.content[0].text, JSON.stringify(uploadError.structuredContent));
   assert.equal(replies.find(reply => reply.id === 4).error.code, -32602);
+});
+
+test('tool description explains uploader host visibility and web fallback', () => {
+  assert.match(uploadTool.description, /이 도구가 실행되는 device host/);
+  assert.match(uploadTool.description, /채팅 첨부.*cloud path/);
+  assert.match(uploadTool.description, /Ennoia 웹 업로드/);
 });
 
 test('streams actual disk chunks by PUT with exact headers and returns safe file identity', async t => {
@@ -118,10 +130,21 @@ test('rejects symlink and non-regular directory', async t => {
   const args = await fixture(t); const network = transport();
   const link = args.local_path + '.pdf';
   await symlink(args.local_path, link);
-  await assert.rejects(uploadFile({ ...args, local_path: link }, network.request), /FILE_INVALID/);
+  await assert.rejects(uploadFile({ ...args, local_path: link }, network.request), /FILE_NOT_REGULAR/);
   const directory = args.local_path + '-dir.pdf';
   await mkdir(directory);
-  await assert.rejects(uploadFile({ ...args, local_path: directory }, network.request), /FILE_INVALID/);
+  await assert.rejects(uploadFile({ ...args, local_path: directory }, network.request), /FILE_NOT_REGULAR/);
+  assert.equal(network.calls.length, 0);
+});
+
+test('distinguishes a path missing from the uploader host', async t => {
+  const args = await fixture(t);
+  await rm(args.local_path);
+  const network = transport();
+  await assert.rejects(
+    uploadFile(args, network.request),
+    error => error.code === 'FILE_NOT_FOUND_ON_UPLOADER_HOST',
+  );
   assert.equal(network.calls.length, 0);
 });
 

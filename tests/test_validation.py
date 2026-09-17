@@ -47,6 +47,35 @@ class ValidationTests(unittest.TestCase):
         (self.root / "plugins/ennoia/skills/ennoia-knowledge/references/uploads.md").unlink()
         self.assertTrue(any("reference" in e for e in self.validate(self.root)))
 
+    def test_knowledge_skill_has_file_upload_recovery_guidance(self):
+        skill = (ROOT / "plugins/ennoia/skills/ennoia-knowledge/SKILL.md").read_text()
+        uploads = (ROOT / "plugins/ennoia/skills/ennoia-knowledge/references/uploads.md").read_text()
+        combined = skill + uploads
+        for fragment in (
+            "upload_ennoia_rag_file",
+            "FILE_NOT_FOUND_ON_UPLOADER_HOST",
+            "https://ennoia.so/studio/rag/files-detail",
+            "https://dev.ennoia.so/studio/rag/files-detail",
+            "group_code",
+            "project_code",
+            "collection_code",
+            "percent-encoding",
+            "ASCII",
+            "한글",
+        ):
+            self.assertIn(fragment, combined)
+        for fragment in ("project_scope", "method=PUT"):
+            self.assertIn(fragment, skill)
+        for fragment in (
+            "cloud path",
+            "웹 업로드",
+            "현재 Ennoia MCP 연결 endpoint",
+            "https://mcp.ennoia.so/mcp",
+            "https://dev-mcp-server.ennoia.so/mcp",
+            "endpoint를 확인할 수 없으면",
+        ):
+            self.assertIn(fragment, uploads)
+
     def test_reference_outside_plugin_cache_is_rejected(self):
         skill = self.root / "plugins/ennoia/skills/ennoia-run/SKILL.md"
         skill.write_text(skill.read_text() + "\n[local](../../../../README.md)\n")
