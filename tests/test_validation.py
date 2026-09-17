@@ -64,10 +64,17 @@ class ValidationTests(unittest.TestCase):
             "한글",
         ):
             self.assertIn(fragment, combined)
-        self.assertIn("도구 목록", combined)
-        self.assertIn("세션을 다시 시작", combined)
-        self.assertIn("cloud path", combined)
-        self.assertIn("웹 업로드", combined)
+        for fragment in ("도구 목록", "세션을 다시 시작", "project_scope", "method=PUT"):
+            self.assertIn(fragment, skill)
+        for fragment in (
+            "cloud path",
+            "웹 업로드",
+            "현재 Ennoia MCP 연결 endpoint",
+            "https://mcp.ennoia.so/mcp",
+            "https://dev-mcp-server.ennoia.so/mcp",
+            "endpoint를 확인할 수 없으면",
+        ):
+            self.assertIn(fragment, uploads)
 
     def test_reference_outside_plugin_cache_is_rejected(self):
         skill = self.root / "plugins/ennoia/skills/ennoia-run/SKILL.md"
