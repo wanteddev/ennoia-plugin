@@ -15,6 +15,7 @@ const UPLOAD_TIMEOUT_MS = 120000;
 const EXTENSIONS = new Set(['.csv', '.txt', '.md', '.pdf', '.docx', '.pptx', '.xlsx', '.xls', '.zip']);
 const HOSTS = new Set(['mcp.ennoia.so', 'dev-mcp-server.ennoia.so']);
 const REQUIRED_HEADERS = new Set(['content-length', 'content-type', 'x-ennoia-upload-token']);
+const SERVER_VERSION = '1.4.2';
 const ERROR_DETAILS = Object.freeze({
   ARGUMENTS_INVALID: ['업로드 인자 형식이 올바르지 않습니다.', 'local_path, upload_url, headers만 전달하세요.'],
   UPLOAD_URL_INVALID: ['업로드 URL을 사용할 수 없습니다.', 'prepare_rag_document_upload로 새 upload ticket을 발급하세요.'],
@@ -199,7 +200,7 @@ async function handleRpc(message, upload = uploadFile) {
   const reply = result => ({ jsonrpc: '2.0', id, result });
   if (message.method === 'initialize') return reply({
     protocolVersion: ['2024-11-05', '2025-03-26', '2025-06-18'].includes(message.params?.protocolVersion) ? message.params.protocolVersion : '2025-06-18',
-    capabilities: { tools: {} }, serverInfo: { name: 'ennoia-file-uploader', version: '1.4.1' },
+    capabilities: { tools: {} }, serverInfo: { name: 'ennoia-file-uploader', version: SERVER_VERSION },
   });
   if (message.method === 'ping') return reply({});
   if (message.method === 'tools/list') return reply({ tools: [uploadTool] });

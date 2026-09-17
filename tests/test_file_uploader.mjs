@@ -62,6 +62,7 @@ test('stdio initializes, ignores notification, lists exact tool and returns safe
   assert.equal(replies.length, 4);
   assert.equal(replies[0].result.protocolVersion, '2025-03-26');
   assert.deepEqual(replies[0].result.capabilities, { tools: {} });
+  assert.deepEqual(replies[0].result.serverInfo, { name: 'ennoia-file-uploader', version: '1.4.2' });
   const [tool] = replies[1].result.tools;
   assert.equal(tool.name, 'upload_ennoia_rag_file');
   assert.deepEqual(tool.inputSchema.required, ['local_path', 'upload_url', 'headers']);

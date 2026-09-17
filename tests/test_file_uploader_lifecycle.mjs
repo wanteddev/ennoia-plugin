@@ -42,7 +42,7 @@ for (const host of ['claude', 'codex']) test(`generated launch resolves ${host} 
   await mkdir(join(dir, 'mcp'));
   await writeFile(join(dir, 'mcp/file-uploader.mjs'), 'process.stdout.write("WRONG_PROJECT_SCRIPT");');
   const config = JSON.parse(await readFile(join(plugin, '.mcp.json'))).mcpServers['ennoia-file-uploader'];
-  assert.equal(config.command, 'node'); assert.equal(config.cwd, '.');
+  assert.equal(config.type, 'stdio'); assert.equal(config.command, 'node'); assert.equal(config.cwd, './');
   const env = { ...process.env };
   delete env.CLAUDE_PLUGIN_ROOT;
   if (host === 'claude') env.CLAUDE_PLUGIN_ROOT = plugin;

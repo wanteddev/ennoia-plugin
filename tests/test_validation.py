@@ -32,13 +32,18 @@ class ValidationTests(unittest.TestCase):
             path = plugin / filename
             original = json.loads(path.read_text())
             self.assertEqual(original["mcpServers"]["ennoia-file-uploader"], {
-                "command": "node", "cwd": ".", "args": ["-e", "import(require('node:url').pathToFileURL(require('node:path').join(process.env.CLAUDE_PLUGIN_ROOT || process.cwd(), 'mcp/file-uploader.mjs')).href).then(m => m.serve()).catch(() => { process.exitCode = 1; })"],
+                "type": "stdio", "command": "node", "cwd": "./", "args": ["-e", "import(require('node:url').pathToFileURL(require('node:path').join(process.env.CLAUDE_PLUGIN_ROOT || process.cwd(), 'mcp/file-uploader.mjs')).href).then(m => m.serve()).catch(() => { process.exitCode = 1; })"],
             })
-            for key, value in (("command", "sh"), ("cwd", ".."), ("args", ["./other.mjs"]), ("env", {"TOKEN": "secret"})):
+            for key, value in (("type", "http"), ("command", "sh"), ("cwd", "."), ("args", ["./other.mjs"]), ("env", {"TOKEN": "secret"})):
                 data = json.loads(json.dumps(original))
                 data["mcpServers"]["ennoia-file-uploader"][key] = value
                 path.write_text(json.dumps(data))
                 self.assertTrue(any("MCP" in e for e in self.validate(self.root)))
+            path.write_text(json.dumps(original))
+            data = json.loads(json.dumps(original))
+            del data["mcpServers"]["ennoia-file-uploader"]["type"]
+            path.write_text(json.dumps(data))
+            self.assertTrue(any("MCP" in e for e in self.validate(self.root)))
             path.write_text(json.dumps(original))
         (plugin / "mcp/file-uploader.mjs").unlink()
         self.assertTrue(any("MCP" in e for e in self.validate(self.root)))
@@ -94,6 +99,11 @@ class ValidationTests(unittest.TestCase):
         data["version"] = "0.0.0"
         path.write_text(json.dumps(data))
         self.assertTrue(any("manifest" in e for e in self.validate(self.root)))
+
+    def test_local_uploader_version_drift_is_rejected(self):
+        path = self.root / "plugins/ennoia/mcp/file-uploader.mjs"
+        path.write_text(path.read_text().replace("SERVER_VERSION = '1.4.2'", "SERVER_VERSION = '0.0.0'"))
+        self.assertTrue(any("uploader version" in e for e in self.validate(self.root)))
 
     def test_hallucinated_tool_reference_is_rejected(self):
         skill = self.root / "plugins/ennoia/skills/ennoia-run/SKILL.md"
