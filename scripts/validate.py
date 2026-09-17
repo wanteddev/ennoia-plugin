@@ -59,13 +59,16 @@ def validate_repository(root: Path) -> list[str]:
             mcp = read_json(plugin / filename)
             expected_servers = {
                 "ennoia": {"type": transport, "url": "https://mcp.ennoia.so/mcp"},
-                "ennoia-file-uploader": {"command": "node", "cwd": ".", "args": ["-e", "import(require('node:url').pathToFileURL(require('node:path').join(process.env.CLAUDE_PLUGIN_ROOT || process.cwd(), 'mcp/file-uploader.mjs')).href).then(m => m.serve()).catch(() => { process.exitCode = 1; })"]},
+                "ennoia-file-uploader": {"type": "stdio", "command": "node", "cwd": "./", "args": ["-e", "import(require('node:url').pathToFileURL(require('node:path').join(process.env.CLAUDE_PLUGIN_ROOT || process.cwd(), 'mcp/file-uploader.mjs')).href).then(m => m.serve()).catch(() => { process.exitCode = 1; })"]},
             }
             if mcp.get("mcpServers") != expected_servers:
                 errors.append(f"MCP 설정 오류 또는 credential 포함: {filename}")
 
-        if not (plugin / "mcp/file-uploader.mjs").is_file():
+        uploader = plugin / "mcp/file-uploader.mjs"
+        if not uploader.is_file():
             errors.append("MCP local file uploader 누락")
+        elif f"const SERVER_VERSION = '{portable['version']}';" not in uploader.read_text(encoding="utf-8"):
+            errors.append("MCP local file uploader version 불일치")
 
         a = read_json(root / ".agents/plugins/marketplace.json")
         b = read_json(root / ".claude-plugin/marketplace.json")
