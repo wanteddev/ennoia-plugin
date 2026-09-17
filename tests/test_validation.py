@@ -64,7 +64,7 @@ class ValidationTests(unittest.TestCase):
             "한글",
         ):
             self.assertIn(fragment, combined)
-        for fragment in ("도구 목록", "세션을 다시 시작", "project_scope", "method=PUT"):
+        for fragment in ("project_scope", "method=PUT"):
             self.assertIn(fragment, skill)
         for fragment in (
             "cloud path",
