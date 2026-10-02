@@ -60,7 +60,7 @@ https://ennoia.so/studio/multi-agent/canvas?group={group_code}&project={project_
 
 같은 계정으로 엔노이아에 로그인해 해당 프로젝트의 외부 도구 연결을 확인·갱신한 뒤 에이전트를 실행·테스트하도록 안내한다. 같은 호출 반복, 임의 사용자 ID·인증 header 생성, 직접 HTTP 우회 호출, 자동 연결 삭제·재배포로 해결하려 하지 않는다. 사용자가 연결 복구를 요청하면 Integrations Skill의 해당 개인 연결 절차를 따른다. `ENNOIA_REAUTH_REQUIRED`가 실제 반환된 경우에만 Ennoia MCP 로그인 복구로 구분한다.
 
-배포 완료와 실행 테스트 미완료를 함께 보고한다. 실행 전 거절이면 Trace가 남지 않을 수 있으므로 Trace 부재만으로 에이전트 내부 오류를 단정하지 않는다. 이전 서버의 일반 `UPSTREAM_UNAVAILABLE`·502만으로 이 원인을 추정하거나 `platform_url`을 만들어 넣지 않는다. Plugin 업데이트만으로 backend의 사용자 ID 전달 기능 배포를 확정하지 않는다.
+배포 상태와 실행 테스트 미완료를 구분해 보고한다. 배포 성공을 실제로 확인한 경우에만 배포 완료라고 안내하고, 연결 오류만으로 배포 상태를 추정하지 않는다. 실행 전 거절이면 Trace가 남지 않을 수 있으므로 Trace 부재만으로 에이전트 내부 오류를 단정하지 않는다. 이전 서버의 일반 `UPSTREAM_UNAVAILABLE`·502만으로 이 원인을 추정하거나 `platform_url`을 만들어 넣지 않는다. Plugin 업데이트만으로 backend의 사용자 ID 전달 기능 배포를 확정하지 않는다.
 
 ## 상태와 답변
 
