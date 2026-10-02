@@ -7,6 +7,7 @@
 | host init `needs-auth` / `AUTH_REQUIRED` / 401 | 실제 설치 서버 이름에 대한 host OAuth 인증을 안내하고 원래 읽기 요청을 다시 확인한다. |
 | host Connected + `ENNOIA_REAUTH_REQUIRED` | 실제 호출에 사용된 Ennoia linked session이 만료됐다. 그 연결의 host 재인증을 안내한다. Connected 표시만 신뢰해 조회를 반복하거나 서버를 삭제하지 않는다. |
 | `INSUFFICIENT_SCOPE` / 403 | 필요한 scope와 현재 권한을 비교한다. 같은 로그인 반복으로 권한이 확대된다고 가정하지 않는다. |
+| `MCP_CONNECTION_REQUIRED` | 에이전트 실행에 필요한 개인 외부 도구 연결 문제다. Ennoia 로그인 만료로 단정하지 않고 [플랫폼 실행 안내](../../../references/response-guide.md#개인-외부-도구-연결-오류)를 따른다. |
 | `PROJECT_SELECTION_REQUIRED` | 프로젝트 목록을 확인한다. 기존 사용자 선택이 유효하면 그대로 저장하고, 선택이 없거나 모호할 때만 질문한다. |
 | `UPSTREAM_UNAVAILABLE` / 502 / 503 | 인증 만료로 단정하지 않는다. retryable·next_action을 확인하고 제한된 재시도 또는 상태 보고를 한다. |
 
