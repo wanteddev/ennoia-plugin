@@ -23,6 +23,8 @@ timeout 또는 응답 유실은 배포 실패 확정이 아니다. 같은 에이
 
 사용자가 실행 검증도 요청했다면 `invoke_deployed_multi_agent` 또는 요청한 App 실행 경로로 실제 결과를 확인한다. 이때 backend가 제공한 API key는 도구 인자로만 사용하고 답변·파일·공유 URL에 노출하지 않는다. 배포 Ready와 업무 결과 성공은 별도로 보고한다.
 
+배포 호출의 개인 MCP 연결은 backend가 MCP 로그인 계정의 사용자 ID를 검증해 내부 전달하는 방식으로 사용한다. 사용자에게 ID·인증 header를 요구하거나 도구 입력·Plugin 설정에 추가하지 않는다. 개인 인증이 필요한 도구라는 이유만으로 웹에서만 실행 가능하다고 단정하지 않는다. 실제 `MCP_CONNECTION_REQUIRED` 응답이면 [개인 외부 도구 연결 오류](../../references/response-guide.md#개인-외부-도구-연결-오류)에 따라 플랫폼 링크를 안내하고 실행 검증은 미완료로 남긴다.
+
 ## App과 공개 범위
 
 App 생성·수정·복제·공유·삭제 요청은 [App 관리](references/apps-and-lifecycle.md)를 읽는다. 특정 App이 있으면 그 `assistant_hash`를 먼저 발견한다. 단순 에이전트 배포를 위해 App이나 공개 링크를 자동 생성하지 않는다.
