@@ -54,7 +54,7 @@ https://ennoia.so/studio/multi-agent/canvas?group={group_code}&project={project_
 
 ## 개인 외부 도구 연결 오류
 
-배포 호출이 `MCP_CONNECTION_REQUIRED`로 실패하면 “이 에이전트에 필요한 개인 외부 도구 연결을 확인할 수 없어 실행 테스트를 완료하지 못했습니다”처럼 쉽게 설명한다. Ennoia 로그인 자체의 만료나 모든 개인 MCP 실행의 불가로 확대하지 않는다. 연결 목록의 ACTIVE·catalog ready만으로 실제 호출 성공을 확정하지 않는다.
+배포된 에이전트의 실행 호출(`invoke_deployed_multi_agent`)이 `MCP_CONNECTION_REQUIRED`로 실패하면 “이 에이전트에 필요한 개인 외부 도구 연결을 확인할 수 없어 실행 테스트를 완료하지 못했습니다”처럼 쉽게 설명한다. Ennoia 로그인 자체의 만료나 모든 개인 MCP 실행의 불가로 확대하지 않는다. 연결 목록의 ACTIVE·catalog ready만으로 실제 호출 성공을 확정하지 않는다.
 
 `error.details.platform_url`이 있으면 **엔노이아에서 에이전트 열기**라는 클릭 가능한 Markdown 링크로 제공한다. `https://ennoia.so` 또는 `https://dev.ennoia.so`의 `/studio/multi-agent` 경로이며 `group`·`project` query만 있는 링크를 사용한다. 인증정보·추가 query·fragment가 있는 링크는 표시하지 않는다. 서버가 반환한 환경과 실제 대상을 유지하고 현재 기본 프로젝트나 저장용 canvas URL로 바꾸지 않는다. 링크가 없거나 허용 형식이 아니면 추측해 만들지 않는다.
 

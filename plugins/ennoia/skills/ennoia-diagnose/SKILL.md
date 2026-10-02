@@ -20,7 +20,7 @@ description: "Ennoia 에이전트의 실행 실패, 응답 지연, Trace, 토큰
 
 ## 해석
 
-- 배포 호출의 `MCP_CONNECTION_REQUIRED`는 실행 시작 전에 반환되어 Trace가 없을 수 있다. 개인 외부 도구 연결을 확인할 수 없다는 응답과 Trace 부재를 구분하고, 공통 응답 규칙의 플랫폼 안내를 따른다. Trace가 없다는 이유로 graph 오류를 단정하거나 재실행·재배포하지 않는다.
+- 배포된 에이전트의 실행 호출(`invoke_deployed_multi_agent`)에서 `MCP_CONNECTION_REQUIRED`가 실행 시작 전에 반환되어 Trace가 없을 수 있다. 개인 외부 도구 연결을 확인할 수 없다는 응답과 Trace 부재를 구분하고, 공통 응답 규칙의 플랫폼 안내를 따른다. Trace가 없다는 이유로 graph 오류를 단정하거나 재실행·재배포하지 않는다.
 - `FAIL_AGENT_NETWORK` 같은 wrapper만으로 네트워크·Redis·worker 중 하나를 원인으로 확정하지 않는다. 실제 하위 오류와 시간상 선후 관계가 필요하다.
 - `truncated=true`, `is_complete_tree=false`, `partial_failures`가 있으면 증거의 범위를 명시한다. 현재 도구가 제공하는 상세만 추가 조회하고 존재하지 않는 pagination·로그 API를 만들지 않는다.
 - `null` token·cost·latency는 미확인 값이다. 0으로 계산하거나 합계가 완전하다고 주장하지 않는다. 누락 범위를 함께 보고한다.
