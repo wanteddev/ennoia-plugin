@@ -102,7 +102,7 @@ class ValidationTests(unittest.TestCase):
 
     def test_local_uploader_version_drift_is_rejected(self):
         path = self.root / "plugins/ennoia/mcp/file-uploader.mjs"
-        path.write_text(path.read_text().replace("SERVER_VERSION = '1.4.2'", "SERVER_VERSION = '0.0.0'"))
+        path.write_text(path.read_text().replace("SERVER_VERSION = '1.4.4'", "SERVER_VERSION = '0.0.0'"))
         self.assertTrue(any("uploader version" in e for e in self.validate(self.root)))
 
     def test_hallucinated_tool_reference_is_rejected(self):

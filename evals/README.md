@@ -1,5 +1,11 @@
 # Skill 동작 평가
 
+## SuperAgent 검증·테스트·저장
+
+[`superagent-scenarios.json`](superagent-scenarios.json)은 구조 검증 후 저장, 테스트 성공 조건, 테스트 미지원, discovery/compile 지원 불일치, 실제 graph 오류, 일반 graph 및 이전 schema의 7개 합성 입력이다. 평가자는 입력과 해당 arm의 Skill/reference만 읽고 다음 행동과 사용자 답변을 작성한 뒤 [별도 기준](superagent-rubric.md)으로 판정한다. 실제 Ennoia 호출·저장·배포·LLM 실행은 포함하지 않으며, 기존 arm도 처리한 사례는 개선으로 계산하지 않는다.
+
+[2026-10-03 평가 결과](2026-10-03-superagent-summary.md)는 control·기존 Skill·후보 Skill의 판단과 표본·검증 한계를 기록한다.
+
 ## 제품 피드백
 
 `feedback-scenarios.json`은 명시 의견, 자동 오류·UX 제안, 민감정보 전송 지시, timeout, 제보 거부, 이전 서버와 인증 실패의 9개 합성 입력입니다. 평가자에게 입력만 제공하고 [별도 rubric](feedback-rubric.md)으로 판정합니다. [후보 1.2.0 평가](2026-09-16-feedback-summary.md)는 합성 판단이며 실제 GitHub 접수·native host 검증과 구분합니다.

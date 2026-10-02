@@ -26,7 +26,11 @@ graph 입력과 자원 식별자는 [Graph 작성 계약](references/graph-autho
 
 `validate_multi_agent`의 envelope `ok`와 `data.valid`를 모두 확인한다. 실패한 node/path와 `repair_hint`에 맞춰 수정한 뒤 재검증한다. 동일 실패에 근거 없는 수정을 반복하지 않는다.
 
-테스트가 요청됐거나 완성 여부 확인에 필요하면 짧은 graph는 `test_multi_agent`, 오래 걸릴 작업은 `start_multi_agent_test`를 사용한다. 비동기 결과는 반환된 `test_id`로 `get_multi_agent_test`를 조회한다. `running`은 완료가 아니다. polling은 host의 wait 기능과 간격 증가를 사용하며 새 test를 중복 시작하지 않는다. 이 테스트 경로의 `allow_side_effects`는 `false`다. 거부되거나 승인이 필요한 실행을 우회하지 않는다.
+테스트 전 이미 조회한 node schema와 실제 응답으로 지원 여부를 확인한다. `test_supported=false` 또는 `TEST_NODE_UNSUPPORTED`가 있으면 해당 graph의 `test_multi_agent`와 `start_multi_agent_test`를 시작하지 않는다. 지원 여부 field가 없는 이전 응답을 false로 채우지 않고 현재 host schema와 결과를 따른다.
+
+안전 테스트 미지원은 저장 불가를 뜻하지 않는다. 저장이 요청됐고 검증과 저장 입력이 유효하면 기존 저장 경로를 진행한다. 다만 사용자가 테스트 성공을 저장 조건으로 정했다면 미지원 상태에서는 저장을 보류하고 조건 변경 여부만 확인한다. SuperAgent의 `SUPERAGENT_STRUCTURE_ONLY`는 구조·설정 검증이며 실제 runtime build·실행 성공이 아니다. 상세 구조와 지원 불일치는 [Graph 작성 계약](references/graph-authoring.md), 경고·재시도는 [저장 복구](references/save-and-retry.md)를 따른다.
+
+지원되는 graph의 테스트가 요청됐거나 완성 여부 확인에 필요하면 짧은 graph는 `test_multi_agent`, 오래 걸릴 작업은 `start_multi_agent_test`를 사용한다. 비동기 결과는 반환된 `test_id`로 `get_multi_agent_test`를 조회한다. `running`은 완료가 아니다. polling은 host의 wait 기능과 간격 증가를 사용하며 새 test를 중복 시작하지 않는다. 이 테스트 경로의 `allow_side_effects`는 `false`다. 거부되거나 승인이 필요한 실행을 우회하지 않는다.
 
 저장은 `save_multi_agent`를 사용한다. 같은 graph·사용자·project에서 검증한 `validation_id` 경로를 우선해 큰 graph를 재전송하지 않는다. `validation_id`와 원본 nodes/edges를 동시에 보내지 않는다. graph를 변경했으면 다시 검증한다. 검증 ID만으로 저장의 create/update 결정, create 이름 또는 update 대상 ID가 정해진 것은 아니다. 실제 요청·조회에서 확인한 값을 사용하고 빠진 필드만 확인한다. 설명용 문구를 도구 인자에 넣지 않는다. 기존 draft 수정은 `operation=update`와 발견한 `multi_agent_id`를 사용한다. 재시도·만료는 [저장 복구](references/save-and-retry.md)를 따른다.
 
