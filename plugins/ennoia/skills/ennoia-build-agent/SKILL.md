@@ -22,6 +22,12 @@ description: "Ennoia multi-agent를 새로 만들거나 기존 graph·draft를 �
 
 graph 입력과 자원 식별자는 [Graph 작성 계약](references/graph-authoring.md)을 필요한 경우 읽는다.
 
+## 업무에 맞는 구조 선택
+
+새 graph를 만들거나 역할·흐름을 바꿀 때는 [설계 판단 기준](references/agent-design.md)을 읽는다. 입력과 산출물·성공 조건, 고정 순서와 동적 위임의 필요성, 사용할 자원, 실패·승인·반복 한계를 기존 요청에서 정리한다. 구조를 바꿀 만큼 중요한 정보만 추가로 확인한다. 사용자 지정 구조·모델은 유지하고, 요구를 만족하는 최소 구성과 선택 이유를 정한다. 도구 사용이나 역할 수만으로 SuperAgent를 선택하지 않는다.
+
+노드 간 값을 전달하거나 조건·반복·MCP 입력을 작성할 때는 [데이터 전달과 전체 예제](references/dataflow-examples.md)를 읽는다. 각 소비 필드가 어디서 생성되는지와 누락 시 동작을 맞춘 뒤, 현재 node schema가 허용하는 설정으로 작성한다. 예제의 model·resource 변수는 discovery 결과로 치환하며 예제 자체를 실행 성공의 증거로 삼지 않는다.
+
 ## 검증·테스트·저장
 
 `validate_multi_agent`의 envelope `ok`와 `data.valid`를 모두 확인한다. 실패한 node/path와 `repair_hint`에 맞춰 수정한 뒤 재검증한다. 동일 실패에 근거 없는 수정을 반복하지 않는다.

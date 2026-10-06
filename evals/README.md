@@ -1,5 +1,11 @@
 # Skill 동작 평가
 
+## 업무 요구에서 graph 설계
+
+[`agent-design-scenarios.json`](agent-design-scenarios.json)은 단일 역할의 검색, 고정 순서, 동적 라우팅, 자율 위임, 구조화 출력 전달, 제한된 반복, 승인 후 전송, 구 schema와 사용자 지정 구조 충돌의 9개 합성 입력이다. 정답 graph를 미리 주지 않고 구조·데이터 계약·실패 경로를 작성하게 한 뒤 [별도 기준](agent-design-rubric.md)으로 판정한다. 사례를 추가한 것 자체는 모델 평가 통과나 설계 품질 향상의 증거가 아니다.
+
+배포되는 [전체 graph 예제](../plugins/ennoia/skills/ennoia-build-agent/references/dataflow-examples.md)는 별도 계약 검증 대상으로 사용한다. Fixture model·MCP resource로 치환한 뒤 각 node/edge의 공개 schema, backend graph 검증, CEL의 정상·빈 값 분기와 MCP 인자 전달을 확인한다. 외부 자원 compile 유예와 SuperAgent 구조 검증의 한계를 기록한다. 이 로컬 검사는 실제 LLM·MCP 실행과 업무 결과 평가를 대체하지 않는다.
+
 ## SuperAgent 검증·테스트·저장
 
 [`superagent-scenarios.json`](superagent-scenarios.json)은 구조 검증 후 저장, 테스트 성공 조건, 테스트 미지원, discovery/compile 지원 불일치, 실제 graph 오류, 일반 graph 및 이전 schema의 7개 합성 입력이다. 평가자는 입력과 해당 arm의 Skill/reference만 읽고 다음 행동과 사용자 답변을 작성한 뒤 [별도 기준](superagent-rubric.md)으로 판정한다. 실제 Ennoia 호출·저장·배포·LLM 실행은 포함하지 않으며, 기존 arm도 처리한 사례는 개선으로 계산하지 않는다.
