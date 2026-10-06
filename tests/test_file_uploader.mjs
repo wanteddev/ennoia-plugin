@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, writeFile, rm, symlink, mkdir, truncate } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile, rm, symlink, mkdir, truncate } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Readable, Writable } from 'node:stream';
@@ -8,6 +8,7 @@ import { spawn } from 'node:child_process';
 import { uploadFile, uploadTool } from '../plugins/ennoia/mcp/file-uploader.mjs';
 
 const server = new URL('../plugins/ennoia/mcp/file-uploader.mjs', import.meta.url);
+const manifest = JSON.parse(await readFile(new URL('../plugins/ennoia/plugin.json', import.meta.url), 'utf8'));
 const url = 'https://mcp.ennoia.so/rag/uploads/opaque-id_123';
 const token = 'secret-upload-token';
 async function fixture(t, name = 'document.pdf', bytes = Buffer.alloc(160000, 42)) {
@@ -62,7 +63,7 @@ test('stdio initializes, ignores notification, lists exact tool and returns safe
   assert.equal(replies.length, 4);
   assert.equal(replies[0].result.protocolVersion, '2025-03-26');
   assert.deepEqual(replies[0].result.capabilities, { tools: {} });
-  assert.deepEqual(replies[0].result.serverInfo, { name: 'ennoia-file-uploader', version: '1.4.4' });
+  assert.deepEqual(replies[0].result.serverInfo, { name: 'ennoia-file-uploader', version: manifest.version });
   const [tool] = replies[1].result.tools;
   assert.equal(tool.name, 'upload_ennoia_rag_file');
   assert.deepEqual(tool.inputSchema.required, ['local_path', 'upload_url', 'headers']);

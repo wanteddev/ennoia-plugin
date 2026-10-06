@@ -52,6 +52,16 @@ https://ennoia.so/studio/multi-agent/canvas?group={group_code}&project={project_
 
 예: “고객응대봇 초안을 저장했습니다. 실행 테스트는 진행 중입니다.” 뒤에 **에이전트 열기** 링크를 붙인다. 정상 응답에 필요한 정보가 모두 있으면 링크 생성을 위한 추가 tool 호출은 없다.
 
+## 개인 외부 도구 연결 오류
+
+배포된 에이전트의 실행 호출(`invoke_deployed_multi_agent`)이 `MCP_CONNECTION_REQUIRED`로 실패하면 “이 에이전트에 필요한 개인 외부 도구 연결을 확인할 수 없어 실행 테스트를 완료하지 못했습니다”처럼 쉽게 설명한다. Ennoia 로그인 자체의 만료나 모든 개인 MCP 실행의 불가로 확대하지 않는다. 연결 목록의 ACTIVE·catalog ready만으로 실제 호출 성공을 확정하지 않는다.
+
+`error.details.platform_url`이 있으면 **엔노이아에서 에이전트 열기**라는 클릭 가능한 Markdown 링크로 제공한다. `https://ennoia.so` 또는 `https://dev.ennoia.so`의 `/studio/multi-agent` 경로이며 `group`·`project` query만 있는 링크를 사용한다. 인증정보·추가 query·fragment가 있는 링크는 표시하지 않는다. 서버가 반환한 환경과 실제 대상을 유지하고 현재 기본 프로젝트나 저장용 canvas URL로 바꾸지 않는다. 링크가 없거나 허용 형식이 아니면 추측해 만들지 않는다.
+
+같은 계정으로 엔노이아에 로그인해 해당 프로젝트의 외부 도구 연결을 확인·갱신한 뒤 에이전트를 실행·테스트하도록 안내한다. 같은 호출 반복, 임의 사용자 ID·인증 header 생성, 직접 HTTP 우회 호출, 자동 연결 삭제·재배포로 해결하려 하지 않는다. 사용자가 연결 복구를 요청하면 Integrations Skill의 해당 개인 연결 절차를 따른다. `ENNOIA_REAUTH_REQUIRED`가 실제 반환된 경우에만 Ennoia MCP 로그인 복구로 구분한다.
+
+배포 상태와 실행 테스트 미완료를 구분해 보고한다. 배포 성공을 실제로 확인한 경우에만 배포 완료라고 안내하고, 연결 오류만으로 배포 상태를 추정하지 않는다. 실행 전 거절이면 Trace가 남지 않을 수 있으므로 Trace 부재만으로 에이전트 내부 오류를 단정하지 않는다. 이전 서버의 일반 `UPSTREAM_UNAVAILABLE`·502만으로 이 원인을 추정하거나 `platform_url`을 만들어 넣지 않는다. Plugin 업데이트만으로 backend의 사용자 ID 전달 기능 배포를 확정하지 않는다.
+
 ## 상태와 답변
 
 서로 다른 upstream domain의 한 글자 code를 섞어 해석하지 않는다. multi-agent `stage` D/P는 Draft/Published, 해당 deployment `status` W/R/D/F/S/E는 Waiting/Running/Deploying/Failed/Stop/Editing이다. RAG 파일 `status` W/R/C/F는 Waiting/Running/Complete/Failed이며 App `assistant_type` P/S/C/M은 Preset/System/Custom/Multi Agent이다. `*_label`이 있으면 raw code도 함께 보존한다. 새 label이 없는 이전 서버에서는 해당 domain의 code만 해석하고 모르는 값은 unknown으로 남긴다. Builder conversation의 BUILDING/COMPLETED/ARCHIVED는 runtime 실행 상태가 아니다.

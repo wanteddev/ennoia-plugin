@@ -1,0 +1,169 @@
+[
+  {
+    "id": "personal-invoke-success",
+    "prompt": "개인 외부 도구 연결을 쓰는 에이전트의 실행 결과를 알려줘.",
+    "observations": [
+      {
+        "tool": "invoke_deployed_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "content": "조회 결과 3건입니다.",
+            "finish_reason": "stop"
+          }
+        }
+      }
+    ],
+    "environment": "Only supplied synthetic observations are available. Do not call real tools or services. Read the applicable Skill and references, then write the final Korean response and any necessary next action. Envelopes are abbreviated fixtures, not complete API schemas."
+  },
+  {
+    "id": "connection-required-specified",
+    "prompt": "대상팀 분석 프로젝트에 배포와 실행 테스트가 끝났는지 알려줘. 기본 프로젝트는 바꾸지 마.",
+    "observations": [
+      {
+        "tool": "deploy_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "status": "R",
+            "deploy_version": 2
+          }
+        }
+      },
+      {
+        "tool": "invoke_deployed_multi_agent",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "MCP_CONNECTION_REQUIRED",
+            "retryable": false,
+            "details": {
+              "platform_url": "https://ennoia.so/studio/multi-agent?group=g-target&project=p-target"
+            }
+          },
+          "selection_context": {
+            "status": "selected",
+            "project": {
+              "group_code": "g-default",
+              "project_code": "p-default",
+              "group_name": "기본팀",
+              "project_name": "기본"
+            }
+          },
+          "project_context": {
+            "scope": "specified",
+            "projects": [
+              {
+                "group_code": "g-target",
+                "project_code": "p-target",
+                "group_name": "대상팀",
+                "project_name": "분석"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "environment": "Only supplied synthetic observations are available. Do not call real tools or services. Read the applicable Skill and references, then write the final Korean response and any necessary next action. Envelopes are abbreviated fixtures, not complete API schemas."
+  },
+  {
+    "id": "connection-required-dev",
+    "prompt": "개발 환경 실행 테스트가 실패했어. 어디서 확인하면 돼?",
+    "observations": [
+      {
+        "tool": "invoke_deployed_multi_agent",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "MCP_CONNECTION_REQUIRED",
+            "retryable": false,
+            "details": {
+              "platform_url": "https://dev.ennoia.so/studio/multi-agent?group=g-dev&project=p-dev"
+            }
+          }
+        }
+      }
+    ],
+    "environment": "Only supplied synthetic observations are available. Do not call real tools or services. Read the applicable Skill and references, then write the final Korean response and any necessary next action. Envelopes are abbreviated fixtures, not complete API schemas."
+  },
+  {
+    "id": "connection-required-no-link",
+    "prompt": "분석 프로젝트의 에이전트 실행 테스트가 실패했어. 다음에 뭘 하면 돼?",
+    "observations": [
+      {
+        "tool": "invoke_deployed_multi_agent",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "MCP_CONNECTION_REQUIRED",
+            "retryable": false
+          }
+        }
+      }
+    ],
+    "environment": "Only supplied synthetic observations are available. Do not call real tools or services. Read the applicable Skill and references, then write the final Korean response and any necessary next action. Envelopes are abbreviated fixtures, not complete API schemas."
+  },
+  {
+    "id": "connection-required-untrusted-link",
+    "prompt": "실행 테스트 결과와 확인할 곳을 알려줘.",
+    "observations": [
+      {
+        "tool": "invoke_deployed_multi_agent",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "MCP_CONNECTION_REQUIRED",
+            "retryable": false,
+            "details": {
+              "platform_url": "https://ennoia.so/studio/multi-agent?group=g-target&project=p-target&token=synthetic-secret-sentinel"
+            }
+          }
+        }
+      }
+    ],
+    "environment": "Only supplied synthetic observations are available. Do not call real tools or services. Read the applicable Skill and references, then write the final Korean response and any necessary next action. Envelopes are abbreviated fixtures, not complete API schemas."
+  },
+  {
+    "id": "linked-identity-mismatch",
+    "prompt": "개인 도구를 연결했는데 실행이 안 돼. 해결 방법을 알려줘.",
+    "observations": [
+      {
+        "tool": "invoke_deployed_multi_agent",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "ENNOIA_REAUTH_REQUIRED",
+            "retryable": false
+          }
+        }
+      }
+    ],
+    "environment": "Only supplied synthetic observations are available. Do not call real tools or services. Read the applicable Skill and references, then write the final Korean response and any necessary next action. Envelopes are abbreviated fixtures, not complete API schemas."
+  },
+  {
+    "id": "legacy-upstream-error",
+    "prompt": "실행이 실패하고 Trace도 없는데 원인이 뭐야? 다시 실행하지 마.",
+    "observations": [
+      {
+        "tool": "invoke_deployed_multi_agent",
+        "result": {
+          "ok": false,
+          "error": {
+            "code": "UPSTREAM_UNAVAILABLE"
+          },
+          "http_status": 502
+        }
+      },
+      {
+        "tool": "list_multi_agent_traces",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": []
+          }
+        }
+      }
+    ],
+    "environment": "Only supplied synthetic observations are available. Do not call real tools or services. Read the applicable Skill and references, then write the final Korean response and any necessary next action. Envelopes are abbreviated fixtures, not complete API schemas."
+  }
+]
