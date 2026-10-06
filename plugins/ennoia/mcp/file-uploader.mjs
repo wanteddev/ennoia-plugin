@@ -15,7 +15,7 @@ const UPLOAD_TIMEOUT_MS = 120000;
 const EXTENSIONS = new Set(['.csv', '.txt', '.md', '.pdf', '.docx', '.pptx', '.xlsx', '.xls', '.zip']);
 const HOSTS = new Set(['mcp.ennoia.so', 'dev-mcp-server.ennoia.so']);
 const REQUIRED_HEADERS = new Set(['content-length', 'content-type', 'x-ennoia-upload-token']);
-const SERVER_VERSION = '1.4.4';
+const SERVER_VERSION = '1.5.0';
 const ERROR_DETAILS = Object.freeze({
   ARGUMENTS_INVALID: ['업로드 인자 형식이 올바르지 않습니다.', 'local_path, upload_url, headers만 전달하세요.'],
   UPLOAD_URL_INVALID: ['업로드 URL을 사용할 수 없습니다.', 'prepare_rag_document_upload로 새 upload ticket을 발급하세요.'],

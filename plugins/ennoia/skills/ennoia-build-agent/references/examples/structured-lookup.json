@@ -1,0 +1,81 @@
+{
+  "nodes": [
+    {"id": "start", "agentConfig": {"type": "start"}},
+    {
+      "id": "extract-query",
+      "agentConfig": {
+        "type": "agent",
+        "metadata": {"name": "검색어 추출"},
+        "system_prompt": "사용자가 찾으려는 정보의 검색어를 query로 반환합니다. 검색 대상을 알 수 없으면 빈 문자열을 반환합니다. 검색하거나 답을 만들지 않습니다.",
+        "llmConfig": {"model": "MODEL_FROM_DISCOVERY"},
+        "nodeSpec": {
+          "agentNodeSpec": {
+            "responseJsonSchema": {
+              "title": "SearchQuery",
+              "type": "object",
+              "properties": {"query": {"type": "string"}},
+              "required": ["query"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "route",
+      "agentConfig": {
+        "type": "conditional",
+        "nodeSpec": {
+          "conditionalNodeSpec": {
+            "branches": [
+              {"expression": "has(node_outputs['extract-query'].query) && node_outputs['extract-query'].query.matches('.*\\S.*')", "target_node": "lookup"}
+            ],
+            "default_target": "clarify"
+          }
+        }
+      }
+    },
+    {
+      "id": "lookup",
+      "agentConfig": {
+        "type": "mcp",
+        "nodeSpec": {
+          "mcpNodeSpec": {
+            "serverId": "SERVER_ID_FROM_DISCOVERY",
+            "serverAlias": "SERVER_ALIAS_FROM_DISCOVERY",
+            "toolName": "TOOL_NAME_FROM_DISCOVERY",
+            "inputMapping": {
+              "query": {"value": "node_outputs['extract-query'].query", "isExpression": true, "isRequired": true}
+            },
+            "requireApproval": false
+          }
+        }
+      }
+    },
+    {
+      "id": "answer",
+      "agentConfig": {
+        "type": "agent",
+        "metadata": {"name": "검색 결과 답변"},
+        "system_prompt": "대화에 전달된 검색 결과로 사용자 질문에 답합니다. 결과가 없으면 찾지 못했다고 알리고, 출처가 확인된 경우에만 출처를 제시합니다. 근거가 없는 내용을 만들지 않습니다.",
+        "llmConfig": {"model": "MODEL_FROM_DISCOVERY"}
+      }
+    },
+    {
+      "id": "clarify",
+      "agentConfig": {
+        "type": "agent",
+        "metadata": {"name": "검색 대상 확인"},
+        "system_prompt": "검색할 대상을 알 수 없습니다. 사용자에게 찾으려는 정보만 짧게 확인합니다. 검색했다고 말하지 않습니다.",
+        "llmConfig": {"model": "MODEL_FROM_DISCOVERY"}
+      }
+    }
+  ],
+  "edges": [
+    {"id": "start-extract", "source": "start", "target": "extract-query"},
+    {"id": "extract-route", "source": "extract-query", "target": "route"},
+    {"id": "route-lookup", "source": "route", "target": "lookup"},
+    {"id": "route-clarify", "source": "route", "target": "clarify"},
+    {"id": "lookup-answer", "source": "lookup", "target": "answer"}
+  ]
+}

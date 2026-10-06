@@ -1,0 +1,56 @@
+[
+  {
+    "id": "single-role-with-retrieval",
+    "prompt": "사내 규정 질문에 문서 근거를 찾아 답하는 에이전트를 만들어줘. 질문마다 필요한 검색어를 정하고, 근거가 없으면 모른다고 답하면 돼. model-alpha를 써줘.",
+    "observations": [{"tool": "list_multi_agent_rag_collections", "result": {"ok": true, "data": {"items": [{"collection_code": "policies-code", "collection_name": "policies-index", "display_name": "사내 규정"}]}}}],
+    "environment": "설계 판단용 합성 입력이다. 실제 도구는 호출하지 않는다. 사용자가 선택한 데모팀 / 설계 프로젝트와 model-alpha의 사용 가능 여부는 확인했다. 규정 컬렉션의 문서는 처리 완료됐다. Node 상세 schema는 아직 조회하지 않았다. observations는 축약된 조회 결과다."
+  },
+  {
+    "id": "fixed-order-complex-task",
+    "prompt": "복잡한 보고서 작성 업무야. 제공한 자료에서 초안을 쓰고, 별도 검토 역할이 빠진 내용을 보완해 최종 보고서를 내도록 만들어줘. 반드시 이 순서로 각각 한 번 실행하고 model-alpha를 유지해줘.",
+    "observations": [],
+    "environment": "설계 판단용 합성 입력이다. 실제 도구는 호출하지 않는다. 데모팀 / 설계 프로젝트는 사용자가 선택했다. model-alpha는 사용 가능하다. 외부 검색이나 도구 호출은 필요 없다. 아직 graph를 작성하지 않았다."
+  },
+  {
+    "id": "dynamic-role-routing",
+    "prompt": "환불 규정 설명 담당, 배송 조회 담당, 계정 안내 담당이 있어. 문의와 앞선 담당자의 답변을 보고 필요한 다음 담당자에게 넘기거나 끝내는 도우미를 설계해줘. 항상 세 담당자를 모두 호출하지는 않아. model-alpha를 써줘.",
+    "observations": [],
+    "environment": "설계 판단용 합성 입력이다. 실제 도구는 호출하지 않는다. 데모팀 / 설계 프로젝트는 사용자가 선택했다. model-alpha는 사용 가능하다. 역할은 새 graph 안에 정의할 예정이며 기존 배포 App을 호출하는 요청은 아니다. 배송 조회 자원은 아직 발견하지 않았다."
+  },
+  {
+    "id": "adaptive-delegation",
+    "prompt": "제공한 자료로 연구 가설을 분석하는 도우미를 만들어줘. 분석 중 새 쟁점이 생기면 계획을 고쳐서 자료 분석 역할과 반론 검토 역할에 필요한 작업을 나눠 맡기고, 충분한 근거가 모이면 종합해줘. 고정된 순서는 필요 없어. model-alpha를 써줘.",
+    "observations": [{"tool": "get_multi_agent_node_schema", "result": {"ok": true, "data": {"type": "superagent", "test_supported": false, "constraints": ["start 1개에서 superagent 1개로 연결하고, superagent에서 agent leaf로 위임합니다.", "start/end/agent/superagent만 사용하며 regular graph의 routing/control node와 혼합하지 않습니다."]}}}],
+    "environment": "설계 판단용 합성 입력이다. 실제 도구는 호출하지 않는다. 데모팀 / 설계 프로젝트는 사용자가 선택했다. model-alpha는 사용 가능하다. 외부 자료 검색은 요청하지 않았다. Node 결과는 구조와 테스트 지원에 관한 축약 응답이며 실제 작성 전 상세 schema를 확인해야 한다."
+  },
+  {
+    "id": "structured-tool-handoff",
+    "prompt": "질문에서 검색어를 추출한 다음, 검색어가 있으면 조회 도구를 호출해 답하고 없으면 검색 대상을 물어보는 에이전트를 만들어줘. model-alpha로 해줘.",
+    "observations": [{"tool": "get_multi_agent_mcp_tool_schema", "result": {"ok": true, "data": {"server_id": "server-demo", "server_alias": "docs", "tool_name": "search", "read_only": true, "availability": "ready", "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}}}}],
+    "environment": "설계 판단용 합성 입력이다. 실제 도구는 호출하지 않는다. 데모팀 / 설계 프로젝트는 사용자가 선택했다. model-alpha는 사용 가능하다. search 도구는 안전 테스트에서 허용되는 credential과 readOnlyHint를 가진 fixture다. agent schema에는 nodeSpec.agentNodeSpec.responseJsonSchema가 있다. observations는 축약된 조회 결과다."
+  },
+  {
+    "id": "bounded-quality-loop",
+    "prompt": "제공한 글을 개선하고 기준을 통과했는지 판정해줘. 판정은 quality_ok라는 boolean이어야 하고, 최대 세 번만 개선해야 해. 통과하거나 세 번이 끝나면 최종 글과 판정 결과를 반환하는 에이전트를 만들어줘. model-alpha를 써줘.",
+    "observations": [],
+    "environment": "설계 판단용 합성 입력이다. 실제 도구는 호출하지 않는다. 데모팀 / 설계 프로젝트는 사용자가 선택했다. model-alpha는 사용 가능하다. 현재 schema는 while의 parentId 본문 그룹, maxIterations, start의 stateConfigs, agent의 responseJsonSchema를 제공한다."
+  },
+  {
+    "id": "approval-before-write",
+    "prompt": "문서에서 메시지 초안을 만든 뒤 내가 승인한 경우에만 전송하고, 거절하면 끝나는 에이전트를 설계해줘. 초안은 model-alpha를 써줘. 우선 설계와 검증까지만 해줘.",
+    "observations": [{"tool": "get_multi_agent_mcp_tool_schema", "result": {"ok": true, "data": {"tool_name": "send", "read_only": false, "input_schema": {"type": "object", "properties": {"body": {"type": "string"}}, "required": ["body"]}}}}],
+    "environment": "설계 판단용 합성 입력이다. 실제 도구는 호출하지 않는다. 데모팀 / 설계 프로젝트는 사용자가 선택했다. model-alpha는 사용 가능하다. 일반 graph에 userApproval이 있으며, MCP 안전 테스트는 write 도구를 실행하지 않는다. observations는 전송 도구 계약의 축약 결과다."
+  },
+  {
+    "id": "legacy-output-contract-gap",
+    "prompt": "판정 agent의 quality_ok 필드가 true일 때만 다음 단계로 가도록 만들어줘. 기계가 읽을 수 있는 boolean 출력이 반드시 필요하고 model-alpha를 써야 해.",
+    "observations": [{"tool": "get_multi_agent_node_schema", "result": {"ok": true, "data": {"type": "agent", "required_paths": ["agentConfig.type", "agentConfig.metadata.name", "agentConfig.system_prompt", "agentConfig.llmConfig.model"], "input_schema": {"type": "object", "properties": {"id": {"type": "string"}, "agentConfig": {"type": "object", "additionalProperties": false, "required": ["type"], "properties": {"type": {"const": "agent"}, "metadata": {"type": "object"}, "system_prompt": {"type": "string"}, "llmConfig": {"type": "object"}}}}}}}}],
+    "environment": "설계 판단용 합성 입력이다. 실제 도구는 호출하지 않는다. 데모팀 / 설계 프로젝트는 사용자가 선택했다. model-alpha는 사용 가능하다. 조회된 구 schema에는 nodeSpec이 없으며 additionalProperties=false다. 현재 backend가 이 필드를 실제로 지원하는지 추가 증거는 없다."
+  },
+  {
+    "id": "explicit-superagent-with-control-node",
+    "prompt": "SuperAgent로 만들어줘. 그런데 승인 node를 SuperAgent와 두 전문 agent 사이에 끼워 넣어서 매번 승인해야만 위임하도록 해줘. 모델은 model-alpha로 고정이야.",
+    "observations": [{"tool": "get_multi_agent_node_schema", "result": {"ok": true, "data": {"type": "superagent", "test_supported": false, "constraints": ["start/end/agent/superagent만 사용하며 regular graph의 routing/control node와 혼합하지 않습니다.", "agent leaf에는 나가는 edge가 없어야 합니다."]}}}],
+    "environment": "설계 판단용 합성 입력이다. 실제 도구는 호출하지 않는다. 데모팀 / 설계 프로젝트는 사용자가 선택했다. model-alpha는 사용 가능하다. 사용자 지정 구조와 현재 지원 범위를 바꾸는 추가 승인은 없다."
+  }
+]
