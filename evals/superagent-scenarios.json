@@ -1,0 +1,263 @@
+[
+  {
+    "id": "structure-only-save",
+    "prompt": "업무 도우미를 테스트 가능한 범위에서 확인하고 초안으로 저장해줘. 배포는 하지 마.",
+    "observations": [
+      {
+        "tool": "validate_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "valid": true,
+            "validation_id": "validation_fixture_superagent_1234",
+            "contract_version": "ennoia.multi-agent.v1",
+            "schema_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "capabilities_version": "fixture-cap-v1",
+            "warnings": [
+              {
+                "code": "SUPERAGENT_STRUCTURE_ONLY",
+                "message": "SuperAgent는 구조와 설정만 검증하며 실제 runtime build 및 실행은 확인하지 않습니다.",
+                "source": "orchestrator",
+                "repair_hint": "검증 성공 시 save_multi_agent로 저장할 수 있지만 test_multi_agent는 지원하지 않습니다."
+              },
+              {
+                "code": "TEST_NODE_UNSUPPORTED",
+                "message": "초기 test_multi_agent는 superagent node를 지원하지 않습니다.",
+                "source": "execution_policy",
+                "node_id": "super"
+              }
+            ],
+            "violations": []
+          }
+        }
+      }
+    ],
+    "environment": "합성 판단 평가이며 실제 tool을 호출하지 않는다. 사용자가 선택한 데모팀 / 검증 프로젝트와 scope(group-demo/project-demo)는 확인됐다. 원본 graph는 start 1개, superagent 1개, 서로 이름이 다른 agent leaf 4개와 edge 5개다. 모델 model-alpha와 graph는 유지한다. create 저장 이름은 업무 도우미다. 저장 요청 schema는 request(operation=create, name, operation_id UUID, validation_id 또는 nodes/edges, contract_version, schema_hash, capabilities_version), project_scope다. Tool result는 합성된 축약 응답이며 실제 운영 데이터가 아니다."
+  },
+  {
+    "id": "test-pass-required",
+    "prompt": "업무 도우미는 안전 테스트가 성공한 경우에만 저장해줘. 테스트를 건너뛰고 저장하면 안 돼.",
+    "observations": [
+      {
+        "tool": "get_multi_agent_node_schema",
+        "result": {
+          "ok": true,
+          "data": {
+            "type": "superagent",
+            "test_supported": false
+          }
+        }
+      },
+      {
+        "tool": "validate_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "valid": true,
+            "validation_id": "validation_fixture_superagent_1234",
+            "contract_version": "ennoia.multi-agent.v1",
+            "schema_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "capabilities_version": "fixture-cap-v1",
+            "warnings": [
+              {
+                "code": "SUPERAGENT_STRUCTURE_ONLY",
+                "message": "SuperAgent는 구조와 설정만 검증하며 실제 runtime build 및 실행은 확인하지 않습니다.",
+                "source": "orchestrator",
+                "repair_hint": "검증 성공 시 save_multi_agent로 저장할 수 있지만 test_multi_agent는 지원하지 않습니다."
+              },
+              {
+                "code": "TEST_NODE_UNSUPPORTED",
+                "message": "초기 test_multi_agent는 superagent node를 지원하지 않습니다.",
+                "source": "execution_policy",
+                "node_id": "super"
+              }
+            ],
+            "violations": []
+          }
+        }
+      }
+    ],
+    "environment": "합성 판단 평가이며 실제 tool을 호출하지 않는다. 사용자가 선택한 데모팀 / 검증 프로젝트와 scope(group-demo/project-demo)는 확인됐다. 원본 graph는 start 1개, superagent 1개, 서로 이름이 다른 agent leaf 4개와 edge 5개다. 모델 model-alpha와 graph는 유지한다. create 저장 이름은 업무 도우미다. 저장 요청 schema는 request(operation=create, name, operation_id UUID, validation_id 또는 nodes/edges, contract_version, schema_hash, capabilities_version), project_scope다. Tool result는 합성된 축약 응답이며 실제 운영 데이터가 아니다."
+  },
+  {
+    "id": "schema-test-unsupported",
+    "prompt": "전문 agent 4개를 쓰는 SuperAgent 업무 도우미를 만들어 가능한 범위까지 확인하고 저장해줘.",
+    "observations": [
+      {
+        "tool": "get_multi_agent_node_schema",
+        "result": {
+          "ok": true,
+          "data": {
+            "type": "superagent",
+            "test_supported": false,
+            "constraints": [
+              "start에서 superagent로 진입하고 superagent에서 agent leaf로 위임합니다."
+            ],
+            "required_paths": [
+              "agentConfig.metadata.name",
+              "agentConfig.system_prompt",
+              "agentConfig.llmConfig.model"
+            ]
+          }
+        }
+      }
+    ],
+    "environment": "합성 판단 평가이며 실제 tool을 호출하지 않는다. 사용자가 선택한 데모팀 / 검증 프로젝트와 scope(group-demo/project-demo)는 확인됐다. 원본 graph는 start 1개, superagent 1개, 서로 이름이 다른 agent leaf 4개와 edge 5개다. 모델 model-alpha와 graph는 유지한다. create 저장 이름은 업무 도우미다. 저장 요청 schema는 request(operation=create, name, operation_id UUID, validation_id 또는 nodes/edges, contract_version, schema_hash, capabilities_version), project_scope다. Tool result는 합성된 축약 응답이며 실제 운영 데이터가 아니다. 원본 graph를 작성했고 아직 validate/test/save는 호출하지 않았다."
+  },
+  {
+    "id": "legacy-compile-rejection",
+    "prompt": "업무 도우미 저장까지 끝내줘. 모델과 SuperAgent 구성은 유지해줘.",
+    "observations": [
+      {
+        "tool": "get_multi_agent_node_schema",
+        "result": {
+          "ok": true,
+          "data": {
+            "type": "superagent",
+            "test_supported": false
+          }
+        }
+      },
+      {
+        "tool": "validate_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "valid": false,
+            "validation_id": null,
+            "graph": null,
+            "violations": [
+              {
+                "code": "COMPILE_FAILED",
+                "message": "LangGraph 컴파일 실패: GraphBuildError",
+                "source": "mab_compile",
+                "repair_hint": "알 수 없는 노드 타입: superagent"
+              }
+            ],
+            "warnings": [
+              {
+                "code": "TEST_NODE_UNSUPPORTED",
+                "message": "초기 test_multi_agent는 superagent node를 지원하지 않습니다.",
+                "source": "execution_policy"
+              }
+            ],
+            "mab_version": "0.9.140"
+          }
+        }
+      }
+    ],
+    "environment": "합성 판단 평가이며 실제 tool을 호출하지 않는다. 사용자가 선택한 데모팀 / 검증 프로젝트와 scope(group-demo/project-demo)는 확인됐다. 원본 graph는 start 1개, superagent 1개, 서로 이름이 다른 agent leaf 4개와 edge 5개다. 모델 model-alpha와 graph는 유지한다. create 저장 이름은 업무 도우미다. 저장 요청 schema는 request(operation=create, name, operation_id UUID, validation_id 또는 nodes/edges, contract_version, schema_hash, capabilities_version), project_scope다. Tool result는 합성된 축약 응답이며 실제 운영 데이터가 아니다. node discovery에도 superagent가 있다. 배포된 backend revision은 확인되지 않았다."
+  },
+  {
+    "id": "invalid-graph-with-structure-warning",
+    "prompt": "이 업무 도우미 초안을 검증하고 저장해줘.",
+    "observations": [
+      {
+        "tool": "validate_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "valid": false,
+            "validation_id": null,
+            "contract_version": "ennoia.multi-agent.v1",
+            "schema_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "capabilities_version": "fixture-cap-v1",
+            "warnings": [
+              {
+                "code": "SUPERAGENT_STRUCTURE_ONLY",
+                "message": "SuperAgent는 구조와 설정만 검증하며 실제 runtime build 및 실행은 확인하지 않습니다.",
+                "source": "orchestrator",
+                "repair_hint": "검증 성공 시 save_multi_agent로 저장할 수 있지만 test_multi_agent는 지원하지 않습니다."
+              },
+              {
+                "code": "TEST_NODE_UNSUPPORTED",
+                "message": "초기 test_multi_agent는 superagent node를 지원하지 않습니다.",
+                "source": "execution_policy",
+                "node_id": "super"
+              }
+            ],
+            "violations": [
+              {
+                "code": "SUPERAGENT_CONFIG_INVALID",
+                "message": "동일한 이름의 sub-agent 위임 대상이 중복됩니다.",
+                "source": "orchestrator",
+                "node_id": "agent-1",
+                "repair_hint": "하위 agent의 metadata.name을 다르게 지정하고 동일 agent로 향하는 중복 edge를 제거하세요."
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "environment": "합성 판단 평가이며 실제 tool을 호출하지 않는다. 사용자가 선택한 데모팀 / 검증 프로젝트와 scope(group-demo/project-demo)는 확인됐다. 모델 model-alpha와 관련 없는 graph 설정은 유지한다. create 저장 이름은 업무 도우미다. 저장 요청 schema는 request(operation=create, name, operation_id UUID, validation_id 또는 nodes/edges, contract_version, schema_hash, capabilities_version), project_scope다. Tool result는 합성된 축약 응답이며 실제 운영 데이터가 아니다. 원본 graph는 start 1개, superagent 1개, agent leaf 4개와 edge 5개다. 이 graph에서 agent-0과 agent-1의 metadata.name은 모두 검토자다. 이름은 사용자가 고정하지 않았다."
+  },
+  {
+    "id": "regular-agent-test",
+    "prompt": "이 일반 에이전트는 안전 테스트가 성공하면 저장해줘.",
+    "observations": [
+      {
+        "tool": "get_multi_agent_node_schema",
+        "result": {
+          "ok": true,
+          "data": {
+            "type": "agent",
+            "test_supported": true
+          }
+        }
+      },
+      {
+        "tool": "validate_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "valid": true,
+            "validation_id": "validation_fixture_regular_123456",
+            "contract_version": "ennoia.multi-agent.v1",
+            "schema_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "capabilities_version": "fixture-cap-v1",
+            "warnings": [],
+            "violations": []
+          }
+        }
+      }
+    ],
+    "environment": "합성 판단 평가이며 실제 tool을 호출하지 않는다. 사용자가 선택한 데모팀 / 검증 프로젝트와 scope(group-demo/project-demo)는 확인됐다. 모델 model-alpha와 graph는 유지한다. create 저장 이름은 업무 도우미다. 저장 요청 schema는 request(operation=create, name, operation_id UUID, validation_id 또는 nodes/edges, contract_version, schema_hash, capabilities_version), project_scope다. Tool result는 합성된 축약 응답이며 실제 운영 데이터가 아니다. 이 case의 graph는 start → agent 두 node의 짧은 일반 graph이며 superagent는 없다. test_multi_agent input schema는 nodes, edges, input, allow_side_effects=false, project_scope다. 원본 nodes/edges와 테스트 입력 안녕하세요는 확보했다."
+  },
+  {
+    "id": "missing-test-supported",
+    "prompt": "기존 일반 에이전트 초안을 짧게 안전 테스트해줘. 저장은 하지 마.",
+    "observations": [
+      {
+        "tool": "get_multi_agent_node_schema",
+        "result": {
+          "ok": true,
+          "data": {
+            "type": "agent",
+            "required_paths": [
+              "agentConfig.type",
+              "agentConfig.metadata.name",
+              "agentConfig.system_prompt",
+              "agentConfig.llmConfig.model"
+            ]
+          }
+        }
+      },
+      {
+        "tool": "validate_multi_agent",
+        "result": {
+          "ok": true,
+          "data": {
+            "valid": true,
+            "validation_id": "validation_fixture_regular_123456",
+            "contract_version": "ennoia.multi-agent.v1",
+            "schema_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "capabilities_version": "fixture-cap-v1",
+            "warnings": [],
+            "violations": []
+          }
+        }
+      }
+    ],
+    "environment": "합성 판단 평가이며 실제 tool을 호출하지 않는다. 사용자가 선택한 데모팀 / 검증 프로젝트와 scope(group-demo/project-demo)는 확인됐다. 모델 model-alpha와 graph는 유지한다. create 저장 이름은 업무 도우미다. 저장 요청 schema는 request(operation=create, name, operation_id UUID, validation_id 또는 nodes/edges, contract_version, schema_hash, capabilities_version), project_scope다. Tool result는 합성된 축약 응답이며 실제 운영 데이터가 아니다. 이 case는 이전 서버의 짧은 start → agent 일반 graph다. schema에 test_supported field가 없다. test_multi_agent 도구와 nodes, edges, input, allow_side_effects=false, project_scope 인자는 실제 host schema에 노출되어 있다. 원본 nodes/edges 및 테스트 입력 안녕하세요를 확보했다."
+  }
+]

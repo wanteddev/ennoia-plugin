@@ -1,5 +1,11 @@
 # Skill 동작 평가
 
+## SuperAgent 검증·테스트·저장
+
+[`superagent-scenarios.json`](superagent-scenarios.json)은 구조 검증 후 저장, 테스트 성공 조건, 테스트 미지원, discovery/compile 지원 불일치, 실제 graph 오류, 일반 graph 및 이전 schema의 7개 합성 입력이다. 평가자는 입력과 해당 arm의 Skill/reference만 읽고 다음 행동과 사용자 답변을 작성한 뒤 [별도 기준](superagent-rubric.md)으로 판정한다. 실제 Ennoia 호출·저장·배포·LLM 실행은 포함하지 않으며, 기존 arm도 처리한 사례는 개선으로 계산하지 않는다.
+
+[2026-10-03 평가 결과](2026-10-03-superagent-summary.md)는 control·기존 Skill·후보 Skill의 판단과 표본·검증 한계를 기록한다.
+
 ## 개인 MCP 연결과 배포된 에이전트 실행
 
 [`mcp-invocation-scenarios.json`](mcp-invocation-scenarios.json)은 정상 실행, 지정 대상·개발 환경의 연결 실패, 링크 부재·부적합, 계정 불일치, 이전 서버 오류를 다룹니다. 입력만 제공한 뒤 별도 [평가 기준](mcp-invocation-rubric.md)으로 판정합니다. 합성 fixture이며 실제 모델 평가·외부 MCP 실행·native host 검증 결과를 포함하지 않습니다.
