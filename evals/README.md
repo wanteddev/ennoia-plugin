@@ -1,5 +1,9 @@
 # Skill 동작 평가
 
+## 개인 MCP 연결과 배포된 에이전트 실행
+
+[`mcp-invocation-scenarios.json`](mcp-invocation-scenarios.json)은 정상 실행, 지정 대상·개발 환경의 연결 실패, 링크 부재·부적합, 계정 불일치, 이전 서버 오류를 다룹니다. 입력만 제공한 뒤 별도 [평가 기준](mcp-invocation-rubric.md)으로 판정합니다. 합성 fixture이며 실제 모델 평가·외부 MCP 실행·native host 검증 결과를 포함하지 않습니다.
+
 ## 제품 피드백
 
 `feedback-scenarios.json`은 명시 의견, 자동 오류·UX 제안, 민감정보 전송 지시, timeout, 제보 거부, 이전 서버와 인증 실패의 9개 합성 입력입니다. 평가자에게 입력만 제공하고 [별도 rubric](feedback-rubric.md)으로 판정합니다. [후보 1.2.0 평가](2026-09-16-feedback-summary.md)는 합성 판단이며 실제 GitHub 접수·native host 검증과 구분합니다.
