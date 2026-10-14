@@ -11,7 +11,7 @@ description: "Ennoia multi-agent를 새로 만들거나 기존 graph·draft를 �
 
 ## 대상과 입력
 
-설치된 Ennoia MCP tool을 이름으로 발견하고 현재 연결의 input schema를 따른다. 이미 확인한 현재 project scope는 재사용하고, 없을 때 `get_current_ennoia_project`로 대상 이름을 확인한다. `auto_selected`이면 생성·실행·저장 전에 사용자 선택을 확보한다. 이미 지정된 대상·모델·기존 설정은 유지한다. 기존 수정의 ID가 이미 확인됐으면 그대로 사용한다. 없을 때만 `list_multi_agents`로 검색한다. `get_multi_agent`에 `format=agent_config`가 실제 input schema에 있을 때 그 형식으로 조회한다. 없는 이전 schema에는 `format`을 보내지 않는다. 현 upstream의 `CANONICAL_GRAPH_UNAVAILABLE`/`details.reason=revision_not_supported`는 canonical edit revision·CAS 부재를 뜻한다. 손실된 Canvas에서 nodes/edges를 자동 재구성하거나 대체 에이전트를 생성하지 않는다. 안전한 원본 graph/export가 없으면 확인 가능한 설정만 제시하고 수정은 제한한다. 필요한 입력만 사용자에게 확인한다.
+설치된 Ennoia MCP tool을 이름으로 발견하고 현재 연결의 input schema를 따른다. 이미 확인한 현재 project scope는 재사용하고, 없을 때 `get_current_ennoia_project`로 대상 이름을 확인한다. `auto_selected`이면 생성·실행·저장 전에 사용자 선택을 확보한다. 이미 지정된 대상·모델·기존 설정은 유지한다. 기존 수정의 ID가 이미 확인됐으면 그대로 사용한다. 없을 때만 `list_multi_agents`로 검색한다. 기존 Canvas의 노드 프롬프트만 바꿀 때는 `get_multi_agent_node_prompts`와 `update_multi_agent_node_prompts`가 현재 host에 있는지 먼저 확인하고, 두 도구가 있으면 [노드 프롬프트 편집](references/node-prompt-editing.md)을 따른다. 이 경로는 아래 전체 graph 재구성·검증·`save_multi_agent` 절차를 사용하지 않는다. 전체 graph·흐름을 수정할 때는 `get_multi_agent`에 `format=agent_config`가 실제 input schema에 있을 때 그 형식으로 조회한다. 없는 이전 schema에는 `format`을 보내지 않는다. 현 upstream의 `CANONICAL_GRAPH_UNAVAILABLE`/`details.reason=revision_not_supported`는 canonical edit revision·CAS 부재를 뜻한다. 손실된 Canvas에서 nodes/edges를 자동 재구성하거나 대체 에이전트를 생성하지 않는다. 안전한 원본 graph/export가 없으면 확인 가능한 설정만 제시하고 수정은 제한한다. 필요한 입력만 사용자에게 확인한다.
 
 ## 필요한 것만 발견
 
