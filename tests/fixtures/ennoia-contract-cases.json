@@ -1,0 +1,245 @@
+[
+  {
+    "tool": "start_ennoia_conversation",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "message": "문서 조사",
+        "auto_select": true,
+        "wait_timeout_seconds": 0
+      }
+    }
+  },
+  {
+    "tool": "start_ennoia_conversation",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "group_code": "fixture-group",
+        "project_code": "fixture-project",
+        "conversation_id": "fixture-conversation",
+        "status": "pending",
+        "recovery_action": "check_acceptance"
+      }
+    }
+  },
+  {
+    "tool": "continue_ennoia_conversation",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "conversation_id": "fixture-conversation",
+        "message": "계속",
+        "wait_timeout_seconds": 0
+      }
+    }
+  },
+  {
+    "tool": "continue_ennoia_conversation",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "group_code": "fixture-group",
+        "project_code": "fixture-project",
+        "conversation_id": "fixture-conversation",
+        "status": "pending",
+        "recovery_action": "read_result"
+      }
+    }
+  },
+  {
+    "tool": "get_ennoia_conversation",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "conversation_id": "fixture-conversation",
+        "view": "messages",
+        "limit": 10
+      }
+    }
+  },
+  {
+    "tool": "get_ennoia_conversation",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "group_code": "fixture-group",
+        "project_code": "fixture-project",
+        "conversation_id": "fixture-conversation",
+        "view": "messages",
+        "execution_status": "awaiting_input",
+        "has_more": true,
+        "next_cursor": null,
+        "messages": []
+      }
+    }
+  },
+  {
+    "tool": "chat_with_ennoia_app",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "assistant_hash": "fixture-app",
+        "conversation_id": "fixture-conversation",
+        "message": "계속"
+      }
+    }
+  },
+  {
+    "tool": "chat_with_ennoia_app",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "group_code": "fixture-group",
+        "project_code": "fixture-project",
+        "conversation_id": "fixture-conversation",
+        "assistant_hash": "fixture-app",
+        "status": "pending"
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_node_prompts",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 1
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_node_prompts",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "group_code": "fixture-group",
+        "project_code": "fixture-project",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 1,
+        "canvas_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "nodes": [
+          {
+            "node_id": "node-1",
+            "node_type": "agent",
+            "system_prompt": "기존 지시",
+            "editable": false,
+            "unsupported_reason": "legacy_model_profile_mismatch"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_prompts",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "multi_agent_id": "fixture-agent",
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "expected_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "updates": [
+          {
+            "node_id": "node-1",
+            "system_prompt": "새 지시"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_prompts",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "group_code": "fixture-group",
+        "project_code": "fixture-project",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 1,
+        "canvas_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "changed_node_ids": [
+          "node-1"
+        ],
+        "migrated_node_ids": []
+      }
+    }
+  },
+  {
+    "tool": "get_ennoia_conversation",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "conversation_id": "fixture-conversation",
+        "view": "invented"
+      }
+    }
+  },
+  {
+    "tool": "continue_ennoia_conversation",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "conversation_id": "fixture-conversation",
+        "message": "계속",
+        "reasoningEffort": "high"
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_prompts",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "multi_agent_id": "fixture-agent",
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "updates": [
+          {
+            "node_id": "node-1",
+            "system_prompt": "새 지시"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_node_prompts",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "group_code": "fixture-group",
+        "project_code": "fixture-project",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 1,
+        "canvas_revision": "not-a-revision",
+        "nodes": []
+      }
+    }
+  }
+]

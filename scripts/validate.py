@@ -3,9 +3,15 @@
 
 import json
 import re
+import sys
 from pathlib import Path
 
 import yaml
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from scripts.validate_contracts import validate_repository_contracts
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOL_PATTERN = re.compile(r"`((?:get|set|list|create|update|delete|clone|rename|share|start|continue|stop|deploy|invoke|add|connect|disconnect|import|upload|prepare|retry|validate|test|save|switch|logout)_[a-z_]+)`")
@@ -86,6 +92,7 @@ def validate_repository(root: Path) -> list[str]:
                 errors.append("marketplace 설치·인증 policy 오류")
 
         tools = set(read_json(root / "tests/fixtures/ennoia-tools.json")["tools"])
+        errors.extend(validate_repository_contracts(root))
         # Remote tool fixture는 유지하고 plugin이 제공하는 local tool을 추가한다.
         tools.add("upload_ennoia_rag_file")
         skills = sorted((plugin / "skills").glob("*/SKILL.md"))

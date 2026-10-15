@@ -13,6 +13,8 @@ Tool input schema가 최종 기준이다. 아래 내용은 Ennoia에서 혼동�
 
 컬렉션 표시 이름, collection code, 검색 index name은 서로 교환하지 않는다. 모델 이름이나 provider를 임의로 보정하지 않는다. 사용자가 고른 모델이 현재 project에서 실행 불가하면 이유를 설명하고 대체 선택을 요청한다.
 
+Skill·Plugin은 Ennoia에 설치된 자원과 이 host에 설치한 Ennoia Plugin 패키지를 구분한다. 현재 discovery와 node schema에 실제 자원 조회·선택 계약이 있을 때만 연결한다. 이름을 ID처럼 넣거나 다른 서버의 Marketplace 도구를 Ennoia tool로 간주하지 않는다. Skill 작성·게시 기능은 환경의 활성화·인증 지원이 확인된 경우에만 안내하며, 서버 버전만으로 기본 활성화됐다고 가정하지 않는다.
+
 목록의 `collection_name`이 null이면 선택한 `collection_code`로 `get_rag_collection`을 조회한다. 단건에도 index 이름이 없다면 RAG 연결은 아직 확인되지 않았다. 표시 이름이나 code로 index 이름을 합성하지 않는다.
 
 현재 graph는 `nodes`와 `edges`로 구성된다. Node의 설정은 `agentConfig`에 있으며 type마다 필요한 field가 다르다. 기억한 `type`, `config` 모양을 임의로 넣지 말고 node schema의 예제를 사용한다. Edge도 조회한 schema를 따른다.

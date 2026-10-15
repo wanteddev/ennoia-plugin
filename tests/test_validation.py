@@ -3,6 +3,8 @@
 import importlib.util
 import json
 import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -24,6 +26,45 @@ class ValidationTests(unittest.TestCase):
 
     def test_valid_repository(self):
         self.assertEqual(self.validate(self.root), [])
+
+    def test_validator_runs_as_a_script_outside_repo(self):
+        result = subprocess.run(
+            [sys.executable, str(self.root / "scripts/validate.py")],
+            cwd=self.temp.name, capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def mutate_contract(self, change):
+        path = self.root / "tests/fixtures/ennoia-tool-contracts.json"
+        catalog = json.loads(path.read_text())
+        change(catalog)
+        path.write_text(json.dumps(catalog))
+
+    def test_tool_name_alone_does_not_satisfy_prompt_editing_contract(self):
+        def remove_revision(catalog):
+            tool = next(t for t in catalog["tools"] if t["name"] == "update_multi_agent_node_prompts")
+            request = tool["inputSchema"]["$defs"]["UpdateNodePromptsRequest"]
+            request["properties"].pop("expected_revision")
+            request["required"].remove("expected_revision")
+
+        self.mutate_contract(remove_revision)
+        self.assertTrue(any("MCP contract" in e for e in self.validate(self.root)))
+
+    def test_projection_result_without_awaiting_input_is_rejected(self):
+        def remove_status(catalog):
+            tool = next(t for t in catalog["tools"] if t["name"] == "get_ennoia_conversation")
+            tool["outputSchema"]["$defs"]["ConversationProjection"]["properties"]["execution_status"]["enum"].remove("awaiting_input")
+
+        self.mutate_contract(remove_status)
+        self.assertTrue(any("MCP contract" in e for e in self.validate(self.root)))
+
+    def test_contract_revisions_must_match_tool_inventory(self):
+        self.mutate_contract(lambda catalog: catalog.update(source_revision="0" * 40))
+        self.assertTrue(any("MCP contract" in e for e in self.validate(self.root)))
+
+    def test_missing_tool_schema_is_rejected(self):
+        self.mutate_contract(lambda catalog: catalog["tools"].pop())
+        self.assertTrue(any("MCP contract" in e for e in self.validate(self.root)))
 
     def test_local_uploader_is_packaged_and_contract_changes_are_rejected(self):
         plugin = self.root / "plugins/ennoia"

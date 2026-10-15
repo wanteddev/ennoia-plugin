@@ -1,5 +1,9 @@
 # Skill 동작 평가
 
+## 최신 SuperApp 실행·노드 프롬프트 편집
+
+[`current-skills-scenarios.json`](current-skills-scenarios.json)은 App 위임 제한, 기존 실행 설정 보존, 실행 중지 미지원, 프롬프트 편집 제한·저장 불확실성·API 미지원, 대화 첨부와 결과물 전달의 8개 합성 입력이다. [판정 기준](current-skills-rubric.md)은 답변 이후에 사용하며, [기존·후보 비교 기록](2026-10-15-current-skills-summary.md)은 실제 host 실행과 구분한다.
+
 ## 업무 요구에서 graph 설계
 
 [`agent-design-scenarios.json`](agent-design-scenarios.json)은 단일 역할의 검색, 고정 순서, 동적 라우팅, 자율 위임, 구조화 출력 전달, 제한된 반복, 승인 후 전송, 구 schema와 사용자 지정 구조 충돌의 9개 합성 입력이다. 정답 graph를 미리 주지 않고 구조·데이터 계약·실패 경로를 작성하게 한 뒤 [별도 기준](agent-design-rubric.md)으로 판정한다. 사례를 추가한 것 자체는 모델 평가 통과나 설계 품질 향상의 증거가 아니다.
