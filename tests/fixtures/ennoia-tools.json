@@ -1,6 +1,6 @@
 {
   "source_repository": "wanteddev/ennoia-mcp-server",
-  "source_revision": "837874039236000887a4f9a895105f0b49b6e2e6",
+  "source_revision": "b3ad6455bd7423dce9e982fcd700832aaa8802e8",
   "tools": [
     "add_ennoia_mcp_server",
     "chat_with_ennoia_app",

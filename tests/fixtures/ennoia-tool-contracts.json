@@ -1,0 +1,3206 @@
+{
+  "source_repository": "wanteddev/ennoia-mcp-server",
+  "source_revision": "b3ad6455bd7423dce9e982fcd700832aaa8802e8",
+  "tools": [
+    {
+      "name": "start_ennoia_conversation",
+      "inputSchema": {
+        "$defs": {
+          "ConversationStartRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "project_scope": {
+                "$ref": "#/$defs/ProjectSelector"
+              },
+              "message": {
+                "maxLength": 20000,
+                "minLength": 1,
+                "title": "Message",
+                "type": "string"
+              },
+              "auto_select": {
+                "default": true,
+                "title": "Auto Select",
+                "type": "boolean"
+              },
+              "selected_app_ids": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 20,
+                "title": "Selected App Ids",
+                "type": "array"
+              },
+              "wait_timeout_seconds": {
+                "default": 30,
+                "maximum": 120,
+                "minimum": 0,
+                "title": "Wait Timeout Seconds",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "ConversationStartRequest",
+            "type": "object"
+          },
+          "ProjectSelector": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "default": "current",
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "group_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Group Code"
+              },
+              "project_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Project Code"
+              }
+            },
+            "title": "ProjectSelector",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/ConversationStartRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "start_ennoia_conversationArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "ConversationDispatchResult": {
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "enum": [
+                  "completed",
+                  "pending"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "conversation_id": {
+                "title": "Conversation Id",
+                "type": "string"
+              },
+              "recovery_action": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "check_acceptance",
+                      "read_result",
+                      "reauthenticate_then_read",
+                      "request_access_then_read"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Recovery Action"
+              },
+              "output": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Output"
+              },
+              "messages": {
+                "default": [],
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "title": "Messages",
+                "type": "array"
+              },
+              "selected_app_ids": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Selected App Ids",
+                "type": "array"
+              },
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "truncated": {
+                "default": false,
+                "title": "Truncated",
+                "type": "boolean"
+              },
+              "has_more": {
+                "default": false,
+                "title": "Has More",
+                "type": "boolean"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              }
+            },
+            "required": [
+              "status",
+              "conversation_id",
+              "group_code",
+              "project_code"
+            ],
+            "title": "ConversationDispatchResult",
+            "type": "object"
+          },
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ConversationDispatchResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[ConversationDispatchResult]",
+        "type": "object"
+      }
+    },
+    {
+      "name": "continue_ennoia_conversation",
+      "inputSchema": {
+        "$defs": {
+          "ConversationContinueRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "conversation_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Conversation Id",
+                "type": "string"
+              },
+              "message": {
+                "maxLength": 20000,
+                "minLength": 1,
+                "title": "Message",
+                "type": "string"
+              },
+              "wait_timeout_seconds": {
+                "default": 30,
+                "maximum": 120,
+                "minimum": 0,
+                "title": "Wait Timeout Seconds",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "conversation_id",
+              "message"
+            ],
+            "title": "ConversationContinueRequest",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/ConversationContinueRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "continue_ennoia_conversationArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "ConversationDispatchResult": {
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "enum": [
+                  "completed",
+                  "pending"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "conversation_id": {
+                "title": "Conversation Id",
+                "type": "string"
+              },
+              "recovery_action": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "check_acceptance",
+                      "read_result",
+                      "reauthenticate_then_read",
+                      "request_access_then_read"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Recovery Action"
+              },
+              "output": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Output"
+              },
+              "messages": {
+                "default": [],
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "title": "Messages",
+                "type": "array"
+              },
+              "selected_app_ids": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Selected App Ids",
+                "type": "array"
+              },
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "truncated": {
+                "default": false,
+                "title": "Truncated",
+                "type": "boolean"
+              },
+              "has_more": {
+                "default": false,
+                "title": "Has More",
+                "type": "boolean"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              }
+            },
+            "required": [
+              "status",
+              "conversation_id",
+              "group_code",
+              "project_code"
+            ],
+            "title": "ConversationDispatchResult",
+            "type": "object"
+          },
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ConversationDispatchResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[ConversationDispatchResult]",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_ennoia_conversation",
+      "inputSchema": {
+        "$defs": {
+          "ConversationGetRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "conversation_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Conversation Id",
+                "type": "string"
+              },
+              "view": {
+                "default": "legacy",
+                "enum": [
+                  "legacy",
+                  "summary",
+                  "messages"
+                ],
+                "title": "View",
+                "type": "string"
+              },
+              "limit": {
+                "default": 10,
+                "maximum": 50,
+                "minimum": 1,
+                "title": "Limit",
+                "type": "integer"
+              },
+              "cursor": {
+                "anyOf": [
+                  {
+                    "maxLength": 128,
+                    "pattern": "^[a-f0-9]{32}\\.[0-9]{1,7}\\.[a-f0-9]{64}$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Cursor"
+              }
+            },
+            "required": [
+              "conversation_id"
+            ],
+            "title": "ConversationGetRequest",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/ConversationGetRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "get_ennoia_conversationArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "ConversationDetail": {
+            "additionalProperties": false,
+            "properties": {
+              "conversation_id": {
+                "title": "Conversation Id",
+                "type": "string"
+              },
+              "title": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Title"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "updated_at": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Updated At"
+              },
+              "selected_app_ids": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Selected App Ids",
+                "type": "array"
+              },
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "completed": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Completed"
+              },
+              "messages": {
+                "default": [],
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "title": "Messages",
+                "type": "array"
+              }
+            },
+            "required": [
+              "conversation_id",
+              "group_code",
+              "project_code"
+            ],
+            "title": "ConversationDetail",
+            "type": "object"
+          },
+          "ConversationProjection": {
+            "additionalProperties": false,
+            "properties": {
+              "conversation_id": {
+                "title": "Conversation Id",
+                "type": "string"
+              },
+              "title": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Title"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "updated_at": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Updated At"
+              },
+              "selected_app_ids": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Selected App Ids",
+                "type": "array"
+              },
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "completed": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Completed"
+              },
+              "messages": {
+                "default": [],
+                "description": "일반 메시지는 role/content와 구조화된 metadata를 보존한다. 긴 필드만 fragment를 사용한다. message_index별로 묶고 fragment.field별 offset(Unicode 문자) 순서로 연결한다. encoding=text는 content, json은 fragment.value를 연결 후 JSON decode한다. complete=true는 필드 마지막 조각이다. fragment 없는 필드는 그대로 보존한다. message_index는 snapshot 내 최신순 위치이며 inactive 버전도 포함한다.",
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "title": "Messages",
+                "type": "array"
+              },
+              "view": {
+                "enum": [
+                  "summary",
+                  "messages"
+                ],
+                "title": "View",
+                "type": "string"
+              },
+              "execution_status": {
+                "enum": [
+                  "pending",
+                  "completed",
+                  "awaiting_input",
+                  "failed",
+                  "unknown"
+                ],
+                "title": "Execution Status",
+                "type": "string"
+              },
+              "latest_answer": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Latest Answer"
+              },
+              "latest_message_index": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Latest Message Index"
+              },
+              "display_title": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Display Title"
+              },
+              "has_more": {
+                "default": false,
+                "title": "Has More",
+                "type": "boolean"
+              },
+              "next_cursor": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Cursor"
+              },
+              "truncated": {
+                "default": false,
+                "title": "Truncated",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "conversation_id",
+              "group_code",
+              "project_code",
+              "view",
+              "execution_status"
+            ],
+            "title": "ConversationProjection",
+            "type": "object"
+          },
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ConversationProjection"
+              },
+              {
+                "$ref": "#/$defs/ConversationDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Data"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[Union[ConversationProjection, ConversationDetail]]",
+        "type": "object"
+      }
+    },
+    {
+      "name": "chat_with_ennoia_app",
+      "inputSchema": {
+        "$defs": {
+          "EnnoiaAppChatRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "project_scope": {
+                "$ref": "#/$defs/ProjectSelector"
+              },
+              "assistant_hash": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Assistant Hash",
+                "type": "string"
+              },
+              "conversation_id": {
+                "anyOf": [
+                  {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Conversation Id"
+              },
+              "message": {
+                "maxLength": 20000,
+                "minLength": 1,
+                "title": "Message",
+                "type": "string"
+              },
+              "wait_timeout_seconds": {
+                "default": 30,
+                "maximum": 120,
+                "minimum": 0,
+                "title": "Wait Timeout Seconds",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "assistant_hash",
+              "message"
+            ],
+            "title": "EnnoiaAppChatRequest",
+            "type": "object"
+          },
+          "ProjectSelector": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "default": "current",
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "group_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Group Code"
+              },
+              "project_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Project Code"
+              }
+            },
+            "title": "ProjectSelector",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/EnnoiaAppChatRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "chat_with_ennoia_appArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "EnnoiaAppChatResult": {
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "enum": [
+                  "completed",
+                  "pending"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "assistant_hash": {
+                "title": "Assistant Hash",
+                "type": "string"
+              },
+              "conversation_id": {
+                "title": "Conversation Id",
+                "type": "string"
+              },
+              "recovery_action": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "check_acceptance",
+                      "read_result",
+                      "reauthenticate_then_read",
+                      "request_access_then_read"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Recovery Action"
+              },
+              "output": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Output"
+              },
+              "messages": {
+                "default": [],
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "title": "Messages",
+                "type": "array"
+              },
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "truncated": {
+                "default": false,
+                "title": "Truncated",
+                "type": "boolean"
+              },
+              "has_more": {
+                "default": false,
+                "title": "Has More",
+                "type": "boolean"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              }
+            },
+            "required": [
+              "status",
+              "assistant_hash",
+              "conversation_id",
+              "group_code",
+              "project_code"
+            ],
+            "title": "EnnoiaAppChatResult",
+            "type": "object"
+          },
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/EnnoiaAppChatResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[EnnoiaAppChatResult]",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_multi_agent_node_prompts",
+      "inputSchema": {
+        "$defs": {
+          "MultiAgentSelection": {
+            "additionalProperties": false,
+            "properties": {
+              "project_scope": {
+                "$ref": "#/$defs/ProjectSelector"
+              },
+              "multi_agent_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "stage": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "D",
+                      "P"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Stage"
+              },
+              "deploy_version": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Deploy Version"
+              }
+            },
+            "required": [
+              "multi_agent_id"
+            ],
+            "title": "MultiAgentSelection",
+            "type": "object"
+          },
+          "ProjectSelector": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "default": "current",
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "group_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Group Code"
+              },
+              "project_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Project Code"
+              }
+            },
+            "title": "ProjectSelector",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/MultiAgentSelection"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "get_multi_agent_node_promptsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "NodePrompt": {
+            "additionalProperties": false,
+            "properties": {
+              "node_id": {
+                "title": "Node Id",
+                "type": "string"
+              },
+              "node_type": {
+                "title": "Node Type",
+                "type": "string"
+              },
+              "name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "system_prompt": {
+                "title": "System Prompt",
+                "type": "string"
+              },
+              "legacy_reference": {
+                "default": false,
+                "title": "Legacy Reference",
+                "type": "boolean"
+              },
+              "editable": {
+                "default": true,
+                "title": "Editable",
+                "type": "boolean"
+              },
+              "unsupported_reason": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "legacy_dynamic_date",
+                      "legacy_model_profile_mismatch"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Unsupported Reason"
+              }
+            },
+            "required": [
+              "node_id",
+              "node_type",
+              "system_prompt"
+            ],
+            "title": "NodePrompt",
+            "type": "object"
+          },
+          "NodePromptsResult": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "multi_agent_id": {
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "stage": {
+                "enum": [
+                  "D",
+                  "P"
+                ],
+                "title": "Stage",
+                "type": "string"
+              },
+              "deploy_version": {
+                "title": "Deploy Version",
+                "type": "integer"
+              },
+              "canvas_revision": {
+                "pattern": "^[a-f0-9]{64}$",
+                "title": "Canvas Revision",
+                "type": "string"
+              },
+              "nodes": {
+                "items": {
+                  "$ref": "#/$defs/NodePrompt"
+                },
+                "title": "Nodes",
+                "type": "array"
+              }
+            },
+            "required": [
+              "group_code",
+              "project_code",
+              "multi_agent_id",
+              "stage",
+              "deploy_version",
+              "canvas_revision",
+              "nodes"
+            ],
+            "title": "NodePromptsResult",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/NodePromptsResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[NodePromptsResult]",
+        "type": "object"
+      }
+    },
+    {
+      "name": "update_multi_agent_node_prompts",
+      "inputSchema": {
+        "$defs": {
+          "NodePromptUpdate": {
+            "additionalProperties": false,
+            "properties": {
+              "node_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Node Id",
+                "type": "string"
+              },
+              "system_prompt": {
+                "maxLength": 100000,
+                "title": "System Prompt",
+                "type": "string"
+              }
+            },
+            "required": [
+              "node_id",
+              "system_prompt"
+            ],
+            "title": "NodePromptUpdate",
+            "type": "object"
+          },
+          "ProjectSelector": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "default": "current",
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "group_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Group Code"
+              },
+              "project_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Project Code"
+              }
+            },
+            "title": "ProjectSelector",
+            "type": "object"
+          },
+          "UpdateNodePromptsRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "project_scope": {
+                "$ref": "#/$defs/ProjectSelector"
+              },
+              "multi_agent_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "stage": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "D",
+                      "P"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Stage"
+              },
+              "deploy_version": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Deploy Version"
+              },
+              "operation_id": {
+                "format": "uuid4",
+                "title": "Operation Id",
+                "type": "string"
+              },
+              "expected_revision": {
+                "pattern": "^[a-f0-9]{64}$",
+                "title": "Expected Revision",
+                "type": "string"
+              },
+              "updates": {
+                "items": {
+                  "$ref": "#/$defs/NodePromptUpdate"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "title": "Updates",
+                "type": "array"
+              }
+            },
+            "required": [
+              "multi_agent_id",
+              "operation_id",
+              "expected_revision",
+              "updates"
+            ],
+            "title": "UpdateNodePromptsRequest",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/UpdateNodePromptsRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "update_multi_agent_node_promptsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "NodePromptSaveResult": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "multi_agent_id": {
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "stage": {
+                "const": "D",
+                "default": "D",
+                "title": "Stage",
+                "type": "string"
+              },
+              "deploy_version": {
+                "title": "Deploy Version",
+                "type": "integer"
+              },
+              "canvas_revision": {
+                "pattern": "^[a-f0-9]{64}$",
+                "title": "Canvas Revision",
+                "type": "string"
+              },
+              "changed_node_ids": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Changed Node Ids",
+                "type": "array"
+              },
+              "migrated_node_ids": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Migrated Node Ids",
+                "type": "array"
+              }
+            },
+            "required": [
+              "group_code",
+              "project_code",
+              "multi_agent_id",
+              "deploy_version",
+              "canvas_revision",
+              "changed_node_ids"
+            ],
+            "title": "NodePromptSaveResult",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/NodePromptSaveResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[NodePromptSaveResult]",
+        "type": "object"
+      }
+    }
+  ]
+}

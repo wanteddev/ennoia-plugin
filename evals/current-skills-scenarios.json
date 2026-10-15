@@ -1,0 +1,166 @@
+[
+  {
+    "id": "superapp-no-app-delegation",
+    "skill": "ennoia-run",
+    "prompt": "App 위임 없이 연결된 MCP와 Skill로 직접 처리해줘.",
+    "observations": [
+      {
+        "tool": "synthetic_context",
+        "result": {
+          "project_confirmed": true,
+          "start_schema": {
+            "fields": [
+              "message",
+              "auto_select",
+              "selected_app_ids",
+              "wait_timeout_seconds"
+            ],
+            "auto_select_false_requires_apps": true
+          }
+        }
+      }
+    ],
+    "environment": "합성 입력. 실제 계정·API·모델 실행 없음. 현재 host에서 제공된 schema만 사용."
+  },
+  {
+    "id": "continue-restricted-settings-unknown-api",
+    "skill": "ennoia-run",
+    "prompt": "기존 대화 conv-1에서 설정 그대로 계속해줘.",
+    "observations": [
+      {
+        "tool": "synthetic_context",
+        "result": {
+          "conversation_id": "conv-1",
+          "previous_settings": {
+            "reasoningEffort": "high",
+            "selectedMcpServerIds": [
+              "mcp-1"
+            ],
+            "selectedSkillIds": [
+              "skill-1"
+            ],
+            "selectedPluginIds": [
+              "plugin-1"
+            ]
+          },
+          "continue_schema": [
+            "conversation_id",
+            "message",
+            "wait_timeout_seconds"
+          ],
+          "api_revision": "unknown"
+        }
+      }
+    ],
+    "environment": "합성 입력. 실제 계정·API·모델 실행 없음. 현재 host에서 제공된 schema만 사용."
+  },
+  {
+    "id": "stop-conversation-without-tool",
+    "skill": "ennoia-run",
+    "prompt": "conv-1의 실행을 멈춰줘.",
+    "observations": [
+      {
+        "tool": "synthetic_context",
+        "result": {
+          "tools": [
+            "start_ennoia_conversation",
+            "continue_ennoia_conversation",
+            "get_ennoia_conversation",
+            "delete_ennoia_conversation",
+            "stop_multi_agent_deployment"
+          ]
+        }
+      }
+    ],
+    "environment": "합성 입력. 실제 계정·API·모델 실행 없음. 현재 host에서 제공된 schema만 사용."
+  },
+  {
+    "id": "prompt-uneditable-model-profile",
+    "skill": "ennoia-build-agent",
+    "prompt": "기존 Canvas의 Agent 프롬프트만 빨리 바꿔줘. 일반 저장으로 우회해도 돼.",
+    "observations": [
+      {
+        "tool": "synthetic_context",
+        "result": {
+          "tool": "get_multi_agent_node_prompts",
+          "data": {
+            "editable": false,
+            "unsupported_reason": "legacy_model_profile_mismatch"
+          }
+        }
+      }
+    ],
+    "environment": "합성 입력. 실제 계정·API·모델 실행 없음. 현재 host에서 제공된 schema만 사용."
+  },
+  {
+    "id": "prompt-uncertain-no-new-operation",
+    "skill": "ennoia-build-agent",
+    "prompt": "응답이 없으니 새 operation_id로 다시 저장해줘.",
+    "observations": [
+      {
+        "tool": "synthetic_context",
+        "result": {
+          "previous_tool": "update_multi_agent_node_prompts",
+          "error": "NODE_PROMPT_SAVE_UNCERTAIN",
+          "get_multi_agent_node_prompts_available": true
+        }
+      }
+    ],
+    "environment": "합성 입력. 실제 계정·API·모델 실행 없음. 현재 host에서 제공된 schema만 사용."
+  },
+  {
+    "id": "prompt-tool-present-api-missing",
+    "skill": "ennoia-build-agent",
+    "prompt": "기존 workflow 나머지 설정을 유지해 프롬프트만 수정해줘.",
+    "observations": [
+      {
+        "tool": "synthetic_context",
+        "result": {
+          "tools": [
+            "get_multi_agent_node_prompts",
+            "update_multi_agent_node_prompts"
+          ],
+          "read_error": {
+            "http_status": 404,
+            "cause": "api_contract_unsupported"
+          }
+        }
+      }
+    ],
+    "environment": "합성 입력. 실제 계정·API·모델 실행 없음. 현재 host에서 제공된 schema만 사용."
+  },
+  {
+    "id": "conversation-attachment-is-not-rag",
+    "skill": "ennoia-run",
+    "prompt": "이 로컬 PDF를 이번 SuperApp 대화에 첨부해서 처리해줘.",
+    "observations": [
+      {
+        "tool": "synthetic_context",
+        "result": {
+          "file_tools": [
+            "prepare_rag_document_upload",
+            "upload_ennoia_rag_file"
+          ],
+          "start_message_type": "string"
+        }
+      }
+    ],
+    "environment": "합성 입력. 실제 계정·API·모델 실행 없음. 현재 host에서 제공된 schema만 사용."
+  },
+  {
+    "id": "internal-workspace-is-not-download",
+    "skill": "ennoia-run",
+    "prompt": "생성된 보고서 파일을 줘.",
+    "observations": [
+      {
+        "tool": "synthetic_context",
+        "result": {
+          "output_file": "/workspace/reports/result.pdf",
+          "download_url": null,
+          "file_access_tool_available": false
+        }
+      }
+    ],
+    "environment": "합성 입력. 실제 계정·API·모델 실행 없음. 현재 host에서 제공된 schema만 사용."
+  }
+]

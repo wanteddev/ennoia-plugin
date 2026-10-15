@@ -7,6 +7,8 @@ description: "Ennoia 지식 컬렉션에 문서·파일·URL을 추가하거나 
 
 문서를 등록하고 검색 가능한 상태인지 확인한 뒤, 요청에 포함된 경우 에이전트에 연결한다.
 
+이번 SuperApp 대화에만 파일을 첨부하려는 요청은 RAG 등록과 구분하고 [업무 실행 Skill](../ennoia-run/SKILL.md)의 첨부 지원 범위를 따른다.
+
 응답 해석과 최종 안내는 [공통 응답 규칙](../../references/response-guide.md)을 적용한다.
 
 ## 컬렉션과 업로드
