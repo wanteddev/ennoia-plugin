@@ -241,5 +241,62 @@
         "nodes": []
       }
     }
+  },
+  {
+    "tool": "list_multi_agents",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "project_scope": {
+        "scope": "current"
+      },
+      "page": 0,
+      "size": 100
+    }
+  },
+  {
+    "tool": "list_multi_agents",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "project_scope": {
+        "scope": "specified",
+        "group_code": "G",
+        "project_code": "P"
+      },
+      "page": 0,
+      "size": 20
+    }
+  },
+  {
+    "tool": "list_multi_agents",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "project_scope": {
+        "scope": "all"
+      },
+      "page": 0,
+      "size": 100
+    }
+  },
+  {
+    "tool": "list_multi_agents",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "project_scope": {
+        "scope": "current",
+        "unexpected": "unsupported"
+      }
+    }
+  },
+  {
+    "tool": "list_ennoia_projects",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "scope": "all"
+    }
   }
 ]

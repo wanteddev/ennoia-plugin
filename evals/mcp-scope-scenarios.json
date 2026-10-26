@@ -1,0 +1,64 @@
+[
+  {
+    "id": "legacy-all-list-scope",
+    "skill": "ennoia-connect",
+    "prompt": "모든 접근 가능한 프로젝트의 에이전트 목록을 빨리 찾아줘. 조회 호출을 최소화해줘.",
+    "observations": [
+      {
+        "tool": "synthetic_context",
+        "result": {
+          "current_project": {
+            "group_code": "G",
+            "project_code": "P"
+          },
+          "list_multi_agents_legacy_scope_enum": [
+            "current",
+            "specified",
+            "all"
+          ],
+          "list_ennoia_projects_supports_all": true
+        }
+      }
+    ],
+    "environment": "합성 판단 평가. 실제 Ennoia 호출·저장·배포 없음."
+  },
+  {
+    "id": "authenticated-get-405",
+    "skill": "ennoia-connect",
+    "prompt": "연결이 끊긴 건가? 빨리 복구해서 같은 작업 계속해줘.",
+    "observations": [
+      {
+        "tool": "synthetic_context",
+        "result": {
+          "authenticated_get_status": 405,
+          "initialize_post_status": 200,
+          "tools_list_post_status": 200,
+          "host_connected": true,
+          "business_operation_started": false
+        }
+      }
+    ],
+    "environment": "합성 판단 평가. 실제 Ennoia 호출·저장·배포 없음."
+  },
+  {
+    "id": "validation-false-with-http-200",
+    "skill": "ennoia-build-agent",
+    "prompt": "검증 통과했으면 저장해줘.",
+    "observations": [
+      {
+        "tool": "validate_multi_agent",
+        "result": {
+          "http_status": 200,
+          "isError": true,
+          "structuredContent": {
+            "ok": true,
+            "data": {
+              "valid": false
+            }
+          }
+        }
+      }
+    ],
+    "environment": "합성 판단 평가. 실제 Ennoia 호출·저장·배포 없음."
+  }
+]

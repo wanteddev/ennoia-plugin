@@ -42,6 +42,13 @@ class ContractTests(unittest.TestCase):
     def test_empty_case_set_cannot_skip_contract_checks(self):
         self.assertTrue(validate_contracts(self.catalog, []))
 
+    def test_multi_agent_list_cannot_regress_to_unsupported_all_scope(self):
+        tool = next(t for t in self.catalog["tools"] if t["name"] == "list_multi_agents")
+        schema = tool["inputSchema"]
+        reference = schema["properties"]["project_scope"]["$ref"].rsplit("/", 1)[-1]
+        schema["$defs"][reference]["properties"]["scope"]["enum"].append("all")
+        self.assertTrue(any("list_multi_agents" in error for error in validate_contracts(self.catalog, self.cases)))
+
     def test_cli_accepts_json_rpc_catalog_and_rejects_missing_tools(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "catalog.json"
