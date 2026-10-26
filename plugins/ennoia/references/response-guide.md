@@ -37,6 +37,8 @@ Ennoia·MCP·Plugin에 대한 사용자 의견이 있거나, 실제 업무 중 �
 
 같은 작업에서 이미 확인한 유효한 scope·schema·대상 ID는 재사용한다. 필요한 필드가 빠졌거나 계약·권한 상태가 변했을 때만 관련 조회를 다시 한다. 사용자가 대상을 바꾸거나 재인증·권한 오류가 생기면 다시 확인한다. 문장 표시만을 위해 추가 조회나 요약용 LLM·MCP 호출을 만들지 않는다.
 
+`list_multi_agents`는 운영 API가 지원하는 `project_scope.scope=current|specified`로 조회한다. 이전 MCP schema에 `all`이 보여도 이 목록 API에는 보내지 않는다. 전체 프로젝트의 에이전트를 찾는 요청은 `list_ennoia_projects`로 접근 가능한 대상을 확인한 뒤 각 프로젝트를 `specified`로 조회하고 소속과 부분 실패를 구분해 합친다. 각 조회는 page 0부터 시작하고 실제 응답의 다음 페이지를 따른다. 이 읽기 때문에 `set_current_ennoia_project`로 저장된 현재 선택을 변경하지 않는다. 다른 도구의 `all` 지원 여부는 그 도구의 실제 계약을 따른다.
+
 ## 저장된 에이전트 링크
 
 `save_multi_agent`로 생성 또는 수정 저장이 성공하면, 사용자가 링크를 따로 요청하지 않아도 최종 응답에 **에이전트 열기** 링크를 함께 제공한다. 운영 Ennoia Studio의 편집 URL은 다음과 같다.

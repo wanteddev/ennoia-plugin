@@ -1,5 +1,9 @@
 # Skill 동작 평가
 
+## 목록 조회 범위와 연결 상태
+
+[`mcp-scope-scenarios.json`](mcp-scope-scenarios.json)은 구 schema의 전체 프로젝트 목록 조회, 인증된 GET 405, HTTP 200의 검증 미통과를 다룬다. [판정 기준](mcp-scope-rubric.md)과 [기존·후보 비교](2026-10-26-mcp-scope-summary.md)를 별도로 두며 실제 API 실행과 구분한다.
+
 ## 최신 SuperApp 실행·노드 프롬프트 편집
 
 [`current-skills-scenarios.json`](current-skills-scenarios.json)은 App 위임 제한, 기존 실행 설정 보존, 실행 중지 미지원, 프롬프트 편집 제한·저장 불확실성·API 미지원, 대화 첨부와 결과물 전달의 8개 합성 입력이다. [판정 기준](current-skills-rubric.md)은 답변 이후에 사용하며, [기존·후보 비교 기록](2026-10-15-current-skills-summary.md)은 실제 host 실행과 구분한다.
