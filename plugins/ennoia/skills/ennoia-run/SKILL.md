@@ -18,6 +18,8 @@ description: "Ennoia의 기존 App 또는 SuperApp에 업무를 요청하거나 
 - SuperApp의 App 자동 선택이 필요하면 `start_ennoia_conversation`의 `auto_select=true`를 사용한다. 이때 `selected_app_ids`를 동시에 지정하지 않는다.
 - 명시적으로 App을 선택한 SuperApp 실행은 `auto_select=false`와 발견한 `selected_app_ids`를 사용한다. 현재 tool schema의 request nesting을 따른다.
 
+현재 Conductor는 요청에 따라 직접 답변·MCP·Skill·App 위임을 선택한다. SuperApp 사용이 항상 App 호출을 뜻하지 않는다. App 위임 금지, 모델·추론 강도·Skill·Plugin·MCP 선택 유지나 변경, 파일 첨부·결과물 요청은 [SuperApp 실행 범위](references/superapp-execution.md)를 읽고 현재 도구가 표현하는 범위에서 처리한다.
+
 ## 대화 이어가기
 
 새 질문이 이미 전송됐다면 반환된 `conversation_id`를 보존한다. `pending` 또는 `output=null`은 실패·성공 완료가 아니다. **진행 중인 결과 확인은 `get_ennoia_conversation`으로 한다.** 같은 질문을 `start_ennoia_conversation`이나 `continue_ennoia_conversation`으로 다시 보내지 않는다.

@@ -8,7 +8,7 @@
 - Skill `description`은 발동 조건을 명확하게 쓰고, 특정 업무의 상세 절차는 필요할 때 읽는 reference로 분리합니다.
 - 프로젝트·모델·배포 범위와 기존 사용자 승인을 보존합니다. 일반 작업마다 새로운 승인 단계를 추가하지 않습니다.
 - OAuth credential을 받는 별도 로컬 script, global hook, host 설정 덮어쓰기, 직접 backend 우회 호출을 추가하지 않습니다. 패키지의 local file uploader는 remote prepare가 발급한 1회용 upload header만 받아 지정된 Ennoia proxy로 전송합니다.
-- Input schema와 실제 결과는 현재 MCP가 기준입니다. `tests/fixtures/ennoia-tools.json`은 작성 시점의 tool-name 회귀 검사 자료이며 runtime schema를 대체하지 않습니다. MCP 계약 변경 시 확인한 server revision과 snapshot을 함께 갱신합니다.
+- Input schema와 실제 결과는 현재 MCP가 기준입니다. `tests/fixtures/ennoia-tools.json`은 tool-name inventory이며, `ennoia-tool-contracts.json`은 실행·대화 조회·노드 프롬프트 편집 도구 6개의 입력·출력 JSON Schema snapshot입니다. `ennoia-contract-cases.json`의 허용·거절 예제를 함께 검사합니다. MCP 계약 변경 시 확인한 source revision과 두 snapshot을 함께 갱신합니다. 이 자료는 runtime schema를 대체하지 않습니다.
 - Skill/reference는 `plugins/ennoia` 내부에서만 상대 경로로 참조합니다. ZIP 생성과 host별 Skill 복제는 필요하지 않습니다.
 
 ## 저장소 구조
@@ -58,6 +58,14 @@ git diff --check
 ```
 
 CI는 credential 없이 패키지 구조와 회귀 테스트를 실행합니다. 설치된 native client의 검증, OAuth, 실제 MCP 업무 결과와 latency는 별도로 확인합니다.
+
+`scripts/validate.py`는 도구명뿐 아니라 JSON Schema 예제도 검사합니다. 이미 확보한 MCP `tools/list` 응답은 아래 명령으로 별도 대조할 수 있습니다. JSON-RPC envelope 또는 `tools` object를 받으며 credential과 source 원문이 포함된 로그 전체를 넣지 않습니다. 외부 schema reference는 네트워크로 가져오지 않습니다.
+
+```bash
+python3 scripts/validate_contracts.py --catalog /absolute/path/to/tools-list.json
+```
+
+Snapshot의 `source_revision`은 MCP 소스의 revision입니다. Catalog 일치만으로 Orchestrator API 배포·권한·실제 저장 성공을 확인했다고 하지 않습니다. JSON Schema에 없는 Pydantic 교차 필드 검증도 backend 테스트의 별도 범위입니다. 새 API 의존 기능은 실제 API의 응답까지 확인한 뒤 릴리스하며, 구 서버에서는 Skill의 제한 복구 절차를 유지합니다. 설정 보존 개선이 적용됐다는 확인이 없으면 제한된 MCP·Skill·Plugin 선택이 유지된다고 보장하지 않습니다.
 
 공개 결과 case는 [`evals/results/2026-09-15-dogfooding-schema.json`](evals/results/2026-09-15-dogfooding-schema.json)의 필수 field와 host·surface·Plugin/source SHA·Skill 로딩/연결 source를 따릅니다. 미측정 수치는 `null`, 미실행 호출 수는 0으로 기록하고 합성 판정을 실제 host `pass`로 재분류하지 않습니다. Host 원본 log·UI·credential은 commit에서 제외합니다. Native Git 설치, 새 세션 Skill 로딩, 인증/연결 source, App/CLI 실행, 성능을 각기 독립 gate로 기록합니다.
 
