@@ -32,11 +32,11 @@ graph 입력과 자원 식별자는 [Graph 작성 계약](references/graph-autho
 
 `validate_multi_agent`의 envelope `ok`와 `data.valid`를 모두 확인한다. 실패한 node/path와 `repair_hint`에 맞춰 수정한 뒤 재검증한다. 동일 실패에 근거 없는 수정을 반복하지 않는다.
 
-테스트 전 이미 조회한 node schema와 실제 응답으로 지원 여부를 확인한다. `test_supported=false` 또는 `TEST_NODE_UNSUPPORTED`가 있으면 해당 graph의 `test_multi_agent`와 `start_multi_agent_test`를 시작하지 않는다. 지원 여부 field가 없는 이전 응답을 false로 채우지 않고 현재 host schema와 결과를 따른다.
+테스트는 입력과 실행 경로를 먼저 구분한다. 원본 `nodes`/`edges`를 받는 `test_multi_agent`·`start_multi_agent_test`는 기존 제한 테스트이며 `allow_side_effects=false`를 유지한다. `test_supported=false`/`TEST_NODE_UNSUPPORTED`이면 이 경로를 시작하지 않는다. 지원 field가 없는 이전 응답을 false로 채우지 않는다. 지원되는 graph는 짧은 작업에 sync, 오래 걸릴 작업에 async 도구를 사용하고, 비동기 결과는 같은 `test_id`의 `get_multi_agent_test`로 wait/backoff 조회한다. `running`은 완료가 아니며 새 test를 중복 시작하거나 거부·승인 필요 실행을 우회하지 않는다.
 
-안전 테스트 미지원은 저장 불가를 뜻하지 않는다. 저장이 요청됐고 검증과 저장 입력이 유효하면 기존 저장 경로를 진행한다. 다만 사용자가 테스트 성공을 저장 조건으로 정했다면 미지원 상태에서는 저장을 보류하고 조건 변경 여부만 확인한다. SuperAgent의 `SUPERAGENT_STRUCTURE_ONLY`는 구조·설정 검증이며 실제 runtime build·실행 성공이 아니다. 상세 구조와 지원 불일치는 [Graph 작성 계약](references/graph-authoring.md), 경고·재시도는 [저장 복구](references/save-and-retry.md)를 따른다.
+저장된 draft의 Studio 실행 테스트는 별도 경로다. 현재 host에 `start_saved_multi_agent_test`와 조회·승인 재개·취소 schema가 있으면 [저장된 draft 테스트](references/saved-draft-testing.md)를 따른다. 이 경로는 서버가 저장 원본을 실행하고 사용자 credential을 주입하므로 MCP·connector가 실제 외부 변경을 수행할 수 있다. 대상 프로젝트·draft와 부작용 가능성을 알리고 명시적인 테스트 승인이 있을 때만 시작한다. 사용자 직접 테스트 요청과 이전 승인 맥락은 재사용하며 단계마다 재승인받지 않는다. 새 도구가 없는 이전 host에는 미지원 사실을 알린다. 테스트 실패를 우회하려고 자동 배포하거나 Canvas를 canonical graph로 역변환하지 않는다.
 
-지원되는 graph의 테스트가 요청됐거나 완성 여부 확인에 필요하면 짧은 graph는 `test_multi_agent`, 오래 걸릴 작업은 `start_multi_agent_test`를 사용한다. 비동기 결과는 반환된 `test_id`로 `get_multi_agent_test`를 조회한다. `running`은 완료가 아니다. polling은 host의 wait 기능과 간격 증가를 사용하며 새 test를 중복 시작하지 않는다. 이 테스트 경로의 `allow_side_effects`는 `false`다. 거부되거나 승인이 필요한 실행을 우회하지 않는다.
+기존 제한 테스트 미지원은 저장 불가나 저장된 draft 테스트 미지원을 뜻하지 않는다. 저장이 요청됐고 검증과 저장 입력이 유효하면 기존 저장 경로를 진행한다. 다만 사용자가 테스트 성공을 저장 조건으로 정했다면 미지원·미완료 상태에서는 저장을 보류한다. SuperAgent의 `SUPERAGENT_STRUCTURE_ONLY`는 구조·설정 검증이며 실제 runtime build·실행 성공이 아니다. 상세 구조와 지원 불일치는 [Graph 작성 계약](references/graph-authoring.md), 경고·재시도는 [저장 복구](references/save-and-retry.md)를 따른다.
 
 저장은 `save_multi_agent`를 사용한다. 같은 graph·사용자·project에서 검증한 `validation_id` 경로를 우선해 큰 graph를 재전송하지 않는다. `validation_id`와 원본 nodes/edges를 동시에 보내지 않는다. graph를 변경했으면 다시 검증한다. 검증 ID만으로 저장의 create/update 결정, create 이름 또는 update 대상 ID가 정해진 것은 아니다. 실제 요청·조회에서 확인한 값을 사용하고 빠진 필드만 확인한다. 설명용 문구를 도구 인자에 넣지 않는다. 기존 draft 수정은 `operation=update`와 발견한 `multi_agent_id`를 사용한다. 재시도·만료는 [저장 복구](references/save-and-retry.md)를 따른다.
 

@@ -8,7 +8,7 @@
 - Skill `description`은 발동 조건을 명확하게 쓰고, 특정 업무의 상세 절차는 필요할 때 읽는 reference로 분리합니다.
 - 프로젝트·모델·배포 범위와 기존 사용자 승인을 보존합니다. 일반 작업마다 새로운 승인 단계를 추가하지 않습니다.
 - OAuth credential을 받는 별도 로컬 script, global hook, host 설정 덮어쓰기, 직접 backend 우회 호출을 추가하지 않습니다. 패키지의 local file uploader는 remote prepare가 발급한 1회용 upload header만 받아 지정된 Ennoia proxy로 전송합니다.
-- Input schema와 실제 결과는 현재 MCP가 기준입니다. `tests/fixtures/ennoia-tools.json`은 tool-name inventory이며, `ennoia-tool-contracts.json`은 실행·대화 조회·노드 프롬프트 편집 도구 6개의 입력·출력 JSON Schema snapshot입니다. `ennoia-contract-cases.json`의 허용·거절 예제를 함께 검사합니다. MCP 계약 변경 시 확인한 source revision과 두 snapshot을 함께 갱신합니다. 이 자료는 runtime schema를 대체하지 않습니다.
+- Input schema와 실제 결과는 현재 MCP가 기준입니다. `tests/fixtures/ennoia-tools.json`은 tool-name inventory이며, `ennoia-tool-contracts.json`은 실행·대화 조회·노드 프롬프트 편집·목록·저장된 draft 테스트 도구의 입력·출력 JSON Schema snapshot입니다. `ennoia-contract-cases.json`의 허용·거절 예제를 함께 검사합니다. MCP 계약 변경 시 확인한 source revision과 두 snapshot을 함께 갱신합니다. 이 자료는 runtime schema를 대체하지 않습니다.
 - Skill/reference는 `plugins/ennoia` 내부에서만 상대 경로로 참조합니다. ZIP 생성과 host별 Skill 복제는 필요하지 않습니다.
 
 ## 저장소 구조

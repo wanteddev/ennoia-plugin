@@ -12,6 +12,8 @@
 
 이 경로는 서버가 기존 Canvas의 모델·MCP·RAG·Skill·Plugin·노드 실행 설정·연결·배치를 보존하고 저장 후 다시 검증한다. 원본 `nodes`/`edges`를 LLM이 재작성하거나 `format=agent_config`로 변환할 필요가 없다. `validate_multi_agent`나 `save_multi_agent(operation=update)`를 추가 호출하지 않는다.
 
+저장 후 사용자가 실행 테스트도 요청했다면 [저장된 draft 테스트](saved-draft-testing.md)를 따른다. 수정된 draft의 실제 버전을 목록에서 확인하고 기존 테스트 승인을 재사용한다. 프롬프트 편집만 요청됐다면 실행을 추가하지 않는다. 테스트를 위해 Canvas 전체 graph를 재작성하지 않는다.
+
 ## 과거 Agent 참조 노드
 
 `legacy_reference=true`인 노드는 연결된 배포 Agent의 실제 설정을 조회한다. 수정하는 노드만 inline 설정으로 옮기며 참조한 단일 Agent와 다른 노드는 수정하지 않는다. `migrated_node_ids`로 실제 변환 대상을 확인한다.

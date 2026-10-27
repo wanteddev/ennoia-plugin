@@ -1,6 +1,6 @@
 {
   "source_repository": "wanteddev/ennoia-mcp-server",
-  "source_revision": "c4301d09c2da3493d7ab8d984e86cc1c529db504",
+  "source_revision": "f7f439099b5d7b8a5858750fbff3f495e9d8f0cd",
   "tools": [
     {
       "name": "start_ennoia_conversation",
@@ -4229,6 +4229,2026 @@
         "title": "ResultEnvelope[ProjectCatalog]",
         "type": "object"
       }
+    },
+    {
+      "name": "start_saved_multi_agent_test",
+      "title": null,
+      "description": "저장된 D draft를 deploy 없이 Studio 테스트로 실행합니다. 개인 MCP credential은 서버에서 주입합니다.\n\n        실제 project와 draft deploy_version을 확인하고 부작용 가능성을 알린 뒤 사용자가 테스트를 승인한 경우에만\n        confirm=true로 호출하세요. configured tool이 외부 변경을 수행할 수 있으며 read-only 보장은 없습니다.\n        같은 operation_id로 재시도하고 반환 test_id를 get_saved_multi_agent_test로 조회하세요. Canvas를 재작성하지 않습니다.",
+      "inputSchema": {
+        "$defs": {
+          "ProjectSelector": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "default": "current",
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "group_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Group Code"
+              },
+              "project_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Project Code"
+              }
+            },
+            "title": "ProjectSelector",
+            "type": "object"
+          },
+          "SavedTestStartRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "project_scope": {
+                "$ref": "#/$defs/ProjectSelector"
+              },
+              "multi_agent_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "stage": {
+                "const": "D",
+                "default": "D",
+                "title": "Stage",
+                "type": "string"
+              },
+              "deploy_version": {
+                "minimum": 0,
+                "title": "Deploy Version",
+                "type": "integer"
+              },
+              "input_message": {
+                "maxLength": 20000,
+                "minLength": 1,
+                "title": "Input Message",
+                "type": "string"
+              },
+              "confirm": {
+                "const": true,
+                "title": "Confirm",
+                "type": "boolean"
+              },
+              "operation_id": {
+                "format": "uuid",
+                "title": "Operation Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "multi_agent_id",
+              "deploy_version",
+              "input_message",
+              "confirm",
+              "operation_id"
+            ],
+            "title": "SavedTestStartRequest",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/SavedTestStartRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "start_saved_multi_agent_testArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SavedTestResult": {
+            "additionalProperties": false,
+            "properties": {
+              "test_id": {
+                "maxLength": 128,
+                "minLength": 16,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "title": "Test Id",
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "running",
+                  "needs_approval",
+                  "completed",
+                  "failed",
+                  "rejected",
+                  "cancelled",
+                  "expired"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "multi_agent_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "stage": {
+                "const": "D",
+                "default": "D",
+                "title": "Stage",
+                "type": "string"
+              },
+              "deploy_version": {
+                "minimum": 0,
+                "title": "Deploy Version",
+                "type": "integer"
+              },
+              "output": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Output"
+              },
+              "events": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Events",
+                "type": "array"
+              },
+              "duration_ms": {
+                "minimum": 0,
+                "title": "Duration Ms",
+                "type": "integer"
+              },
+              "approval_id": {
+                "anyOf": [
+                  {
+                    "maxLength": 128,
+                    "minLength": 16,
+                    "pattern": "^[A-Za-z0-9_-]+$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Approval Id"
+              },
+              "approval_summary": {
+                "anyOf": [
+                  {
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Approval Summary"
+              },
+              "error_code": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Error Code"
+              },
+              "error_message": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Error Message"
+              }
+            },
+            "required": [
+              "test_id",
+              "status",
+              "multi_agent_id",
+              "deploy_version",
+              "duration_ms"
+            ],
+            "title": "SavedTestResult",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SavedTestResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[SavedTestResult]",
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": {
+        "title": null,
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "meta": null,
+      "execution": null
+    },
+    {
+      "name": "get_saved_multi_agent_test",
+      "title": null,
+      "description": "저장 draft 테스트의 같은 test_id로 상태와 결과를 조회합니다. 새 실행을 만들지 않습니다.\n\n        running과 needs_approval은 완료가 아닙니다. needs_approval이면 사용자 결정 후 반환 approval_id로 재개합니다.",
+      "inputSchema": {
+        "properties": {
+          "test_id": {
+            "maxLength": 128,
+            "minLength": 16,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Test Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "test_id"
+        ],
+        "title": "get_saved_multi_agent_testArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SavedTestResult": {
+            "additionalProperties": false,
+            "properties": {
+              "test_id": {
+                "maxLength": 128,
+                "minLength": 16,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "title": "Test Id",
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "running",
+                  "needs_approval",
+                  "completed",
+                  "failed",
+                  "rejected",
+                  "cancelled",
+                  "expired"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "multi_agent_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "stage": {
+                "const": "D",
+                "default": "D",
+                "title": "Stage",
+                "type": "string"
+              },
+              "deploy_version": {
+                "minimum": 0,
+                "title": "Deploy Version",
+                "type": "integer"
+              },
+              "output": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Output"
+              },
+              "events": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Events",
+                "type": "array"
+              },
+              "duration_ms": {
+                "minimum": 0,
+                "title": "Duration Ms",
+                "type": "integer"
+              },
+              "approval_id": {
+                "anyOf": [
+                  {
+                    "maxLength": 128,
+                    "minLength": 16,
+                    "pattern": "^[A-Za-z0-9_-]+$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Approval Id"
+              },
+              "approval_summary": {
+                "anyOf": [
+                  {
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Approval Summary"
+              },
+              "error_code": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Error Code"
+              },
+              "error_message": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Error Message"
+              }
+            },
+            "required": [
+              "test_id",
+              "status",
+              "multi_agent_id",
+              "deploy_version",
+              "duration_ms"
+            ],
+            "title": "SavedTestResult",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SavedTestResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[SavedTestResult]",
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": {
+        "title": null,
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "meta": null,
+      "execution": null
+    },
+    {
+      "name": "resume_saved_multi_agent_test",
+      "title": null,
+      "description": "needs_approval인 저장 draft 테스트를 반환 approval_id와 사용자의 approve/reject 결정으로 재개합니다.\n\n        도구 실행의 부작용과 승인 대상을 사용자가 확인해야 합니다. 모델이 자동 승인하지 않습니다.\n        같은 operation_id를 유지하고 결과가 불명확하면 같은 test_id를 조회하세요.",
+      "inputSchema": {
+        "$defs": {
+          "SavedTestResumeRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "operation_id": {
+                "format": "uuid",
+                "title": "Operation Id",
+                "type": "string"
+              },
+              "approval_id": {
+                "maxLength": 128,
+                "minLength": 16,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "title": "Approval Id",
+                "type": "string"
+              },
+              "decision": {
+                "enum": [
+                  "approve",
+                  "reject"
+                ],
+                "title": "Decision",
+                "type": "string"
+              }
+            },
+            "required": [
+              "operation_id",
+              "approval_id",
+              "decision"
+            ],
+            "title": "SavedTestResumeRequest",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "test_id": {
+            "maxLength": 128,
+            "minLength": 16,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Test Id",
+            "type": "string"
+          },
+          "request": {
+            "$ref": "#/$defs/SavedTestResumeRequest"
+          }
+        },
+        "required": [
+          "test_id",
+          "request"
+        ],
+        "title": "resume_saved_multi_agent_testArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SavedTestResult": {
+            "additionalProperties": false,
+            "properties": {
+              "test_id": {
+                "maxLength": 128,
+                "minLength": 16,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "title": "Test Id",
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "running",
+                  "needs_approval",
+                  "completed",
+                  "failed",
+                  "rejected",
+                  "cancelled",
+                  "expired"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "multi_agent_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "stage": {
+                "const": "D",
+                "default": "D",
+                "title": "Stage",
+                "type": "string"
+              },
+              "deploy_version": {
+                "minimum": 0,
+                "title": "Deploy Version",
+                "type": "integer"
+              },
+              "output": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Output"
+              },
+              "events": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Events",
+                "type": "array"
+              },
+              "duration_ms": {
+                "minimum": 0,
+                "title": "Duration Ms",
+                "type": "integer"
+              },
+              "approval_id": {
+                "anyOf": [
+                  {
+                    "maxLength": 128,
+                    "minLength": 16,
+                    "pattern": "^[A-Za-z0-9_-]+$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Approval Id"
+              },
+              "approval_summary": {
+                "anyOf": [
+                  {
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Approval Summary"
+              },
+              "error_code": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Error Code"
+              },
+              "error_message": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Error Message"
+              }
+            },
+            "required": [
+              "test_id",
+              "status",
+              "multi_agent_id",
+              "deploy_version",
+              "duration_ms"
+            ],
+            "title": "SavedTestResult",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SavedTestResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[SavedTestResult]",
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": {
+        "title": null,
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "meta": null,
+      "execution": null
+    },
+    {
+      "name": "cancel_saved_multi_agent_test",
+      "title": null,
+      "description": "사용자가 취소한 저장 draft 테스트를 중지합니다. 이미 실행한 외부 변경을 되돌리지는 않습니다.\n\n        재시도에는 같은 operation_id를 사용하고 get_saved_multi_agent_test로 최종 상태를 확인하세요.",
+      "inputSchema": {
+        "$defs": {
+          "SavedTestOperation": {
+            "additionalProperties": false,
+            "properties": {
+              "operation_id": {
+                "format": "uuid",
+                "title": "Operation Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "operation_id"
+            ],
+            "title": "SavedTestOperation",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "test_id": {
+            "maxLength": 128,
+            "minLength": 16,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Test Id",
+            "type": "string"
+          },
+          "request": {
+            "$ref": "#/$defs/SavedTestOperation"
+          }
+        },
+        "required": [
+          "test_id",
+          "request"
+        ],
+        "title": "cancel_saved_multi_agent_testArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SavedTestResult": {
+            "additionalProperties": false,
+            "properties": {
+              "test_id": {
+                "maxLength": 128,
+                "minLength": 16,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "title": "Test Id",
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "running",
+                  "needs_approval",
+                  "completed",
+                  "failed",
+                  "rejected",
+                  "cancelled",
+                  "expired"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "multi_agent_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "stage": {
+                "const": "D",
+                "default": "D",
+                "title": "Stage",
+                "type": "string"
+              },
+              "deploy_version": {
+                "minimum": 0,
+                "title": "Deploy Version",
+                "type": "integer"
+              },
+              "output": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Output"
+              },
+              "events": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Events",
+                "type": "array"
+              },
+              "duration_ms": {
+                "minimum": 0,
+                "title": "Duration Ms",
+                "type": "integer"
+              },
+              "approval_id": {
+                "anyOf": [
+                  {
+                    "maxLength": 128,
+                    "minLength": 16,
+                    "pattern": "^[A-Za-z0-9_-]+$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Approval Id"
+              },
+              "approval_summary": {
+                "anyOf": [
+                  {
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Approval Summary"
+              },
+              "error_code": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Error Code"
+              },
+              "error_message": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Error Message"
+              }
+            },
+            "required": [
+              "test_id",
+              "status",
+              "multi_agent_id",
+              "deploy_version",
+              "duration_ms"
+            ],
+            "title": "SavedTestResult",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SavedTestResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[SavedTestResult]",
+        "type": "object"
+      },
+      "icons": null,
+      "annotations": {
+        "title": null,
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "meta": null,
+      "execution": null
     }
   ]
 }
