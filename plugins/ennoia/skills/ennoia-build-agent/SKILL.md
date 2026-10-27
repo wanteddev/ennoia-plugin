@@ -16,7 +16,8 @@ description: "Ennoia multi-agent를 새로 만들거나 기존 graph·draft를 �
 ## 필요한 것만 발견
 
 - 처음 graph를 작성할 때 `list_multi_agent_node_types`, 사용할 type의 `get_multi_agent_node_schema`, `get_multi_agent_edge_schema`를 확인한다. 상세 schema와 예제를 우선한다.
-- 자원 종류·사용 가능 여부가 불명확하면 `get_multi_agent_capabilities` 요약을 읽는다. 필요한 `list_multi_agent_models`, `list_multi_agent_mcp_servers`, `list_multi_agent_rag_collections`만 query로 좁혀 조회한다.
+- 새 agent의 모델을 자동 선택할 때는 현재 project의 `list_multi_agent_models`를 먼저 조회하고 [모델 선택 기준](references/model-selection.md)을 따른다. 업무 난이도·비용·필수 기능에 맞는 모델군·등급 안에서 사용 가능한 최신 버전을 기본으로 선택한다. 사용자가 exact 모델·버전을 지정했거나 기존 graph를 수정하는 경우에는 해당 설정을 유지한다.
+- 다른 자원 종류·사용 가능 여부가 불명확하면 `get_multi_agent_capabilities` 요약을 읽는다. 필요한 `list_multi_agent_mcp_servers`, `list_multi_agent_rag_collections`만 query로 좁혀 조회한다.
 - MCP는 선택한 서버의 `list_multi_agent_mcp_tools`를 조회한 뒤 사용할 도구의 `get_multi_agent_mcp_tool_schema`만 읽는다. 카탈로그와 OAuth 연결 상태를 혼동하지 않는다.
 - 같은 project·schema·capability version의 유효한 조회 결과는 작업 중 재사용한다. project·model·version이 바뀌거나 서버가 stale이라고 판단하면 관련 부분만 다시 조회한다.
 

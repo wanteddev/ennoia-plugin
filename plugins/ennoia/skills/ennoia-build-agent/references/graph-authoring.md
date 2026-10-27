@@ -37,4 +37,4 @@ Discovery/schema는 superagent를 제공하지만 검증이 `COMPILE_FAILED`와 
 
 기존 graph 수정에서는 현재 연결의 `get_multi_agent` input schema가 `format=agent_config`를 지원할 때 이를 요청한다. 현 upstream은 원자적 edit revision/CAS가 없어 `CANONICAL_GRAPH_UNAVAILABLE`/`revision_not_supported`를 반환한다. `source_version`은 원본 배포 metadata이며 안전한 canonical edit identity가 아니다. 응답의 Canvas graph에서 누락 node/end edge·handle·node type·실행 속성을 추측해 단순 역변환하거나 새 에이전트를 대신 만들지 않는다. 원본 canonical nodes/edges 또는 검증된 export가 별도로 있으면 그 경로와 보존 범위를 확인한다. 이전 schema에서는 새 `format` 인자를 보내지 않고 같은 안전 경계를 유지한다.
 
-페이지는 응답의 `has_next`·`next_page`를 따른다. 목록에서 충분한 자원을 찾았다면 모든 페이지·모든 input schema를 읽지 않는다. 의존 관계가 없는 읽기 조회만 host가 지원하는 범위에서 병렬화한다.
+페이지는 응답의 `has_next`·`next_page`를 따른다. 모델 자동 선택은 [모델 선택 기준](model-selection.md)에 따라 같은 모델군의 최신 후보까지 비교한다. 그 밖의 자원 목록에서 충분한 자원을 찾았다면 모든 페이지·모든 input schema를 읽지 않는다. 의존 관계가 없는 읽기 조회만 host가 지원하는 범위에서 병렬화한다.

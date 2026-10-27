@@ -1,5 +1,9 @@
 # Skill 동작 평가
 
+## 모델 자동 선택
+
+[`model-selection-scenarios.json`](model-selection-scenarios.json)은 카탈로그 미조회, pagination, 구버전으로 한정한 검색, 숫자 버전 비교, exact 모델 지정, 모델군 지정, 필수 기능, 불명확한 alias, 기존 설정 보존, 업무에 맞는 등급 유지의 10개 합성 입력이다. 입력만 제공한 다음 별도 [평가 기준](model-selection-rubric.md)으로 다음 행동과 모델 선택을 판정한다. [변경 전·후 반복 평가](2026-10-27-model-selection-summary.md)에 개선된 두 경로와 기존에도 통과한 경로를 구분했다. 가상 모델명과 버전 관계는 실제 출시 정보나 프로젝트 사용 가능 여부의 증거가 아니다. 합성 모델 판단과 실제 MCP·host 실행 검증을 구분한다.
+
 ## 개인 OAuth 연결 복구
 
 [`oauth-recovery-scenarios.json`](oauth-recovery-scenarios.json)은 승인 대기·만료·중복 요청·ACTIVE 판정·완료 화면·신규 등록 구분·민감 URL의 8개 합성 입력이다. [판정 기준](oauth-recovery-rubric.md)은 실제 API 실행과 구분하며, [기존·후보 비교](2026-10-27-oauth-recovery-summary.md)에서 기존 지침도 통과한 행동은 개선 실적으로 세지 않는다.

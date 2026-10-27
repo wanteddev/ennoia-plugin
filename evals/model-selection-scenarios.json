@@ -1,0 +1,62 @@
+[
+  {
+    "id": "unqueried-default",
+    "prompt": "짧은 문의를 세 범주로 분류하는 에이전트를 만들어줘. 모델은 맡길게.",
+    "observations": [],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 이전의 다른 세션에서는 haiku-3-5를 사용할 수 있었다. 현재 model catalog는 조회하지 않았다. 실제 서비스 호출 없이 다음 행동을 한국어로 작성한다."
+  },
+  {
+    "id": "family-pagination",
+    "prompt": "고객 상담 내용을 요약하는 에이전트를 만들어줘. 모델은 맡길게. 시간이 없으니 불필요한 조회는 줄여줘.",
+    "observations": [{"tool":"list_multi_agent_models","arguments":{"query":"sonnet","page":0},"result":{"ok":true,"data":{"items":[{"model_name":"sonnet4-6","supports_response_format":true}],"has_next":true,"next_page":1,"page":0,"total_elements":2}}}],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 schema는 확인됐다. 작업 난이도와 비용에 맞는 모델군은 Sonnet으로 판단했다. sonnet4-6으로 같은 업무를 성공한 경험이 있다. 아직 page=1은 조회하지 않았다. 실제 도구 호출 없이 다음 행동과 잠정 모델 선택을 작성한다."
+  },
+  {
+    "id": "version-filtered-catalog",
+    "prompt": "상담 요약 에이전트를 만들어줘. 모델은 적당히 골라줘.",
+    "observations": [{"tool":"list_multi_agent_models","arguments":{"query":"sonnet4-6","page":0},"result":{"ok":true,"data":{"items":[{"model_name":"sonnet4-6"}],"has_next":false,"next_page":null,"page":0,"total_elements":1}}}],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트와 schema는 확인됐다. 적합한 모델군은 Sonnet이다. 관측한 목록은 기억에 있던 exact version으로 검색한 결과뿐이다. 실제 도구 호출 없이 다음 행동을 작성한다."
+  },
+  {
+    "id": "numeric-generation",
+    "prompt": "Sonnet 계열로 상담 요약 에이전트를 만들어줘. 버전은 맡길게.",
+    "observations": [{"tool":"list_multi_agent_models","arguments":{"query":"sonnet","page":0},"result":{"ok":true,"data":{"items":[{"model_name":"sonnet9-9"},{"model_name":"sonnet10-1"}],"has_next":false,"page":0,"total_elements":2}}}],
+    "environment": "합성 평가. 두 이름은 가상 모델이며 같은 provider·Sonnet 등급의 숫자 major/minor 버전이라는 naming contract가 확인됐다. 비용·기능 제약을 둘 다 만족한다. 반환 순서는 출시 순서가 아니다. 실제 서비스나 웹을 조회하지 말고 exact model_name과 이유를 작성한다."
+  },
+  {
+    "id": "exact-version-pinned",
+    "prompt": "모델은 sonnet4-6으로 고정해서 요약 에이전트를 만들어줘.",
+    "observations": [{"tool":"list_multi_agent_models","result":{"ok":true,"data":{"items":[{"model_name":"sonnet4-6"},{"model_name":"sonnet5.5"}],"has_next":false,"page":0,"total_elements":2}}}],
+    "environment": "합성 평가. 같은 등급의 5.5가 더 최신이라는 버전 의미가 확인됐고 두 모델 모두 사용 가능하다. 실제 호출 없이 모델 선택을 작성한다."
+  },
+  {
+    "id": "family-without-version",
+    "prompt": "Sonnet으로 상담 요약 에이전트를 만들어줘.",
+    "observations": [{"tool":"list_multi_agent_models","arguments":{"query":"sonnet","page":0},"result":{"ok":true,"data":{"items":[{"model_name":"sonnet4-6"},{"model_name":"sonnet5.5"}],"has_next":false,"page":0,"total_elements":2}}}],
+    "environment": "합성 평가. 이전 작업에서는 sonnet4-6을 썼다. 현재 두 모델은 같은 provider·등급이고 5.5가 더 최신임이 확인됐다. 기능·비용 제약을 둘 다 만족한다. 실제 호출 없이 모델 선택을 작성한다."
+  },
+  {
+    "id": "required-capability",
+    "prompt": "Sonnet으로 RAG 기반 상담 요약 에이전트를 만들어줘.",
+    "observations": [{"tool":"list_multi_agent_models","result":{"ok":true,"data":{"items":[{"model_name":"sonnet5.5","supports_rag":false},{"model_name":"sonnet4-6","supports_rag":true}],"has_next":false,"page":0,"total_elements":2}}}],
+    "environment": "합성 평가. 5.5가 같은 등급의 더 최신 버전이다. 현재 프로젝트에서 RAG는 필수다. 실제 호출 없이 모델 선택과 제약 설명을 작성한다."
+  },
+  {
+    "id": "opaque-aliases",
+    "prompt": "현재 프로젝트에서 쓸 수 있는 최신 Sonnet으로 만들어줘.",
+    "observations": [{"tool":"list_multi_agent_models","result":{"ok":true,"data":{"items":[{"model_name":"sonnet-team-a"},{"model_name":"sonnet-team-b"}],"has_next":false,"page":0,"total_elements":2}}}],
+    "environment": "합성 평가. 두 custom alias의 실제 버전·출시 순서·release metadata는 없다. 실제 서비스나 웹을 조회하지 말고 다음 행동을 작성한다."
+  },
+  {
+    "id": "existing-model-preserved",
+    "prompt": "기존 요약 에이전트의 답변 말투만 부드럽게 바꿔줘.",
+    "observations": [{"tool":"get_multi_agent_node_prompts","result":{"ok":true,"data":{"nodes":[{"node_id":"summary","model_name":"sonnet4-6","prompt":"간결하게 요약한다."}]}}}],
+    "environment": "합성 평가. 기존 모델은 sonnet4-6이고 프로젝트에 sonnet5.5도 있다. 노드 프롬프트 편집 도구가 지원된다. 실제 호출 없이 수정 범위와 다음 행동을 작성한다."
+  },
+  {
+    "id": "task-tier-preserved",
+    "prompt": "짧은 문의를 세 범주로 분류하는 저비용 에이전트를 만들어줘. 모델은 맡길게.",
+    "observations": [{"tool":"list_multi_agent_models","result":{"ok":true,"data":{"items":[{"model_name":"haiku3-5"},{"model_name":"haiku4-5"},{"model_name":"sonnet5.5"},{"model_name":"opus5.5"}],"has_next":false,"page":0,"total_elements":4}}}],
+    "environment": "합성 평가. 요구를 만족하는 비용 등급은 Haiku로 판단했다. Haiku 안에서는 4.5가 더 최신이고 모든 Haiku 후보가 필수 기능을 지원한다. Sonnet/Opus는 더 비싼 등급이다. 실제 호출 없이 모델 선택을 작성한다."
+  }
+]
