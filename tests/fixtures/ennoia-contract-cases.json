@@ -1282,5 +1282,31 @@
         "credential": "fixture-only"
       }
     }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": false,
+      "error": {
+        "code": "SAVED_TEST_GRAPH_CHANGED",
+        "message": "승인 대기 중 실행 설정이 변경되어 재개할 수 없습니다.",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": false,
+      "error": {
+        "code": "SAVED_TEST_RUNTIME_MISMATCH",
+        "message": "승인 대기 중 실행 설정이 변경되어 재개할 수 없습니다.",
+        "retryable": false
+      }
+    }
   }
 ]
