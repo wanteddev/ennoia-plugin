@@ -25,9 +25,13 @@ Skill·Plugin은 Ennoia에 설치된 자원과 이 host에 설치한 Ennoia Plug
 
 SuperAgent는 일반 graph의 routing/control node와 별도 runtime을 사용한다. 조회한 schema에 따라 start 1개에서 superagent 1개로 진입하고 superagent에서 agent leaf로 위임한다. 하위 agent의 `metadata.name`은 서로 다르게 지정하고 같은 agent로 향하는 위임 edge는 하나만 둔다. agent leaf에는 나가는 edge를 두지 않으며 선택적인 end는 superagent에서 연결한다. node별 필수 설정은 현재 schema를 따른다.
 
-Discovery의 superagent 노출은 현재 서버에서 검증·저장·테스트가 모두 성공한다는 보장이 아니다. `test_supported=false`는 안전 테스트 미지원이며 저장 가능 여부는 `validate_multi_agent`의 실제 `data.valid`와 저장 응답으로 판단한다. `SUPERAGENT_STRUCTURE_ONLY` warning이 있어도 `violations`나 `data.valid=false`를 무시하지 않는다.
+Discovery의 superagent 노출은 현재 서버에서 검증·저장·테스트가 모두 성공한다는 보장이 아니다. `test_supported=false`는 원본 graph를 받는 기존 제한 테스트의 미지원이며 저장 가능 여부는 `validate_multi_agent`의 실제 `data.valid`와 저장 응답으로 판단한다. 저장 원본의 Studio 실행은 [저장된 draft 테스트](saved-draft-testing.md)의 별도 도구·승인 계약으로 확인한다. `SUPERAGENT_STRUCTURE_ONLY` warning이 있어도 `violations`나 `data.valid=false`를 무시하지 않는다.
 
 Discovery/schema는 superagent를 제공하지만 검증이 `COMPILE_FAILED`와 “알 수 없는 노드 타입: superagent”로 실패하면 서버의 discovery와 compile 경로 사이 지원 불일치 가능성을 안내한다. Plugin version이나 MAB version만으로 backend 배포 상태를 확정하지 않는다. 같은 실패를 근거 없이 반복하거나 node type·사용자 모델을 바꿔 통과시키지 않는다. 실패한 검증을 원본 graph 직접 저장이나 backend 호출로 우회하지 않고, 관련 schema·실제 응답 또는 서버 개선의 새 근거가 생긴 뒤 재검증한다. 이름 중복·잘못된 edge 같은 구체적인 구조 위반은 해당 설정을 수정하는 별도 경로다.
+
+## MCP 실행 승인 설정
+
+직접 `mcp` 노드의 실행 전 승인은 `agentConfig.nodeSpec.mcpNodeSpec.requireApproval`이다. Agent가 선택해 호출하는 MCP 도구의 승인은 해당 `agentConfig.mcpConfig` 항목의 `approvalTools` 목록으로 설정한다. `allowedTools`는 사용 가능한 도구 범위이며 승인 정책을 대신하지 않는다. `approvalTools`에 없는 도구는 승인 없이 실행될 수 있다. 두 경로의 field를 서로 바꿔 쓰거나 `USER`·`ACTIVE` 연결 상태만으로 안전성을 추정하지 않는다. 현재 node schema에서 각 field의 지원과 실제 저장값을 확인한다. 기존 draft의 승인 설정을 테스트 통과 목적으로 제거하지 않는다.
 
 ## 기존 graph와 목록 조회
 

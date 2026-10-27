@@ -24,6 +24,10 @@
 
 [2026-10-03 평가 결과](2026-10-03-superagent-summary.md)는 control·기존 Skill·후보 Skill의 판단과 표본·검증 한계를 기록한다.
 
+## 저장된 draft의 Studio 테스트
+
+[`saved-draft-test-scenarios.json`](saved-draft-test-scenarios.json)은 명시 승인 재사용, USER·ACTIVE의 한계, 기존 raw 테스트 미지원과 새 경로 구분, 이전 host, D/0 버전, 승인 대기·승인/거절 재개, 중복 시작 방지·timeout 복구·취소·실패 및 terminal 상태·불명확한 버전·신뢰할 수 없는 승인 설명·재개 시 graph/runtime 변경 거절·승인 인수 미노출의 21개 합성 입력이다. 다음 행동과 완료 표현을 작성한 뒤 [별도 기준](saved-draft-test-rubric.md)으로 판정한다. 실제 backend·host 실행이나 독립 모델 판정을 수행한 결과가 아니며, 계약 fixture 검증과도 구분한다.
+
 ## 개인 MCP 연결과 배포된 에이전트 실행
 
 [`mcp-invocation-scenarios.json`](mcp-invocation-scenarios.json)은 정상 실행, 지정 대상·개발 환경의 연결 실패, 링크 부재·부적합, 계정 불일치, 이전 서버 오류를 다룹니다. 입력만 제공한 뒤 별도 [평가 기준](mcp-invocation-rubric.md)으로 판정합니다. 합성 fixture이며 실제 모델 평가·외부 MCP 실행·native host 검증 결과를 포함하지 않습니다.

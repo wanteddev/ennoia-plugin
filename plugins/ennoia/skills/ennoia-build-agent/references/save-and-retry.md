@@ -18,8 +18,8 @@
 | Warning | 저장·실행 판단 |
 | --- | --- |
 | `MAB_COMPILE_DEFERRED` | 외부 자원이 필요한 compile 검증이 실행 단계로 미뤄졌다. 저장 가능성과 compile/test 실행 성공을 구분하며, 테스트 지원 여부는 현재 schema와 결과를 확인한다. |
-| `SUPERAGENT_STRUCTURE_ONLY` | 전용 runtime의 구조·설정만 검증됐다. 실제 runtime build·실행은 미확인이며, 안전 테스트가 명시적으로 미지원이면 sync/async 테스트를 시작하지 않는다. |
-| `TEST_NODE_UNSUPPORTED` | 안전 테스트 제한이다. 유효한 검증과 요청된 저장 입력이 있으면 저장할 수 있으나, 사용자 요청이 테스트 성공을 저장 조건으로 삼았다면 저장을 보류한다. |
+| `SUPERAGENT_STRUCTURE_ONLY` | 전용 runtime의 구조·설정만 검증됐다. 실제 runtime build·실행은 미확인이며, 기존 제한 테스트가 명시적으로 미지원이면 그 sync/async 테스트를 시작하지 않는다. 저장된 draft 실행은 별도 도구·승인 계약으로 판단한다. |
+| `TEST_NODE_UNSUPPORTED` | 원본 graph를 받는 기존 제한 테스트의 제한이다. 유효한 검증과 요청된 저장 입력이 있으면 저장할 수 있으나, 사용자 요청이 테스트 성공을 저장 조건으로 삼았다면 저장을 보류한다. |
 
 같은 code라도 테스트 응답의 violation이나 `data.valid=false`이면 해당 실패를 유지한다. 저장 완료는 실제 `save_multi_agent` 성공 응답으로만 확인하고, 구조 검증 또는 저장 성공을 실제 테스트 성공으로 표현하지 않는다.
 

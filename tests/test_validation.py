@@ -152,8 +152,11 @@ class ValidationTests(unittest.TestCase):
 
     def test_hallucinated_tool_reference_is_rejected(self):
         skill = self.root / "plugins/ennoia/skills/ennoia-run/SKILL.md"
-        skill.write_text(skill.read_text() + "\n`get_ennoia_fictional_resume`\n")
-        self.assertTrue(any("tool" in e for e in self.validate(self.root)))
+        original = skill.read_text()
+        for tool in ("get_ennoia_fictional_resume", "resume_saved_fictional_test", "cancel_saved_fictional_test"):
+            with self.subTest(tool=tool):
+                skill.write_text(original + f"\n`{tool}`\n")
+                self.assertTrue(any(tool in e for e in self.validate(self.root)))
 
     def test_symlink_outside_payload_is_rejected(self):
         (self.root / "plugins/ennoia/outside").symlink_to(self.root.parent)

@@ -298,5 +298,1015 @@
     "value": {
       "scope": "all"
     }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "project_scope": {
+          "scope": "current"
+        },
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "input_message": "초안 테스트",
+        "confirm": true,
+        "operation_id": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "project_scope": {
+          "scope": "current"
+        },
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "input_message": "초안 테스트",
+        "confirm": false,
+        "operation_id": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "project_scope": {
+          "scope": "current"
+        },
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": -1,
+        "input_message": "초안 테스트",
+        "confirm": true,
+        "operation_id": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "project_scope": {
+          "scope": "current"
+        },
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "input_message": "",
+        "confirm": true,
+        "operation_id": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "project_scope": {
+          "scope": "current"
+        },
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "input_message": "초안 테스트",
+        "confirm": true,
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "nodes": []
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "project_scope": {
+          "scope": "current"
+        },
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "input_message": "초안 테스트",
+        "operation_id": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "project_scope": {
+          "scope": "current"
+        },
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "input_message": "초안 테스트",
+        "confirm": true,
+        "operation_id": "22222222-2222-4222-8222-222222222222"
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "test_id": "fixture-opaque-test"
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "test_id": "fixture-opaque-test",
+      "request": {
+        "approval_id": "fixture-approval",
+        "decision": "approve",
+        "operation_id": "33333333-3333-4333-8333-333333333333"
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "test_id": "fixture-opaque-test",
+      "request": {
+        "approval_id": "fixture-approval",
+        "decision": "reject",
+        "operation_id": "33333333-3333-4333-8333-333333333333"
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "test_id": "fixture-opaque-test",
+      "request": {
+        "decision": "approve",
+        "operation_id": "33333333-3333-4333-8333-333333333333"
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "test_id": "fixture-opaque-test",
+      "request": {
+        "approval_id": "fixture-approval",
+        "decision": "auto",
+        "operation_id": "33333333-3333-4333-8333-333333333333"
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "test_id": "fixture-opaque-test",
+      "request": {
+        "operation_id": "44444444-4444-4444-8444-444444444444"
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "test_id": "fixture-opaque-test",
+      "request": {}
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "needs_approval",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "approval_id": "fixture-approval",
+        "approval_summary": "create_issue 요청 승인 필요"
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "completed",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "output": "문의 분류 완료"
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "failed",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "error_code": "EXECUTION_FAILED",
+        "error_message": "실행 실패"
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "rejected",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "cancelled",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "expired",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "pending",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "stream_id": "fixture-stream"
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "session_id": "fixture-session"
+      }
+    }
+  },
+  {
+    "tool": "start_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "credential": "fixture-only"
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "needs_approval",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "approval_id": "fixture-approval",
+        "approval_summary": "create_issue 요청 승인 필요"
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "completed",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "output": "문의 분류 완료"
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "failed",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "error_code": "EXECUTION_FAILED",
+        "error_message": "실행 실패"
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "rejected",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "cancelled",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "expired",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "pending",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "stream_id": "fixture-stream"
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "session_id": "fixture-session"
+      }
+    }
+  },
+  {
+    "tool": "get_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "credential": "fixture-only"
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "needs_approval",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "approval_id": "fixture-approval",
+        "approval_summary": "create_issue 요청 승인 필요"
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "completed",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "output": "문의 분류 완료"
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "failed",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "error_code": "EXECUTION_FAILED",
+        "error_message": "실행 실패"
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "rejected",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "cancelled",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "expired",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "pending",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "stream_id": "fixture-stream"
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "session_id": "fixture-session"
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "credential": "fixture-only"
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "needs_approval",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "approval_id": "fixture-approval",
+        "approval_summary": "create_issue 요청 승인 필요"
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "completed",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "output": "문의 분류 완료"
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "failed",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "error_code": "EXECUTION_FAILED",
+        "error_message": "실행 실패"
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "rejected",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "cancelled",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "expired",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "pending",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": []
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "stream_id": "fixture-stream"
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "session_id": "fixture-session"
+      }
+    }
+  },
+  {
+    "tool": "cancel_saved_multi_agent_test",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "test_id": "fixture-opaque-test",
+        "status": "running",
+        "multi_agent_id": "fixture-agent",
+        "stage": "D",
+        "deploy_version": 0,
+        "duration_ms": 0,
+        "events": [],
+        "credential": "fixture-only"
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": false,
+      "error": {
+        "code": "SAVED_TEST_GRAPH_CHANGED",
+        "message": "승인 대기 중 실행 설정이 변경되어 재개할 수 없습니다.",
+        "retryable": false
+      }
+    }
+  },
+  {
+    "tool": "resume_saved_multi_agent_test",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": false,
+      "error": {
+        "code": "SAVED_TEST_RUNTIME_MISMATCH",
+        "message": "승인 대기 중 실행 설정이 변경되어 재개할 수 없습니다.",
+        "retryable": false
+      }
+    }
   }
 ]

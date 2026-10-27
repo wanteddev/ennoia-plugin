@@ -49,6 +49,36 @@ class ContractTests(unittest.TestCase):
         schema["$defs"][reference]["properties"]["scope"]["enum"].append("all")
         self.assertTrue(any("list_multi_agents" in error for error in validate_contracts(self.catalog, self.cases)))
 
+    def test_saved_test_confirmation_cannot_be_optional_or_false(self):
+        tool = next(t for t in self.catalog["tools"] if t["name"] == "start_saved_multi_agent_test")
+        request = tool["inputSchema"]["$defs"]["SavedTestStartRequest"]
+        request["properties"]["confirm"].pop("const")
+        request["required"].remove("confirm")
+        self.assertTrue(any("start_saved_multi_agent_test" in error for error in validate_contracts(self.catalog, self.cases)))
+
+    def test_saved_test_version_must_be_explicit(self):
+        tool = next(t for t in self.catalog["tools"] if t["name"] == "start_saved_multi_agent_test")
+        tool["inputSchema"]["$defs"]["SavedTestStartRequest"]["required"].remove("deploy_version")
+        self.assertTrue(any("start_saved_multi_agent_test" in error for error in validate_contracts(self.catalog, self.cases)))
+
+    def test_saved_test_input_message_boundaries(self):
+        case = copy.deepcopy(next(c for c in self.cases if c["tool"] == "start_saved_multi_agent_test" and c["valid"]))
+        for length, valid in ((0, False), (1, True), (20_000, True), (20_001, False)):
+            with self.subTest(length=length):
+                case["value"]["request"]["input_message"] = "가" * length
+                case["valid"] = valid
+                self.assertEqual(validate_contracts(self.catalog, [case]), [])
+
+    def test_saved_test_approval_status_cannot_disappear(self):
+        tool = next(t for t in self.catalog["tools"] if t["name"] == "get_saved_multi_agent_test")
+        tool["outputSchema"]["$defs"]["SavedTestResult"]["properties"]["status"]["enum"].remove("needs_approval")
+        self.assertTrue(any("get_saved_multi_agent_test" in error for error in validate_contracts(self.catalog, self.cases)))
+
+    def test_saved_test_response_cannot_accept_private_execution_identifiers(self):
+        tool = next(t for t in self.catalog["tools"] if t["name"] == "get_saved_multi_agent_test")
+        tool["outputSchema"]["$defs"]["SavedTestResult"]["additionalProperties"] = True
+        self.assertTrue(any("get_saved_multi_agent_test" in error for error in validate_contracts(self.catalog, self.cases)))
+
     def test_cli_accepts_json_rpc_catalog_and_rejects_missing_tools(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "catalog.json"
