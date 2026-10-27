@@ -1,5 +1,9 @@
 # Skill 동작 평가
 
+## 개인 OAuth 연결 복구
+
+[`oauth-recovery-scenarios.json`](oauth-recovery-scenarios.json)은 승인 대기·만료·중복 요청·ACTIVE 판정·완료 화면·신규 등록 구분·민감 URL의 8개 합성 입력이다. [판정 기준](oauth-recovery-rubric.md)은 실제 API 실행과 구분하며, [기존·후보 비교](2026-10-27-oauth-recovery-summary.md)에서 기존 지침도 통과한 행동은 개선 실적으로 세지 않는다.
+
 ## 목록 조회 범위와 연결 상태
 
 [`mcp-scope-scenarios.json`](mcp-scope-scenarios.json)은 구 schema의 전체 프로젝트 목록 조회, 인증된 GET 405, HTTP 200의 검증 미통과를 다룬다. [판정 기준](mcp-scope-rubric.md)과 [기존·후보 비교](2026-10-26-mcp-scope-summary.md)를 별도로 두며 실제 API 실행과 구분한다.

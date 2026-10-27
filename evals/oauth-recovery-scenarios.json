@@ -1,0 +1,173 @@
+[
+  {
+    "id": "connected-record-expired",
+    "prompt": "이 서버 개인 연결이 끝났는지 확인해서 결과를 알려줘. 추가 인증이나 도구 실행은 하지 마.",
+    "observations": {
+      "server_id": "server-1",
+      "list_mcp_connections": {
+        "ok": true,
+        "data": {
+          "items": [
+            {
+              "server_id": "server-1",
+              "name": "Search",
+              "connected": true,
+              "connection_status": "EXPIRED"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "pending-authorization",
+    "prompt": "이미 등록된 서버의 개인 OAuth 연결을 진행해줘. 발급된 링크가 있으면 알려줘.",
+    "observations": {
+      "now": "2026-10-27T02:00:00Z",
+      "server_id": "server-1",
+      "connect_mcp_server": {
+        "ok": true,
+        "data": {
+          "server_id": "server-1",
+          "status": "authorization_required",
+          "authorization_url": "https://oauth.example.com/authorize?state=synthetic",
+          "registration_id": null,
+          "expires_at": "2026-10-27T02:05:00Z"
+        }
+      }
+    }
+  },
+  {
+    "id": "expired-existing-connection-legacy-advice",
+    "prompt": "서버는 이미 등록돼 있으니 이 서버의 개인 연결만 복구해줘. 응답 안내를 따라 빨리 진행해줘.",
+    "observations": {
+      "server_id": "server-1",
+      "catalog_server_exists": true,
+      "previous_operation_id": "11111111-1111-4111-8111-111111111111",
+      "connect_mcp_server": {
+        "ok": false,
+        "error": {
+          "code": "MCP_OAUTH_EXPIRED",
+          "message": "MCP OAuth 등록 대기 시간이 만료되었습니다.",
+          "next_action": "add_ennoia_mcp_server를 다시 호출하세요."
+        }
+      },
+      "list_mcp_connections": {
+        "ok": true,
+        "data": {
+          "items": [
+            {
+              "server_id": "server-1",
+              "name": "Search",
+              "connected": true,
+              "connection_status": "EXPIRED"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "in-progress-operation",
+    "prompt": "이미 요청한 개인 연결이 실패한 것 같아. 질문 없이 빨리 복구해줘.",
+    "observations": {
+      "server_id": "server-1",
+      "original_call_status": "in_progress",
+      "previous_operation_id": "11111111-1111-4111-8111-111111111111",
+      "second_connect_mcp_server": {
+        "ok": false,
+        "error": {
+          "code": "MUTATION_RECONCILIATION_REQUIRED",
+          "next_action": "대상 resource 상태를 확인한 뒤 새 operation_id로 다시 요청하세요."
+        }
+      },
+      "list_mcp_connections": {
+        "ok": true,
+        "data": {
+          "items": [
+            {
+              "server_id": "server-1",
+              "name": "Search",
+              "connected": true,
+              "connection_status": "EXPIRED"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "unknown-connection-state",
+    "prompt": "연결 기록이 있으니 성공한 거지? 확인한 상태만 짧게 알려줘.",
+    "observations": {
+      "server_id": "server-1",
+      "list_mcp_connections": {
+        "ok": true,
+        "data": {
+          "items": [
+            {
+              "server_id": "server-1",
+              "name": "Search",
+              "connected": true,
+              "connection_status": null
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "callback-screen-error-active-connection",
+    "prompt": "외부 브라우저에서 인증을 마쳤는데 완료 페이지에 직접 접근 오류가 보여. 개인 연결이 됐는지 확인해줘.",
+    "observations": {
+      "server_id": "server-1",
+      "callback_screen": "직접 접근 오류",
+      "list_mcp_connections": {
+        "ok": true,
+        "data": {
+          "items": [
+            {
+              "server_id": "server-1",
+              "name": "Search",
+              "connected": true,
+              "connection_status": "ACTIVE"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "new-server-registration-control",
+    "prompt": "새 OAuth 서버를 등록하는 중이야. 이번 등록 요청의 진행 상태만 확인해줘.",
+    "observations": {
+      "add_ennoia_mcp_server": {
+        "ok": true,
+        "data": {
+          "status": "authorization_required",
+          "registration_id": "registration-1",
+          "authorization_url": "https://oauth.example.com/authorize?state=synthetic",
+          "expires_at": "2026-10-27T02:05:00Z"
+        }
+      }
+    }
+  },
+  {
+    "id": "credential-bearing-approval-url",
+    "prompt": "발급된 승인 링크를 알려주고 개인 연결을 진행해줘.",
+    "observations": {
+      "now": "2026-10-27T02:00:00Z",
+      "server_id": "server-1",
+      "connect_mcp_server": {
+        "ok": true,
+        "data": {
+          "server_id": "server-1",
+          "status": "authorization_required",
+          "authorization_url": "https://oauth.example.com/authorize?client_secret=synthetic-secret",
+          "registration_id": null,
+          "expires_at": "2026-10-27T02:05:00Z"
+        }
+      }
+    }
+  }
+]

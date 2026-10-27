@@ -23,9 +23,13 @@ description: "Ennoia에 외부 MCP 서버를 등록·조회·변경하거나 공
 
 새 서버가 필요한 요청이면 제공되거나 신뢰할 수 있는 설정에서 확인한 endpoint·transport·auth 방식으로 `add_ennoia_mcp_server`를 사용한다. endpoint를 이름에서 추측하지 않는다. 반환된 `registration_id`를 `get_mcp_registration_status`로 확인하고 next action에 따라 이어간다.
 
-기존 서버 연결은 `connect_mcp_server`를 사용한다. OAuth challenge·reauthentication 안내가 있으면 host가 지원하는 인증 흐름에서 사용자 본인이 인증하게 한다. 비밀번호·refresh token을 채팅에 붙여넣게 하거나 plugin 설정·소스·로그에 저장하지 않는다. 토큰이 필요한 공급자는 적절한 credential 입력 화면을 사용한다. 화면을 제공하지 않는 host라면 Ennoia 연결 관리 화면에서 인증하고 결과를 다시 확인한다.
+기존 서버의 개인 연결은 같은 `server_id`의 `connect_mcp_server`로 처리한다. `authorization_required`는 승인 대기이며 연결 완료가 아니다. 사용자가 연결 진행·링크 안내를 요청했고 응답에 `authorization_url`이 있으면 공통 응답 규칙에 따라 승인 링크와 실제 `expires_at`을 안내한다. 만료된 URL은 다시 제공하지 않고, 만료 시각이 없으면 추측하지 않는다. OAuth 승인은 사용자 본인이 진행하며 비밀번호·refresh token을 채팅으로 수집하거나 Plugin 설정·소스·로그에 저장하지 않는다. 별도 credential 입력 화면이 필요한 공급자는 host의 공식 화면을 사용하고, 화면이 없으면 Ennoia 연결 관리 화면을 안내한다.
 
-`list_mcp_connections`로 연결 상태를 재확인한다. 실제 동작 확인이 요청됐다면 노출된 읽기 전용 도구를 최소 입력으로 검증한다. Ennoia가 외부 도구를 직접 호출하는 범용 도구를 제공한다고 가정하지 않는다. 필요하면 요청 범위에서 read-only graph test를 사용한다.
+승인 뒤 `list_mcp_connections`에서 같은 `server_id`의 `connection_status=ACTIVE`를 확인한다. `connected=true`는 연결 기록의 존재여서 EXPIRED도 포함할 수 있다. 상태가 누락·unknown이거나 결과가 서로 모순되면 미확인으로 보고한다. 완료 화면의 성공·오류 표시만으로 연결을 확정하지 않는다. ACTIVE는 개인 인증 연결 상태이며 실제 도구 실행 성공을 뜻하지 않는다. `get_mcp_registration_status`는 신규 등록에서 받은 `registration_id`에만 사용하고 개인 연결의 누락·null ID를 만들어 조회하지 않는다.
+
+진행 중인 요청은 원래 결과를 기다리며 새 `operation_id`로 중복 시작하지 않는다. 유효한 동일 요청을 재전송해야 할 때는 같은 ID를 사용한다. `MUTATION_RECONCILIATION_REQUIRED`나 timeout처럼 결과가 불명확하면 현재 연결 상태를 확인하되, 기존 기록의 EXPIRED만으로 진행 중인 요청의 실패를 단정하지 않는다. 개인 연결의 만료·실패가 확인되고 복구가 요청됐으면 상태 확인 후 새 UUIDv4 `operation_id`로 같은 서버의 `connect_mcp_server`를 사용한다. 구 서버의 복구 문구가 새 등록을 안내하더라도 기존 개인 연결 때문에 `add_ennoia_mcp_server`를 호출하지 않는다. 실제 반환된 `failure_stage`·`upstream_status`만 설명하고 일반 502·`UPSTREAM_UNAVAILABLE`만으로 인증 만료나 공급자 장애를 추정하지 않는다.
+
+실제 동작 확인이 요청됐다면 노출된 읽기 전용 도구를 최소 입력으로 검증한다. Ennoia가 외부 도구를 직접 호출하는 범용 도구를 제공한다고 가정하지 않는다. 필요하면 요청 범위에서 read-only graph test를 사용한다.
 
 ## 변경과 해제
 
