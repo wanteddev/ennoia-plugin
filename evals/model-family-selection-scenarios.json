@@ -1,0 +1,436 @@
+[
+  {
+    "id": "gpt-latest-in-tier",
+    "prompt": "GPT mini 계열로 짧은 문서를 분류하는 에이전트를 만들어줘. 버전은 맡길게.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gpt-9.9-mini"
+              },
+              {
+                "model_name": "gpt-10.1-mini"
+              },
+              {
+                "model_name": "gpt-10.2"
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 3
+          }
+        },
+        "arguments": {
+          "query": "gpt",
+          "page": 0
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 GPT mini 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 작업 난이도·비용·필수 기능에 맞는 등급은 GPT mini로 판단했다. 이 등급의 두 후보 모두 요구를 만족한다. gpt-10.2는 더 비싼 별도 등급이고 요구 범위 밖이다. 반환 순서는 출시 순서가 아니다."
+  },
+  {
+    "id": "gpt-family-pagination",
+    "prompt": "문서 분류 에이전트를 만들어줘. 모델은 맡길게. 불필요한 조회를 줄이고 빨리 진행해줘.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gpt-9.9-mini"
+              }
+            ],
+            "has_next": true,
+            "page": 0,
+            "total_elements": 2,
+            "next_page": 1
+          }
+        },
+        "arguments": {
+          "query": "gpt",
+          "page": 0
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 GPT mini 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 업무에 적합한 등급은 GPT mini다. gpt-9.9-mini로 이전에 성공했다. page=1은 아직 관측하지 않았다."
+  },
+  {
+    "id": "gpt-version-filtered",
+    "prompt": "문서 분류 에이전트를 만들어줘. 모델은 적당히 골라줘.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gpt-9.9-mini"
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 1
+          }
+        },
+        "arguments": {
+          "query": "gpt-9.9-mini",
+          "page": 0
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 GPT mini 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 업무에 적합한 등급은 GPT mini다. 관측한 목록은 기억한 구버전 exact 이름으로 검색한 결과뿐이다."
+  },
+  {
+    "id": "gpt-exact-pinned",
+    "prompt": "gpt-9.9-mini 모델로 고정해서 만들어줘.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gpt-9.9-mini"
+              },
+              {
+                "model_name": "gpt-10.1-mini"
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 2
+          }
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 GPT mini 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 두 후보 모두 현재 프로젝트에서 사용 가능하고 필수 기능을 지원한다."
+  },
+  {
+    "id": "gpt-required-capability",
+    "prompt": "GPT mini 계열로 구조화 JSON 출력을 반드시 지원하는 에이전트를 만들어줘.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gpt-10.1-mini",
+                "supports_response_format": false
+              },
+              {
+                "model_name": "gpt-9.9-mini",
+                "supports_response_format": true
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 2
+          }
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 GPT mini 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 구조화 JSON 출력은 필수다. 해당 지원 여부는 현재 catalog와 node schema에서 확인됐다."
+  },
+  {
+    "id": "gpt-opaque-aliases",
+    "prompt": "프로젝트에서 쓸 수 있는 최신 GPT mini로 만들어줘.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gpt-team-a"
+              },
+              {
+                "model_name": "gpt-team-b"
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 2
+          }
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 GPT mini 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 목록의 custom alias에는 실제 기반 버전과 release metadata가 없다. 앞서 설명한 숫자 버전 모델들은 이 목록에 없다."
+  },
+  {
+    "id": "gpt-project-availability",
+    "prompt": "GPT mini로 문서 분류 에이전트를 만들어줘. 버전은 맡길게.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gpt-9.9-mini"
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 1
+          }
+        },
+        "arguments": {
+          "query": "gpt",
+          "page": 0
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 GPT mini 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 조회한 현재 프로젝트의 전체 해당 등급 후보는 gpt-9.9-mini 하나다. 공개 최신 모델로 gpt-10.1-mini를 알고 있더라도 현재 프로젝트 catalog에는 없다. 현재 후보는 필수 기능·비용 조건을 만족한다."
+  },
+  {
+    "id": "gpt-existing-model",
+    "prompt": "기존 분류 에이전트의 답변 말투만 정중하게 바꿔줘.",
+    "observations": [
+      {
+        "tool": "get_multi_agent_node_prompts",
+        "result": {
+          "ok": true,
+          "data": {
+            "nodes": [
+              {
+                "node_id": "classifier",
+                "model_name": "gpt-9.9-mini",
+                "prompt": "세 범주로 분류한다."
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 GPT mini 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 기존 모델은 gpt-9.9-mini이고 프로젝트에는 gpt-10.1-mini도 있다. 전용 노드 프롬프트 편집 도구가 지원된다. 수정에 필요한 누락 metadata는 추측하지 않는다."
+  },
+  {
+    "id": "gemini-latest-in-tier",
+    "prompt": "Gemini Flash 계열로 짧은 문서를 분류하는 에이전트를 만들어줘. 버전은 맡길게.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gemini-9.9-flash"
+              },
+              {
+                "model_name": "gemini-10.1-flash"
+              },
+              {
+                "model_name": "gemini-10.2-pro"
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 3
+          }
+        },
+        "arguments": {
+          "query": "gemini",
+          "page": 0
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 Gemini Flash 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 작업 난이도·비용·필수 기능에 맞는 등급은 Gemini Flash로 판단했다. 이 등급의 두 후보 모두 요구를 만족한다. gemini-10.2-pro는 더 비싼 별도 등급이고 요구 범위 밖이다. 반환 순서는 출시 순서가 아니다."
+  },
+  {
+    "id": "gemini-family-pagination",
+    "prompt": "문서 분류 에이전트를 만들어줘. 모델은 맡길게. 불필요한 조회를 줄이고 빨리 진행해줘.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gemini-9.9-flash"
+              }
+            ],
+            "has_next": true,
+            "page": 0,
+            "total_elements": 2,
+            "next_page": 1
+          }
+        },
+        "arguments": {
+          "query": "gemini",
+          "page": 0
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 Gemini Flash 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 업무에 적합한 등급은 Gemini Flash다. gemini-9.9-flash로 이전에 성공했다. page=1은 아직 관측하지 않았다."
+  },
+  {
+    "id": "gemini-version-filtered",
+    "prompt": "문서 분류 에이전트를 만들어줘. 모델은 적당히 골라줘.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gemini-9.9-flash"
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 1
+          }
+        },
+        "arguments": {
+          "query": "gemini-9.9-flash",
+          "page": 0
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 Gemini Flash 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 업무에 적합한 등급은 Gemini Flash다. 관측한 목록은 기억한 구버전 exact 이름으로 검색한 결과뿐이다."
+  },
+  {
+    "id": "gemini-exact-pinned",
+    "prompt": "gemini-9.9-flash 모델로 고정해서 만들어줘.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gemini-9.9-flash"
+              },
+              {
+                "model_name": "gemini-10.1-flash"
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 2
+          }
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 Gemini Flash 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 두 후보 모두 현재 프로젝트에서 사용 가능하고 필수 기능을 지원한다."
+  },
+  {
+    "id": "gemini-required-capability",
+    "prompt": "Gemini Flash 계열로 이미지 입력을 반드시 지원하는 에이전트를 만들어줘.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gemini-10.1-flash",
+                "supports_image": false
+              },
+              {
+                "model_name": "gemini-9.9-flash",
+                "supports_image": true
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 2
+          }
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 Gemini Flash 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 이미지 입력은 필수다. 해당 지원 여부는 현재 catalog와 node schema에서 확인됐다."
+  },
+  {
+    "id": "gemini-opaque-aliases",
+    "prompt": "프로젝트에서 쓸 수 있는 최신 Gemini Flash로 만들어줘.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gemini-team-a"
+              },
+              {
+                "model_name": "gemini-team-b"
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 2
+          }
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 Gemini Flash 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 목록의 custom alias에는 실제 기반 버전과 release metadata가 없다. 앞서 설명한 숫자 버전 모델들은 이 목록에 없다."
+  },
+  {
+    "id": "gemini-project-availability",
+    "prompt": "Gemini Flash로 문서 분류 에이전트를 만들어줘. 버전은 맡길게.",
+    "observations": [
+      {
+        "tool": "list_multi_agent_models",
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "model_name": "gemini-9.9-flash"
+              }
+            ],
+            "has_next": false,
+            "page": 0,
+            "total_elements": 1
+          }
+        },
+        "arguments": {
+          "query": "gemini",
+          "page": 0
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 Gemini Flash 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 조회한 현재 프로젝트의 전체 해당 등급 후보는 gemini-9.9-flash 하나다. 공개 최신 모델로 gemini-10.1-flash를 알고 있더라도 현재 프로젝트 catalog에는 없다. 현재 후보는 필수 기능·비용 조건을 만족한다."
+  },
+  {
+    "id": "gemini-existing-model",
+    "prompt": "기존 분류 에이전트의 답변 말투만 정중하게 바꿔줘.",
+    "observations": [
+      {
+        "tool": "get_multi_agent_node_prompts",
+        "result": {
+          "ok": true,
+          "data": {
+            "nodes": [
+              {
+                "node_id": "classifier",
+                "model_name": "gemini-9.9-flash",
+                "prompt": "세 범주로 분류한다."
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "environment": "합성 평가. 평가팀/모델 평가 프로젝트가 선택됐고 node schema는 확인됐다. 모델명은 가상이며 같은 Gemini Flash 등급의 숫자 major/minor에서 10.1이 9.9보다 최신이라는 naming contract가 확인됐다. 실제 서비스·웹 호출 없이 다음 행동과 exact model_name을 작성한다. 기존 모델은 gemini-9.9-flash이고 프로젝트에는 gemini-10.1-flash도 있다. 전용 노드 프롬프트 편집 도구가 지원된다. 수정에 필요한 누락 metadata는 추측하지 않는다."
+  }
+]
