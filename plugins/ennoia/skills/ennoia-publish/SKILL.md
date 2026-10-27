@@ -1,6 +1,6 @@
 ---
 name: ennoia-publish
-description: "Ennoia 에이전트의 운영 배포, 배포 상태 확인·중지, App 생성·수정·공유 또는 명시적인 배포/App 삭제를 요청했을 때 사용합니다. draft 저장만 요청된 경우에는 사용하지 않습니다."
+description: "Ennoia 에이전트의 운영 배포·상태 확인·중지, 기존 배포의 API 사용법·API 키 확인 링크·cURL 조회, App 생성·수정·공유 또는 명시적인 배포/App 삭제에 사용합니다. draft 저장만 요청된 경우에는 사용하지 않습니다."
 ---
 
 # Ennoia 배포와 App 관리
