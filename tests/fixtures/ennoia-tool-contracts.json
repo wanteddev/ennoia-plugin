@@ -1,6 +1,6 @@
 {
   "source_repository": "wanteddev/ennoia-mcp-server",
-  "source_revision": "f7f439099b5d7b8a5858750fbff3f495e9d8f0cd",
+  "source_revision": "0e7bfe76ce64253597c201ff0ad883122fa863b9",
   "tools": [
     {
       "name": "start_ennoia_conversation",
@@ -4232,8 +4232,6 @@
     },
     {
       "name": "start_saved_multi_agent_test",
-      "title": null,
-      "description": "저장된 D draft를 deploy 없이 Studio 테스트로 실행합니다. 개인 MCP credential은 서버에서 주입합니다.\n\n        실제 project와 draft deploy_version을 확인하고 부작용 가능성을 알린 뒤 사용자가 테스트를 승인한 경우에만\n        confirm=true로 호출하세요. configured tool이 외부 변경을 수행할 수 있으며 read-only 보장은 없습니다.\n        같은 operation_id로 재시도하고 반환 test_id를 get_saved_multi_agent_test로 조회하세요. Canvas를 재작성하지 않습니다.",
       "inputSchema": {
         "$defs": {
           "ProjectSelector": {
@@ -4778,22 +4776,10 @@
         ],
         "title": "ResultEnvelope[SavedTestResult]",
         "type": "object"
-      },
-      "icons": null,
-      "annotations": {
-        "title": null,
-        "readOnlyHint": false,
-        "destructiveHint": true,
-        "idempotentHint": true,
-        "openWorldHint": true
-      },
-      "meta": null,
-      "execution": null
+      }
     },
     {
       "name": "get_saved_multi_agent_test",
-      "title": null,
-      "description": "저장 draft 테스트의 같은 test_id로 상태와 결과를 조회합니다. 새 실행을 만들지 않습니다.\n\n        running과 needs_approval은 완료가 아닙니다. needs_approval이면 사용자 결정 후 반환 approval_id로 재개합니다.",
       "inputSchema": {
         "properties": {
           "test_id": {
@@ -5245,22 +5231,10 @@
         ],
         "title": "ResultEnvelope[SavedTestResult]",
         "type": "object"
-      },
-      "icons": null,
-      "annotations": {
-        "title": null,
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": true
-      },
-      "meta": null,
-      "execution": null
+      }
     },
     {
       "name": "resume_saved_multi_agent_test",
-      "title": null,
-      "description": "needs_approval인 저장 draft 테스트를 반환 approval_id와 사용자의 approve/reject 결정으로 재개합니다.\n\n        도구 실행의 부작용과 승인 대상을 사용자가 확인해야 합니다. 모델이 자동 승인하지 않습니다.\n        같은 operation_id를 유지하고 결과가 불명확하면 같은 test_id를 조회하세요.",
       "inputSchema": {
         "$defs": {
           "SavedTestResumeRequest": {
@@ -5750,22 +5724,10 @@
         ],
         "title": "ResultEnvelope[SavedTestResult]",
         "type": "object"
-      },
-      "icons": null,
-      "annotations": {
-        "title": null,
-        "readOnlyHint": false,
-        "destructiveHint": true,
-        "idempotentHint": true,
-        "openWorldHint": true
-      },
-      "meta": null,
-      "execution": null
+      }
     },
     {
       "name": "cancel_saved_multi_agent_test",
-      "title": null,
-      "description": "사용자가 취소한 저장 draft 테스트를 중지합니다. 이미 실행한 외부 변경을 되돌리지는 않습니다.\n\n        재시도에는 같은 operation_id를 사용하고 get_saved_multi_agent_test로 최종 상태를 확인하세요.",
       "inputSchema": {
         "$defs": {
           "SavedTestOperation": {
@@ -6238,17 +6200,2098 @@
         ],
         "title": "ResultEnvelope[SavedTestResult]",
         "type": "object"
+      }
+    },
+    {
+      "name": "deploy_multi_agent",
+      "inputSchema": {
+        "$defs": {
+          "DeploymentRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "project_scope": {
+                "$ref": "#/$defs/ProjectSelector"
+              },
+              "multi_agent_id": {
+                "anyOf": [
+                  {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Multi Agent Id"
+              },
+              "name": {
+                "anyOf": [
+                  {
+                    "maxLength": 255,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "keep_previous_running": {
+                "default": true,
+                "title": "Keep Previous Running",
+                "type": "boolean"
+              },
+              "wait_timeout_seconds": {
+                "default": 120,
+                "maximum": 300,
+                "minimum": 1,
+                "title": "Wait Timeout Seconds",
+                "type": "integer"
+              },
+              "operation_id": {
+                "format": "uuid4",
+                "title": "Operation Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "operation_id"
+            ],
+            "title": "DeploymentRequest",
+            "type": "object"
+          },
+          "ProjectSelector": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "default": "current",
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "group_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Group Code"
+              },
+              "project_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Project Code"
+              }
+            },
+            "title": "ProjectSelector",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/DeploymentRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "deploy_multi_agentArguments",
+        "type": "object"
       },
-      "icons": null,
-      "annotations": {
-        "title": null,
-        "readOnlyHint": false,
-        "destructiveHint": true,
-        "idempotentHint": true,
-        "openWorldHint": true
+      "outputSchema": {
+        "$defs": {
+          "DeploymentResult": {
+            "additionalProperties": false,
+            "properties": {
+              "multi_agent_id": {
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "name": {
+                "title": "Name",
+                "type": "string"
+              },
+              "deploy_version": {
+                "minimum": 0,
+                "title": "Deploy Version",
+                "type": "integer"
+              },
+              "status": {
+                "const": "R",
+                "title": "Status",
+                "type": "string"
+              },
+              "endpoint": {
+                "title": "Endpoint",
+                "type": "string"
+              },
+              "api_key": {
+                "title": "Api Key",
+                "type": "string"
+              },
+              "started_at": {
+                "format": "date-time",
+                "title": "Started At",
+                "type": "string"
+              },
+              "completed_at": {
+                "format": "date-time",
+                "title": "Completed At",
+                "type": "string"
+              },
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "usage": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/DeploymentUsage"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "multi_agent_id",
+              "name",
+              "deploy_version",
+              "status",
+              "endpoint",
+              "api_key",
+              "started_at",
+              "completed_at",
+              "group_code",
+              "project_code"
+            ],
+            "title": "DeploymentResult",
+            "type": "object"
+          },
+          "DeploymentUsage": {
+            "additionalProperties": false,
+            "properties": {
+              "multi_agent_id": {
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "name": {
+                "title": "Name",
+                "type": "string"
+              },
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "deploy_version": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Deploy Version"
+              },
+              "stage": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Stage"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "availability": {
+                "enum": [
+                  "running",
+                  "unavailable",
+                  "no_deployment",
+                  "unknown"
+                ],
+                "title": "Availability",
+                "type": "string"
+              },
+              "links": {
+                "$ref": "#/$defs/DeploymentUsageLinks"
+              },
+              "request": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/DeploymentUsageHttpRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "examples": {
+                "default": [],
+                "items": {
+                  "$ref": "#/$defs/DeploymentUsageExample"
+                },
+                "title": "Examples",
+                "type": "array"
+              },
+              "authentication": {
+                "$ref": "#/$defs/DeploymentUsageAuthentication"
+              },
+              "response": {
+                "$ref": "#/$defs/DeploymentUsageResponse"
+              },
+              "verification": {
+                "$ref": "#/$defs/DeploymentUsageVerification"
+              }
+            },
+            "required": [
+              "multi_agent_id",
+              "name",
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "availability",
+              "links",
+              "authentication",
+              "response",
+              "verification"
+            ],
+            "title": "DeploymentUsage",
+            "type": "object"
+          },
+          "DeploymentUsageAuthentication": {
+            "additionalProperties": false,
+            "properties": {
+              "key_scope": {
+                "const": "project",
+                "default": "project",
+                "title": "Key Scope",
+                "type": "string"
+              },
+              "api_key_available": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Api Key Available"
+              },
+              "key_environment_variable": {
+                "const": "ENNOIA_API_KEY",
+                "default": "ENNOIA_API_KEY",
+                "title": "Key Environment Variable",
+                "type": "string"
+              },
+              "personal_mcp": {
+                "const": "unknown",
+                "default": "unknown",
+                "title": "Personal Mcp",
+                "type": "string"
+              },
+              "instructions": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Instructions",
+                "type": "array"
+              }
+            },
+            "required": [
+              "instructions"
+            ],
+            "title": "DeploymentUsageAuthentication",
+            "type": "object"
+          },
+          "DeploymentUsageExample": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "title": "Name",
+                "type": "string"
+              },
+              "language": {
+                "const": "sh",
+                "default": "sh",
+                "title": "Language",
+                "type": "string"
+              },
+              "code": {
+                "title": "Code",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "code"
+            ],
+            "title": "DeploymentUsageExample",
+            "type": "object"
+          },
+          "DeploymentUsageHttpRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "method": {
+                "const": "POST",
+                "default": "POST",
+                "title": "Method",
+                "type": "string"
+              },
+              "endpoint": {
+                "title": "Endpoint",
+                "type": "string"
+              },
+              "headers": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Headers",
+                "type": "object"
+              },
+              "body": {
+                "additionalProperties": true,
+                "title": "Body",
+                "type": "object"
+              },
+              "response_mode": {
+                "enum": [
+                  "json",
+                  "sse"
+                ],
+                "title": "Response Mode",
+                "type": "string"
+              }
+            },
+            "required": [
+              "endpoint",
+              "headers",
+              "body",
+              "response_mode"
+            ],
+            "title": "DeploymentUsageHttpRequest",
+            "type": "object"
+          },
+          "DeploymentUsageLinks": {
+            "additionalProperties": false,
+            "properties": {
+              "studio": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Studio"
+              },
+              "deployment": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Deployment"
+              },
+              "api_key": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Api Key"
+              }
+            },
+            "title": "DeploymentUsageLinks",
+            "type": "object"
+          },
+          "DeploymentUsageResponse": {
+            "additionalProperties": false,
+            "properties": {
+              "mode": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "json",
+                      "sse"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Mode"
+              },
+              "completion": {
+                "title": "Completion",
+                "type": "string"
+              },
+              "approval": {
+                "title": "Approval",
+                "type": "string"
+              }
+            },
+            "required": [
+              "completion",
+              "approval"
+            ],
+            "title": "DeploymentUsageResponse",
+            "type": "object"
+          },
+          "DeploymentUsageVerification": {
+            "additionalProperties": false,
+            "properties": {
+              "environment": {
+                "title": "Environment",
+                "type": "string"
+              },
+              "contract_source": {
+                "title": "Contract Source",
+                "type": "string"
+              },
+              "checked_at": {
+                "format": "date-time",
+                "title": "Checked At",
+                "type": "string"
+              },
+              "execution_tested": {
+                "const": false,
+                "default": false,
+                "title": "Execution Tested",
+                "type": "boolean"
+              },
+              "unknowns": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Unknowns",
+                "type": "array"
+              }
+            },
+            "required": [
+              "environment",
+              "contract_source",
+              "checked_at",
+              "unknowns"
+            ],
+            "title": "DeploymentUsageVerification",
+            "type": "object"
+          },
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/DeploymentResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[DeploymentResult]",
+        "type": "object"
+      }
+    },
+    {
+      "name": "invoke_deployed_multi_agent",
+      "inputSchema": {
+        "$defs": {
+          "DeploymentInvokeRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "project_scope": {
+                "$ref": "#/$defs/ProjectSelector"
+              },
+              "multi_agent_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "deploy_version": {
+                "minimum": 0,
+                "title": "Deploy Version",
+                "type": "integer"
+              },
+              "api_key": {
+                "anyOf": [
+                  {
+                    "maxLength": 4096,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Api Key"
+              },
+              "message": {
+                "maxLength": 20000,
+                "minLength": 1,
+                "title": "Message",
+                "type": "string"
+              },
+              "timeout_seconds": {
+                "default": 120,
+                "maximum": 300,
+                "minimum": 1,
+                "title": "Timeout Seconds",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "multi_agent_id",
+              "deploy_version",
+              "message"
+            ],
+            "title": "DeploymentInvokeRequest",
+            "type": "object"
+          },
+          "ProjectSelector": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "default": "current",
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "group_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Group Code"
+              },
+              "project_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Project Code"
+              }
+            },
+            "title": "ProjectSelector",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/DeploymentInvokeRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "invoke_deployed_multi_agentArguments",
+        "type": "object"
       },
-      "meta": null,
-      "execution": null
+      "outputSchema": {
+        "$defs": {
+          "DeploymentInvokeResult": {
+            "additionalProperties": false,
+            "properties": {
+              "content": {
+                "title": "Content",
+                "type": "string"
+              },
+              "finish_reason": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Finish Reason"
+              },
+              "usage": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "type": "integer"
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Usage"
+              },
+              "trace_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Trace Id"
+              },
+              "elapsed_ms": {
+                "minimum": 0,
+                "title": "Elapsed Ms",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "content",
+              "elapsed_ms"
+            ],
+            "title": "DeploymentInvokeResult",
+            "type": "object"
+          },
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/DeploymentInvokeResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[DeploymentInvokeResult]",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_multi_agent_deployment_usage",
+      "inputSchema": {
+        "$defs": {
+          "DeploymentUsageRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "project_scope": {
+                "$ref": "#/$defs/UsageProjectSelector"
+              },
+              "multi_agent_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "deploy_version": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Deploy Version"
+              }
+            },
+            "required": [
+              "multi_agent_id"
+            ],
+            "title": "DeploymentUsageRequest",
+            "type": "object"
+          },
+          "UsageProjectSelector": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "default": "current",
+                "enum": [
+                  "current",
+                  "specified"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "group_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Group Code"
+              },
+              "project_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Project Code"
+              }
+            },
+            "title": "UsageProjectSelector",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/DeploymentUsageRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "get_multi_agent_deployment_usageArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "DeploymentUsage": {
+            "additionalProperties": false,
+            "properties": {
+              "multi_agent_id": {
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "name": {
+                "title": "Name",
+                "type": "string"
+              },
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "deploy_version": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Deploy Version"
+              },
+              "stage": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Stage"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "availability": {
+                "enum": [
+                  "running",
+                  "unavailable",
+                  "no_deployment",
+                  "unknown"
+                ],
+                "title": "Availability",
+                "type": "string"
+              },
+              "links": {
+                "$ref": "#/$defs/DeploymentUsageLinks"
+              },
+              "request": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/DeploymentUsageHttpRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "examples": {
+                "default": [],
+                "items": {
+                  "$ref": "#/$defs/DeploymentUsageExample"
+                },
+                "title": "Examples",
+                "type": "array"
+              },
+              "authentication": {
+                "$ref": "#/$defs/DeploymentUsageAuthentication"
+              },
+              "response": {
+                "$ref": "#/$defs/DeploymentUsageResponse"
+              },
+              "verification": {
+                "$ref": "#/$defs/DeploymentUsageVerification"
+              }
+            },
+            "required": [
+              "multi_agent_id",
+              "name",
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "availability",
+              "links",
+              "authentication",
+              "response",
+              "verification"
+            ],
+            "title": "DeploymentUsage",
+            "type": "object"
+          },
+          "DeploymentUsageAuthentication": {
+            "additionalProperties": false,
+            "properties": {
+              "key_scope": {
+                "const": "project",
+                "default": "project",
+                "title": "Key Scope",
+                "type": "string"
+              },
+              "api_key_available": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Api Key Available"
+              },
+              "key_environment_variable": {
+                "const": "ENNOIA_API_KEY",
+                "default": "ENNOIA_API_KEY",
+                "title": "Key Environment Variable",
+                "type": "string"
+              },
+              "personal_mcp": {
+                "const": "unknown",
+                "default": "unknown",
+                "title": "Personal Mcp",
+                "type": "string"
+              },
+              "instructions": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Instructions",
+                "type": "array"
+              }
+            },
+            "required": [
+              "instructions"
+            ],
+            "title": "DeploymentUsageAuthentication",
+            "type": "object"
+          },
+          "DeploymentUsageExample": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "title": "Name",
+                "type": "string"
+              },
+              "language": {
+                "const": "sh",
+                "default": "sh",
+                "title": "Language",
+                "type": "string"
+              },
+              "code": {
+                "title": "Code",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "code"
+            ],
+            "title": "DeploymentUsageExample",
+            "type": "object"
+          },
+          "DeploymentUsageHttpRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "method": {
+                "const": "POST",
+                "default": "POST",
+                "title": "Method",
+                "type": "string"
+              },
+              "endpoint": {
+                "title": "Endpoint",
+                "type": "string"
+              },
+              "headers": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Headers",
+                "type": "object"
+              },
+              "body": {
+                "additionalProperties": true,
+                "title": "Body",
+                "type": "object"
+              },
+              "response_mode": {
+                "enum": [
+                  "json",
+                  "sse"
+                ],
+                "title": "Response Mode",
+                "type": "string"
+              }
+            },
+            "required": [
+              "endpoint",
+              "headers",
+              "body",
+              "response_mode"
+            ],
+            "title": "DeploymentUsageHttpRequest",
+            "type": "object"
+          },
+          "DeploymentUsageLinks": {
+            "additionalProperties": false,
+            "properties": {
+              "studio": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Studio"
+              },
+              "deployment": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Deployment"
+              },
+              "api_key": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Api Key"
+              }
+            },
+            "title": "DeploymentUsageLinks",
+            "type": "object"
+          },
+          "DeploymentUsageResponse": {
+            "additionalProperties": false,
+            "properties": {
+              "mode": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "json",
+                      "sse"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Mode"
+              },
+              "completion": {
+                "title": "Completion",
+                "type": "string"
+              },
+              "approval": {
+                "title": "Approval",
+                "type": "string"
+              }
+            },
+            "required": [
+              "completion",
+              "approval"
+            ],
+            "title": "DeploymentUsageResponse",
+            "type": "object"
+          },
+          "DeploymentUsageVerification": {
+            "additionalProperties": false,
+            "properties": {
+              "environment": {
+                "title": "Environment",
+                "type": "string"
+              },
+              "contract_source": {
+                "title": "Contract Source",
+                "type": "string"
+              },
+              "checked_at": {
+                "format": "date-time",
+                "title": "Checked At",
+                "type": "string"
+              },
+              "execution_tested": {
+                "const": false,
+                "default": false,
+                "title": "Execution Tested",
+                "type": "boolean"
+              },
+              "unknowns": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Unknowns",
+                "type": "array"
+              }
+            },
+            "required": [
+              "environment",
+              "contract_source",
+              "checked_at",
+              "unknowns"
+            ],
+            "title": "DeploymentUsageVerification",
+            "type": "object"
+          },
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/DeploymentUsage"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[DeploymentUsage]",
+        "type": "object"
+      }
     }
   ]
 }
