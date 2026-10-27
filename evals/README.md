@@ -105,6 +105,8 @@
 
 ## 실제 성능 비교
 
+배포 후 첫 사용과 재조회는 [배포 사용 안내 시나리오](deployment-usage-scenarios.json)와 [평가 기준](deployment-usage-rubric.md)으로 확인한다. 링크·키 설정·기본 cURL, 실제 대상과 고정 버전, 구 서버, 개인 연결·승인 미확인, 안내 생성 실패를 포함한다. 합성 평가를 실제 API 호출 성공으로 기록하지 않는다.
+
 승인된 테스트 project와 고정 모델·입력·MCP revision을 사용해 MCP-only와 Plugin arm을 반복 실행합니다. 초기 세션/재사용 세션, cache cold/warm, host tool-search 설정을 구분합니다. 성공률, 잘못된 도구/재시도 수, 총 호출 수, 입력·출력 token, 완료 시간 분포, 사용자 추가 질문 수를 기록합니다. 실패나 timeout도 포함합니다. 한 번의 smoke 결과나 정적 문자 수로 token·latency 개선률을 계산하지 않습니다.
 
 실제 mutation·모델 실행이 없는 CI에는 이 비교를 자동 연결하지 않습니다. 원본 host log는 공개 `evals/results/` 밖의 로컬 scratch에 보관하고 credential·개인정보를 제거한 case 기록만 이 디렉터리에 남깁니다. 고정 server revision·모델·입력·cache 조건의 CLI 각 3쌍을 탐색 표본으로 사용하고 실패도 포함합니다. 실제 측정 전에는 속도·token 개선이나 p95를 제시하지 않습니다.

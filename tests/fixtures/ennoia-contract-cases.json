@@ -1308,5 +1308,461 @@
         "retryable": false
       }
     }
+  },
+  {
+    "tool": "get_multi_agent_deployment_usage",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "multi_agent_id": "fixture-agent"
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_deployment_usage",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "project_scope": {
+          "scope": "specified",
+          "group_code": "fixture-group",
+          "project_code": "fixture-project"
+        },
+        "multi_agent_id": "fixture-agent",
+        "deploy_version": 0
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_deployment_usage",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "project_scope": {
+          "scope": "all"
+        },
+        "multi_agent_id": "fixture-agent"
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_deployment_usage",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "multi_agent_id": "fixture-agent",
+        "deploy_version": -1
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_deployment_usage",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "multi_agent_id": "fixture-agent",
+        "api_key": "synthetic-key-must-not-be-input"
+      }
+    }
+  },
+  {
+    "tool": "invoke_deployed_multi_agent",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "multi_agent_id": "fixture-agent",
+        "deploy_version": 1,
+        "message": "안녕하세요"
+      }
+    }
+  },
+  {
+    "tool": "invoke_deployed_multi_agent",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "multi_agent_id": "fixture-agent",
+        "deploy_version": 1,
+        "api_key": "synthetic-test-key",
+        "message": "안녕하세요"
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_deployment_usage",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "multi_agent_id": "agent-1",
+        "name": "도우미",
+        "group_code": "G",
+        "group_name": "그룹",
+        "project_code": "P",
+        "project_name": "프로젝트",
+        "deploy_version": 4,
+        "stage": "P",
+        "status": "R",
+        "availability": "running",
+        "links": {
+          "studio": "https://dev.ennoia.so/studio/multi-agent?group=G&project=P",
+          "deployment": "https://dev.ennoia.so/studio/multi-agent/canvas?group=G&project=P&mode=edit&multiAgentId=agent-1&deployVersion=4",
+          "api_key": "https://dev.ennoia.so/setting/project/general?group=G&project=P"
+        },
+        "request": {
+          "method": "POST",
+          "endpoint": "https://dev-api.ennoia.so/api/llm-orchestrator/chat/stream/agent-1/4",
+          "headers": {
+            "apiKey": "${ENNOIA_API_KEY}"
+          },
+          "body": {},
+          "response_mode": "sse"
+        },
+        "examples": [
+          {
+            "name": "SSE cURL",
+            "language": "sh",
+            "code": "curl --header \"apiKey: ${ENNOIA_API_KEY}\""
+          }
+        ],
+        "authentication": {
+          "key_scope": "project",
+          "api_key_available": true,
+          "key_environment_variable": "ENNOIA_API_KEY",
+          "personal_mcp": "unknown",
+          "instructions": [
+            "API KEY 복사 버튼을 사용하세요."
+          ]
+        },
+        "response": {
+          "mode": "sse",
+          "completion": "terminal event를 확인하세요.",
+          "approval": "승인 대기는 완료가 아닙니다."
+        },
+        "verification": {
+          "environment": "dev",
+          "contract_source": "configured:legacy_sse",
+          "checked_at": "2026-10-27T01:00:00Z",
+          "execution_tested": false,
+          "unknowns": [
+            "개인 MCP 인증 미확인",
+            "실제 실행 미확인"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_deployment_usage",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "multi_agent_id": "agent-1",
+        "name": "도우미",
+        "group_code": "G",
+        "group_name": "그룹",
+        "project_code": "P",
+        "project_name": "프로젝트",
+        "deploy_version": 4,
+        "stage": "P",
+        "status": "R",
+        "availability": "running",
+        "links": {
+          "studio": "https://dev.ennoia.so/studio/multi-agent?group=G&project=P",
+          "deployment": "https://dev.ennoia.so/studio/multi-agent/canvas?group=G&project=P&mode=edit&multiAgentId=agent-1&deployVersion=4",
+          "api_key": "https://dev.ennoia.so/setting/project/general?group=G&project=P"
+        },
+        "request": {
+          "method": "POST",
+          "endpoint": "https://dev-api.ennoia.so/api/llm-orchestrator/chat/stream/agent-1/4",
+          "headers": {
+            "apiKey": "${ENNOIA_API_KEY}"
+          },
+          "body": {},
+          "response_mode": "sse"
+        },
+        "examples": [
+          {
+            "name": "SSE cURL",
+            "language": "sh",
+            "code": "curl --header \"apiKey: ${ENNOIA_API_KEY}\""
+          }
+        ],
+        "authentication": {
+          "key_scope": "project",
+          "api_key_available": true,
+          "key_environment_variable": "ENNOIA_API_KEY",
+          "personal_mcp": "unknown",
+          "instructions": [
+            "API KEY 복사 버튼을 사용하세요."
+          ]
+        },
+        "response": {
+          "mode": "sse",
+          "completion": "terminal event를 확인하세요.",
+          "approval": "승인 대기는 완료가 아닙니다."
+        },
+        "verification": {
+          "environment": "dev",
+          "contract_source": "configured:legacy_sse",
+          "checked_at": "2026-10-27T01:00:00Z",
+          "execution_tested": false,
+          "unknowns": [
+            "개인 MCP 인증 미확인",
+            "실제 실행 미확인"
+          ]
+        },
+        "api_key": "synthetic-secret-must-be-rejected"
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_deployment_usage",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "multi_agent_id": "agent-1",
+        "name": "도우미",
+        "group_code": "G",
+        "group_name": "그룹",
+        "project_code": "P",
+        "project_name": "프로젝트",
+        "deploy_version": 4,
+        "stage": "P",
+        "status": "R",
+        "availability": "running",
+        "links": {
+          "studio": "https://dev.ennoia.so/studio/multi-agent?group=G&project=P",
+          "deployment": "https://dev.ennoia.so/studio/multi-agent/canvas?group=G&project=P&mode=edit&multiAgentId=agent-1&deployVersion=4",
+          "api_key": "https://dev.ennoia.so/setting/project/general?group=G&project=P"
+        },
+        "request": {
+          "method": "POST",
+          "endpoint": "https://dev-api.ennoia.so/api/llm-orchestrator/chat/stream/agent-1/4",
+          "headers": {
+            "apiKey": "${ENNOIA_API_KEY}"
+          },
+          "body": {},
+          "response_mode": "sse"
+        },
+        "examples": [
+          {
+            "name": "SSE cURL",
+            "language": "sh",
+            "code": "curl --header \"apiKey: ${ENNOIA_API_KEY}\""
+          }
+        ],
+        "authentication": {
+          "key_scope": "project",
+          "api_key_available": true,
+          "key_environment_variable": "ENNOIA_API_KEY",
+          "personal_mcp": "unknown",
+          "instructions": [
+            "API KEY 복사 버튼을 사용하세요."
+          ]
+        },
+        "response": {
+          "mode": "sse",
+          "completion": "terminal event를 확인하세요.",
+          "approval": "승인 대기는 완료가 아닙니다."
+        },
+        "verification": {
+          "environment": "dev",
+          "contract_source": "configured:legacy_sse",
+          "checked_at": "2026-10-27T01:00:00Z",
+          "execution_tested": true,
+          "unknowns": [
+            "개인 MCP 인증 미확인",
+            "실제 실행 미확인"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "tool": "deploy_multi_agent",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "multi_agent_id": "fixture-agent",
+        "name": "고객응대봇",
+        "deploy_version": 2,
+        "status": "R",
+        "endpoint": "https://api.ennoia.so/api/llm-orchestrator/chat/stream/fixture-agent/2",
+        "api_key": "synthetic-existing-contract-key",
+        "started_at": "2026-10-27T01:00:00Z",
+        "completed_at": "2026-10-27T01:00:01Z",
+        "group_code": "g-target",
+        "project_code": "p-target"
+      }
+    }
+  },
+  {
+    "tool": "deploy_multi_agent",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "multi_agent_id": "fixture-agent",
+        "name": "고객응대봇",
+        "deploy_version": 2,
+        "status": "R",
+        "endpoint": "https://api.ennoia.so/api/llm-orchestrator/chat/stream/fixture-agent/2",
+        "api_key": "synthetic-existing-contract-key",
+        "started_at": "2026-10-27T01:00:00Z",
+        "completed_at": "2026-10-27T01:00:01Z",
+        "group_code": "g-target",
+        "project_code": "p-target",
+        "usage": {
+          "multi_agent_id": "agent-1",
+          "name": "도우미",
+          "group_code": "G",
+          "group_name": "그룹",
+          "project_code": "P",
+          "project_name": "프로젝트",
+          "deploy_version": 4,
+          "stage": "P",
+          "status": "R",
+          "availability": "running",
+          "links": {
+            "studio": "https://dev.ennoia.so/studio/multi-agent?group=G&project=P",
+            "deployment": "https://dev.ennoia.so/studio/multi-agent/canvas?group=G&project=P&mode=edit&multiAgentId=agent-1&deployVersion=4",
+            "api_key": "https://dev.ennoia.so/setting/project/general?group=G&project=P"
+          },
+          "request": {
+            "method": "POST",
+            "endpoint": "https://dev-api.ennoia.so/api/llm-orchestrator/chat/stream/agent-1/4",
+            "headers": {
+              "apiKey": "${ENNOIA_API_KEY}"
+            },
+            "body": {},
+            "response_mode": "sse"
+          },
+          "examples": [
+            {
+              "name": "SSE cURL",
+              "language": "sh",
+              "code": "curl --header \"apiKey: ${ENNOIA_API_KEY}\""
+            }
+          ],
+          "authentication": {
+            "key_scope": "project",
+            "api_key_available": true,
+            "key_environment_variable": "ENNOIA_API_KEY",
+            "personal_mcp": "unknown",
+            "instructions": [
+              "API KEY 복사 버튼을 사용하세요."
+            ]
+          },
+          "response": {
+            "mode": "sse",
+            "completion": "terminal event를 확인하세요.",
+            "approval": "승인 대기는 완료가 아닙니다."
+          },
+          "verification": {
+            "environment": "dev",
+            "contract_source": "configured:legacy_sse",
+            "checked_at": "2026-10-27T01:00:00Z",
+            "execution_tested": false,
+            "unknowns": [
+              "개인 MCP 인증 미확인",
+              "실제 실행 미확인"
+            ]
+          }
+        }
+      }
+    }
+  },
+  {
+    "tool": "deploy_multi_agent",
+    "kind": "output",
+    "valid": false,
+    "value": {
+      "ok": true,
+      "data": {
+        "multi_agent_id": "fixture-agent",
+        "name": "고객응대봇",
+        "deploy_version": 2,
+        "status": "R",
+        "endpoint": "https://api.ennoia.so/api/llm-orchestrator/chat/stream/fixture-agent/2",
+        "api_key": "synthetic-existing-contract-key",
+        "started_at": "2026-10-27T01:00:00Z",
+        "completed_at": "2026-10-27T01:00:01Z",
+        "group_code": "g-target",
+        "project_code": "p-target",
+        "usage": {
+          "multi_agent_id": "agent-1",
+          "name": "도우미",
+          "group_code": "G",
+          "group_name": "그룹",
+          "project_code": "P",
+          "project_name": "프로젝트",
+          "deploy_version": 4,
+          "stage": "P",
+          "status": "R",
+          "availability": "running",
+          "links": {
+            "studio": "https://dev.ennoia.so/studio/multi-agent?group=G&project=P",
+            "deployment": "https://dev.ennoia.so/studio/multi-agent/canvas?group=G&project=P&mode=edit&multiAgentId=agent-1&deployVersion=4",
+            "api_key": "https://dev.ennoia.so/setting/project/general?group=G&project=P"
+          },
+          "request": {
+            "method": "POST",
+            "endpoint": "https://dev-api.ennoia.so/api/llm-orchestrator/chat/stream/agent-1/4",
+            "headers": {
+              "apiKey": "${ENNOIA_API_KEY}"
+            },
+            "body": {},
+            "response_mode": "sse"
+          },
+          "examples": [
+            {
+              "name": "SSE cURL",
+              "language": "sh",
+              "code": "curl --header \"apiKey: ${ENNOIA_API_KEY}\""
+            }
+          ],
+          "authentication": {
+            "key_scope": "deployment",
+            "api_key_available": true,
+            "key_environment_variable": "ENNOIA_API_KEY",
+            "personal_mcp": "unknown",
+            "instructions": [
+              "API KEY 복사 버튼을 사용하세요."
+            ]
+          },
+          "response": {
+            "mode": "sse",
+            "completion": "terminal event를 확인하세요.",
+            "approval": "승인 대기는 완료가 아닙니다."
+          },
+          "verification": {
+            "environment": "dev",
+            "contract_source": "configured:legacy_sse",
+            "checked_at": "2026-10-27T01:00:00Z",
+            "execution_tested": false,
+            "unknowns": [
+              "개인 MCP 인증 미확인",
+              "실제 실행 미확인"
+            ]
+          }
+        }
+      }
+    }
   }
 ]

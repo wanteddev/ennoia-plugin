@@ -1,6 +1,6 @@
 {
   "source_repository": "wanteddev/ennoia-mcp-server",
-  "source_revision": "f7f439099b5d7b8a5858750fbff3f495e9d8f0cd",
+  "source_revision": "0e7bfe76ce64253597c201ff0ad883122fa863b9",
   "tools": [
     "add_ennoia_mcp_server",
     "cancel_saved_multi_agent_test",
@@ -28,6 +28,7 @@
     "get_mcp_registration_status",
     "get_multi_agent",
     "get_multi_agent_capabilities",
+    "get_multi_agent_deployment_usage",
     "get_multi_agent_edge_schema",
     "get_multi_agent_mcp_tool_schema",
     "get_multi_agent_node_prompts",
