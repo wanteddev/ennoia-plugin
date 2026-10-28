@@ -39,7 +39,7 @@ graph 입력과 자원 식별자는 [Graph 작성 계약](references/graph-autho
 
 기존 제한 테스트 미지원은 저장 불가나 저장된 draft 테스트 미지원을 뜻하지 않는다. 저장이 요청됐고 검증과 저장 입력이 유효하면 기존 저장 경로를 진행한다. 다만 사용자가 테스트 성공을 저장 조건으로 정했다면 미지원·미완료 상태에서는 저장을 보류한다. SuperAgent의 `SUPERAGENT_STRUCTURE_ONLY`는 구조·설정 검증이며 실제 runtime build·실행 성공이 아니다. 상세 구조와 지원 불일치는 [Graph 작성 계약](references/graph-authoring.md), 경고·재시도는 [저장 복구](references/save-and-retry.md)를 따른다.
 
-저장은 `save_multi_agent`를 사용한다. 같은 graph·사용자·project에서 검증한 `validation_id` 경로를 우선해 큰 graph를 재전송하지 않는다. `validation_id`와 원본 nodes/edges를 동시에 보내지 않는다. graph를 변경했으면 다시 검증한다. 검증 ID만으로 저장의 create/update 결정, create 이름 또는 update 대상 ID가 정해진 것은 아니다. 실제 요청·조회에서 확인한 값을 사용하고 빠진 필드만 확인한다. 설명용 문구를 도구 인자에 넣지 않는다. 기존 draft 수정은 `operation=update`와 발견한 `multi_agent_id`를 사용한다. 재시도·만료는 [저장 복구](references/save-and-retry.md)를 따른다.
+저장은 `save_multi_agent`를 사용한다. 같은 graph·사용자·project에서 검증한 `validation_id` 경로를 우선해 큰 graph를 재전송하지 않는다. `validation_id`와 원본 nodes/edges를 동시에 보내지 않는다. graph를 변경했으면 다시 검증한다. 검증 ID만으로 저장의 create/update 결정, create 이름 또는 update 대상 ID가 정해진 것은 아니다. 실제 요청·조회에서 확인한 값을 사용하고 빠진 필드만 확인한다. 설명용 문구를 도구 인자에 넣지 않는다. 기존 에이전트의 변경 내용을 draft로 저장할 때는 `operation=update`와 발견한 `multi_agent_id`를 사용한다. Published만 있고 draft가 없어도 같은 ID로 update하며, 이를 지원하는 backend가 새 draft를 저장한다. 앞의 안전한 원본 graph 확보 제한은 그대로 유지한다. 지원하지 않는 backend의 오류와 재시도·만료는 [저장 복구](references/save-and-retry.md)를 따른다.
 
 ## 결과
 

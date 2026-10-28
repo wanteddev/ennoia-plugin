@@ -7,6 +7,10 @@
 - `validation_id` 경로와 원본 `nodes`/`edges` 경로 중 하나만 사용한다.
 - 검증 응답의 `contract_version`, `schema_hash`, `capabilities_version`은 현재 input schema에서 요구하는 대로 그대로 전달한다.
 
+Published만 있고 draft가 없는 기존 에이전트도 같은 `multi_agent_id`의 `operation=update`를 사용한다. 이를 지원하는 backend는 해당 에이전트에 새 draft를 저장한다. draft를 만들기 위한 목적으로 `update_multi_agent_node_prompts`를 호출해 프롬프트를 바꾸거나 `operation=create`로 새 에이전트를 만들지 않는다. 이 저장 경로도 [Graph 작성 계약](graph-authoring.md)의 안전한 원본 canonical nodes/edges 또는 검증된 export 확보 제한을 유지하며, Canvas에서 원본 graph를 임의 재구성하지 않는다.
+
+지원하지 않는 backend 등에서 `MULTI_AGENT_NOT_FOUND`로 실패하면 `error.next_action`에 따라 대상 project·ID·stage와 저장 상태를 확인하고 실패·미완료 상태를 안내한다. Published의 존재만으로 원인이나 저장 성공을 단정하지 않는다. backend가 지시하지 않은 재시도나 위 우회 방법을 사용하지 않는다.
+
 저장 전 create/update 선택과 그 작업에 필요한 이름 또는 정확한 대상 ID가 확정됐는지 확인한다. 검증 ID가 유효해도 이 필드가 없으면 빠진 값만 확인하고 저장을 보류한다. `operation_id`는 실제 생성한 UUID를 사용한다. 설명용 placeholder는 UUID나 대상 식별자가 아니다.
 
 `operation_id`는 하나의 논리적 저장 작업에 하나의 UUID다. 응답 유실·timeout으로 같은 요청을 재시도할 때 같은 값과 같은 payload를 사용한다. 다른 수정 내용은 새 작업이며 다시 검증한다. `validation_id`는 사용자·project·graph에 묶여 있으므로 다른 대상에서 재사용하지 않는다.
