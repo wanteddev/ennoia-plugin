@@ -26,6 +26,7 @@ description: "Ennoia 에이전트의 실행 실패, 응답 지연, Trace, 토큰
 - `null` token·cost·latency는 미확인 값이다. 0으로 계산하거나 합계가 완전하다고 주장하지 않는다. 누락 범위를 함께 보고한다.
 - duration/latency의 단위나 집계 범위가 충돌하면 각각의 출처와 불일치를 보고한다. 예를 들어 요약의 81ms와 root trace의 81,588ms를 같은 확정 latency로 취급하지 않는다. `source`·`completeness`는 반환된 row의 보고 범위로 읽고 전체 LLM 비용 보증으로 확대하지 않는다. cost=0도 coverage가 불명확하면 전체 비용이 0 또는 무료라는 뜻이 아니다.
 - LLM 추론, MCP 호출, 대기, 재시도 중 어디에 시간이 쓰였는지 나눈다. 한 번의 호출을 p95 성능이나 전체 서비스 상태로 일반화하지 않는다.
+- 캐시는 Gateway 응답 캐시(`llmConfig.cache_control`)와 모델의 시스템 prefix 캐시(`llmConfig.prompt_cache`)를 구분한다. `prompt_cache`는 지원 runtime에서 기본 true이고 false로 자동 추가를 끌 수 있다. 미지원 모델·캐시할 prefix가 없는 요청에는 지점이 추가되지 않으므로 `cache_control=true`나 설정값만으로 실제 cache hit를 판단하지 않는다. 제공된 provider usage나 SSE가 있으면 최초 호출의 캐시 생성량(`cache_creation_input_tokens` 또는 `prompt_tokens_details.cache_creation_tokens`)과 동일 prefix 후속 호출의 읽기량(`cache_read_input_tokens` 또는 `prompt_tokens_details.cached_tokens`)을 확인한다. 필드가 없으면 미확인으로 남기며 읽기 0만으로 미생성·매번 재생성을 구분하지 않는다. 모델별 최소 prefix 길이·TTL·prefix 변경과 실제 배포 revision을 확인한다. provider cache hit와 Ennoia 예산 할인을 구분하고, 현재 예산 정산의 기본 입력 단가 정책 때문에 cache hit만으로 예산 차감액 감소를 약속하지 않는다.
 
 오류 처리와 재시도는 응답의 `error.next_action`, `repair_hint`, `retryable`을 따른다. 조회 실패를 해결하려고 에이전트 재실행·삭제·배포를 시작하지 않는다. 수정이 요청됐다면 근거가 가리키는 범위에서 해당 작업 Skill로 이어간다.
 

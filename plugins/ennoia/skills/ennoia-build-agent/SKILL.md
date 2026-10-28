@@ -31,6 +31,8 @@ graph 입력과 자원 식별자는 [Graph 작성 계약](references/graph-autho
 
 ## 검증·테스트·저장
 
+캐시 설정을 요청받으면 `llmConfig.cache_control`은 Gateway 응답 캐시 제어(True는 Gateway 설정을 따름, False는 `Cache-Control: no-cache`)이며 프롬프트 캐싱과 별개임을 설명한다. 현재 node schema가 지원하는 `prompt_cache`의 기본값은 true이며, Anthropic Claude Chat 노드의 고정 시스템 prefix 캐싱을 자동 요청한다. 자동 추가를 끄려면 `prompt_cache=false`를 명시한다. 미지원 모델·미확인 alias 또는 캐시할 시스템 text가 없는 요청에는 자동 지점을 추가하지 않는다. TTL은 5분이다. 모델별 최소 prefix 길이·동일 prefix 조건이 필요하고 cache hit를 보장하지 않는다. 사용자 입력마다 달라지는 내용을 고정 시스템 지침에 섞지 않는다. `PROMPT_CACHE_RUNTIME_UNSUPPORTED`면 runtime 업데이트가 필요한 상태로 보고하며, 사용자 동의 없이 false로 바꿔 검증을 통과시키지 않는다.
+
 `validate_multi_agent`의 envelope `ok`와 `data.valid`를 모두 확인한다. 실패한 node/path와 `repair_hint`에 맞춰 수정한 뒤 재검증한다. 동일 실패에 근거 없는 수정을 반복하지 않는다.
 
 테스트는 입력과 실행 경로를 먼저 구분한다. 원본 `nodes`/`edges`를 받는 `test_multi_agent`·`start_multi_agent_test`는 기존 제한 테스트이며 `allow_side_effects=false`를 유지한다. `test_supported=false`/`TEST_NODE_UNSUPPORTED`이면 이 경로를 시작하지 않는다. 지원 field가 없는 이전 응답을 false로 채우지 않는다. 지원되는 graph는 짧은 작업에 sync, 오래 걸릴 작업에 async 도구를 사용하고, 비동기 결과는 같은 `test_id`의 `get_multi_agent_test`로 wait/backoff 조회한다. `running`은 완료가 아니며 새 test를 중복 시작하거나 거부·승인 필요 실행을 우회하지 않는다.
