@@ -1,6 +1,6 @@
 ---
 name: ennoia-build-agent
-description: "Ennoia multi-agent를 새로 만들거나 기존 graph·draft를 수정, 검증, 테스트, 저장할 때 사용합니다. 이미 배포된 App 실행이나 운영 배포 요청은 별도 Skill의 대상입니다."
+description: "Ennoia multi-agent를 새로 만들거나 기존 graph·draft와 모델 설정을 수정, 검증, 테스트, 저장할 때 사용합니다. 이미 배포된 App 실행이나 운영 배포 요청은 별도 Skill의 대상입니다."
 ---
 
 # Ennoia 에이전트 만들기
@@ -11,7 +11,7 @@ description: "Ennoia multi-agent를 새로 만들거나 기존 graph·draft를 �
 
 ## 대상과 입력
 
-설치된 Ennoia MCP tool을 이름으로 발견하고 현재 연결의 input schema를 따른다. 이미 확인한 현재 project scope는 재사용하고, 없을 때 `get_current_ennoia_project`로 대상 이름을 확인한다. `auto_selected`이면 생성·실행·저장 전에 사용자 선택을 확보한다. 이미 지정된 대상·모델·기존 설정은 유지한다. 기존 수정의 ID가 이미 확인됐으면 그대로 사용한다. 없을 때만 `list_multi_agents`로 검색한다. 기존 Canvas의 노드 프롬프트만 바꿀 때는 `get_multi_agent_node_prompts`와 `update_multi_agent_node_prompts`가 현재 host에 있는지 먼저 확인하고, 두 도구가 있으면 [노드 프롬프트 편집](references/node-prompt-editing.md)을 따른다. 이 경로는 아래 전체 graph 재구성·검증·`save_multi_agent` 절차를 사용하지 않는다. 전체 graph·흐름을 수정할 때는 `get_multi_agent`에 `format=agent_config`가 실제 input schema에 있을 때 그 형식으로 조회한다. 없는 이전 schema에는 `format`을 보내지 않는다. 현 upstream의 `CANONICAL_GRAPH_UNAVAILABLE`/`details.reason=revision_not_supported`는 canonical edit revision·CAS 부재를 뜻한다. 손실된 Canvas에서 nodes/edges를 자동 재구성하거나 대체 에이전트를 생성하지 않는다. 안전한 원본 graph/export가 없으면 확인 가능한 설정만 제시하고 수정은 제한한다. 필요한 입력만 사용자에게 확인한다.
+설치된 Ennoia MCP tool을 이름으로 발견하고 현재 연결의 input schema를 따른다. 이미 확인한 현재 project scope는 재사용하고, 없을 때 `get_current_ennoia_project`로 대상 이름을 확인한다. `auto_selected`이면 생성·실행·저장 전에 사용자 선택을 확보한다. 이미 지정된 대상·모델·기존 설정은 유지한다. 기존 수정의 ID가 이미 확인됐으면 그대로 사용한다. 없을 때만 `list_multi_agents`로 검색한다. 기존 Agent·SuperAgent의 `max_tokens`나 `reasoning.effort`만 변경할 때는 현재 host의 `get_multi_agent_node_model_settings`와 `update_multi_agent_node_model_settings` 지원을 확인하고 [노드 모델 설정 편집](references/node-model-settings.md)을 따른다. 이 전용 경로는 기존 ID와 Canvas를 보존하며 전체 graph 조회·검증·저장 절차를 대체한다. 기존 Canvas의 노드 프롬프트만 바꿀 때는 `get_multi_agent_node_prompts`와 `update_multi_agent_node_prompts`가 현재 host에 있는지 먼저 확인하고, 두 도구가 있으면 [노드 프롬프트 편집](references/node-prompt-editing.md)을 따른다. 이 경로는 아래 전체 graph 재구성·검증·`save_multi_agent` 절차를 사용하지 않는다. 전체 graph·흐름을 수정할 때는 `get_multi_agent`에 `format=agent_config`가 실제 input schema에 있을 때 그 형식으로 조회한다. 없는 이전 schema에는 `format`을 보내지 않는다. 현 upstream의 `CANONICAL_GRAPH_UNAVAILABLE`/`details.reason=revision_not_supported`는 canonical edit revision·CAS 부재를 뜻한다. 손실된 Canvas에서 nodes/edges를 자동 재구성하거나 대체 에이전트를 생성하지 않는다. 안전한 원본 graph/export가 없으면 확인 가능한 설정만 제시하고 수정은 제한한다. 필요한 입력만 사용자에게 확인한다.
 
 ## 필요한 것만 발견
 
@@ -41,7 +41,7 @@ graph 입력과 자원 식별자는 [Graph 작성 계약](references/graph-autho
 
 기존 제한 테스트 미지원은 저장 불가나 저장된 draft 테스트 미지원을 뜻하지 않는다. 저장이 요청됐고 검증과 저장 입력이 유효하면 기존 저장 경로를 진행한다. 다만 사용자가 테스트 성공을 저장 조건으로 정했다면 미지원·미완료 상태에서는 저장을 보류한다. SuperAgent의 `SUPERAGENT_STRUCTURE_ONLY`는 구조·설정 검증이며 실제 runtime build·실행 성공이 아니다. 상세 구조와 지원 불일치는 [Graph 작성 계약](references/graph-authoring.md), 경고·재시도는 [저장 복구](references/save-and-retry.md)를 따른다.
 
-저장은 `save_multi_agent`를 사용한다. 같은 graph·사용자·project에서 검증한 `validation_id` 경로를 우선해 큰 graph를 재전송하지 않는다. `validation_id`와 원본 nodes/edges를 동시에 보내지 않는다. graph를 변경했으면 다시 검증한다. 검증 ID만으로 저장의 create/update 결정, create 이름 또는 update 대상 ID가 정해진 것은 아니다. 실제 요청·조회에서 확인한 값을 사용하고 빠진 필드만 확인한다. 설명용 문구를 도구 인자에 넣지 않는다. 기존 에이전트의 변경 내용을 draft로 저장할 때는 `operation=update`와 발견한 `multi_agent_id`를 사용한다. Published만 있고 draft가 없어도 같은 ID로 update하며, 이를 지원하는 backend가 새 draft를 저장한다. 앞의 안전한 원본 graph 확보 제한은 그대로 유지한다. 지원하지 않는 backend의 오류와 재시도·만료는 [저장 복구](references/save-and-retry.md)를 따른다.
+새 graph나 전체 graph 수정의 저장은 `save_multi_agent`를 사용한다. 같은 graph·사용자·project에서 검증한 `validation_id` 경로를 우선해 큰 graph를 재전송하지 않는다. `validation_id`와 원본 nodes/edges를 동시에 보내지 않는다. graph를 변경했으면 다시 검증한다. 검증 ID만으로 저장의 create/update 결정, create 이름 또는 update 대상 ID가 정해진 것은 아니다. 실제 요청·조회에서 확인한 값을 사용하고 빠진 필드만 확인한다. 설명용 문구를 도구 인자에 넣지 않는다. 기존 에이전트의 변경 내용을 draft로 저장할 때는 `operation=update`와 발견한 `multi_agent_id`를 사용한다. Published만 있고 draft가 없어도 같은 ID로 update하며, 이를 지원하는 backend가 새 draft를 저장한다. 앞의 안전한 원본 graph 확보 제한은 그대로 유지한다. 지원하지 않는 backend의 오류와 재시도·만료는 [저장 복구](references/save-and-retry.md)를 따른다.
 
 ## 결과
 

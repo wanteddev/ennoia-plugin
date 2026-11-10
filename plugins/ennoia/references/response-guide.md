@@ -41,14 +41,15 @@ Ennoia·MCP·Plugin에 대한 사용자 의견이 있거나, 실제 업무 중 �
 
 ## 저장된 에이전트 링크
 
-`save_multi_agent`로 생성 또는 수정 저장이 성공하면, 사용자가 링크를 따로 요청하지 않아도 최종 응답에 **에이전트 열기** 링크를 함께 제공한다. 운영 Ennoia Studio의 편집 URL은 다음과 같다.
+`save_multi_agent`, `update_multi_agent_node_prompts` 또는 `update_multi_agent_node_model_settings`로 생성·수정 저장이 성공하면, 사용자가 링크를 따로 요청하지 않아도 최종 응답에 **에이전트 열기** 링크를 함께 제공한다. 운영 Ennoia Studio의 편집 URL은 다음과 같다.
 
 ```text
 https://ennoia.so/studio/multi-agent/canvas?group={group_code}&project={project_code}&mode=edit&multiAgentId={multi_agent_id}
 ```
 
 - `multiAgentId`는 성공한 저장 응답의 `data.multi_agent_id`, `group`·`project`는 같은 응답의 `project_context.projects`에서 그 에이전트가 실제 저장된 단일 대상의 `group_code`·`project_code`를 사용한다. `selection_context`의 기본 프로젝트로 대체하지 않는다.
-- 이전 응답에 `project_context`가 없으면, 이번 저장 요청에 적용된 것으로 이미 확인한 정확한 그룹·프로젝트 코드만 재사용한다. 대상이 여러 개이거나 코드·ID가 누락되어 소속을 확정할 수 없으면 필요한 대상만 읽기 조회한다. 끝내 확인되지 않으면 링크를 생략하고 이유를 짧게 알린다. 현재 선택이나 다른 에이전트의 ID로 빈 값을 채우지 않으며 링크 때문에 저장을 반복하지 않는다.
+- 노드 부분 수정 응답은 같은 `data`의 `group_code`·`project_code`와 `multi_agent_id`를 사용한다.
+- 이전 응답에 `project_context`나 위의 직접 코드가 없으면, 이번 저장 요청에 적용된 것으로 이미 확인한 정확한 그룹·프로젝트 코드만 재사용한다. 대상이 여러 개이거나 코드·ID가 누락되어 소속을 확정할 수 없으면 필요한 대상만 읽기 조회한다. 끝내 확인되지 않으면 링크를 생략하고 이유를 짧게 알린다. 현재 선택이나 다른 에이전트의 ID로 빈 값을 채우지 않으며 링크 때문에 저장을 반복하지 않는다.
 - query 값은 각각 URL percent-encoding하고 `mode=edit`는 고정한다. **에이전트 열기** 또는 에이전트 이름을 표시 문구로 한 클릭 가능한 Markdown 링크로 쓴다. 실제 값이 모두 확인되기 전에는 placeholder URL을 결과로 출력하지 않는다. 다른 Ennoia 환경이라면 확인된 해당 Studio 주소를 사용하며 MCP 주소에서 도메인을 추측하지 않는다.
 - 저장 전 검증·테스트만 끝났거나 저장이 실패·미확인인 경우 새 결과 링크를 만들지 않는다. 저장 성공 후 테스트가 실패하거나 진행 중이어도 저장된 초안 링크는 제공하되 각 상태는 그대로 알린다. 이 링크는 Studio 편집 화면이며 배포된 App·실행 endpoint·공개 공유 링크가 아니다. 링크 제공을 위해 배포나 공유를 추가하지 않는다.
 
