@@ -1764,5 +1764,244 @@
         }
       }
     }
+  },
+  {
+    "tool": "update_multi_agent_node_model_settings",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "multi_agent_id": "agent-a",
+        "stage": "P",
+        "deploy_version": 2,
+        "expected_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "updates": [
+          {
+            "node_id": "planner",
+            "max_tokens": 128000,
+            "reasoning_effort": "medium"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_model_settings",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "multi_agent_id": "agent-a",
+        "stage": "P",
+        "deploy_version": 2,
+        "expected_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "updates": [
+          {
+            "node_id": "planner",
+            "max_tokens": 4096
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_model_settings",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "multi_agent_id": "agent-a",
+        "stage": "P",
+        "deploy_version": 2,
+        "expected_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "updates": [
+          {
+            "node_id": "planner",
+            "reasoning_effort": null
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_model_settings",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "multi_agent_id": "agent-a",
+        "stage": "P",
+        "deploy_version": 2,
+        "expected_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "updates": [
+          {
+            "node_id": "planner",
+            "max_tokens": 0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_model_settings",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "multi_agent_id": "agent-a",
+        "stage": "P",
+        "deploy_version": 2,
+        "expected_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "updates": [
+          {
+            "node_id": "planner",
+            "max_tokens": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_model_settings",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "multi_agent_id": "agent-a",
+        "stage": "P",
+        "deploy_version": 2,
+        "expected_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "updates": [
+          {
+            "node_id": "planner",
+            "max_tokens": "4096"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_model_settings",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "multi_agent_id": "agent-a",
+        "stage": "P",
+        "deploy_version": 2,
+        "expected_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "updates": [
+          {
+            "node_id": "planner",
+            "reasoning_effort": "ultra"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_model_settings",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "multi_agent_id": "agent-a",
+        "stage": "P",
+        "deploy_version": 2,
+        "expected_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "updates": [
+          {
+            "node_id": "planner",
+            "max_tokens": 4096,
+            "model": "replacement"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_node_model_settings",
+    "kind": "input",
+    "valid": true,
+    "value": {
+      "request": {
+        "multi_agent_id": "agent-a",
+        "stage": "P",
+        "deploy_version": 2
+      }
+    }
+  },
+  {
+    "tool": "get_multi_agent_node_model_settings",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "group_code": "fixture-group",
+        "project_code": "fixture-project",
+        "multi_agent_id": "agent-a",
+        "stage": "D",
+        "deploy_version": 3,
+        "canvas_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "nodes": [
+          {
+            "node_id": "planner",
+            "node_type": "superAgent",
+            "model": "fixture-model",
+            "max_tokens": 128000,
+            "reasoning_effort": "medium",
+            "editable": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_model_settings",
+    "kind": "output",
+    "valid": true,
+    "value": {
+      "ok": true,
+      "data": {
+        "group_code": "fixture-group",
+        "project_code": "fixture-project",
+        "multi_agent_id": "agent-a",
+        "stage": "D",
+        "deploy_version": 3,
+        "canvas_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "changed_node_ids": [
+          "planner"
+        ],
+        "migrated_node_ids": []
+      }
+    }
+  },
+  {
+    "tool": "update_multi_agent_node_model_settings",
+    "kind": "input",
+    "valid": false,
+    "value": {
+      "request": {
+        "multi_agent_id": "agent-a",
+        "stage": "P",
+        "deploy_version": 2,
+        "operation_id": "22222222-2222-4222-8222-222222222222",
+        "updates": [
+          {
+            "node_id": "planner",
+            "reasoning_effort": null
+          }
+        ]
+      }
+    }
   }
 ]

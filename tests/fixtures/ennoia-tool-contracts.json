@@ -1,6 +1,6 @@
 {
   "source_repository": "wanteddev/ennoia-mcp-server",
-  "source_revision": "0e7bfe76ce64253597c201ff0ad883122fa863b9",
+  "source_revision": "fd21e5948bf7398cf8b8137fd0d7c1a3dc217a61",
   "tools": [
     {
       "name": "start_ennoia_conversation",
@@ -8290,6 +8290,1141 @@
           "ok"
         ],
         "title": "ResultEnvelope[DeploymentUsage]",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_multi_agent_node_model_settings",
+      "inputSchema": {
+        "$defs": {
+          "MultiAgentSelection": {
+            "additionalProperties": false,
+            "properties": {
+              "project_scope": {
+                "$ref": "#/$defs/ProjectSelector"
+              },
+              "multi_agent_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "stage": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "D",
+                      "P"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Stage"
+              },
+              "deploy_version": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Deploy Version"
+              }
+            },
+            "required": [
+              "multi_agent_id"
+            ],
+            "title": "MultiAgentSelection",
+            "type": "object"
+          },
+          "ProjectSelector": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "default": "current",
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "group_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Group Code"
+              },
+              "project_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Project Code"
+              }
+            },
+            "title": "ProjectSelector",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/MultiAgentSelection"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "get_multi_agent_node_model_settingsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "NodeModelSettings": {
+            "additionalProperties": false,
+            "properties": {
+              "node_id": {
+                "title": "Node Id",
+                "type": "string"
+              },
+              "node_type": {
+                "title": "Node Type",
+                "type": "string"
+              },
+              "name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "model": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Model"
+              },
+              "max_tokens": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Max Tokens"
+              },
+              "reasoning_effort": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reasoning Effort"
+              },
+              "legacy_reference": {
+                "default": false,
+                "title": "Legacy Reference",
+                "type": "boolean"
+              },
+              "editable": {
+                "default": true,
+                "title": "Editable",
+                "type": "boolean"
+              },
+              "unsupported_reason": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "legacy_dynamic_date",
+                      "legacy_model_profile_mismatch",
+                      "invalid_llm_config"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Unsupported Reason"
+              }
+            },
+            "required": [
+              "node_id",
+              "node_type"
+            ],
+            "title": "NodeModelSettings",
+            "type": "object"
+          },
+          "NodeModelSettingsResult": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "multi_agent_id": {
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "stage": {
+                "enum": [
+                  "D",
+                  "P"
+                ],
+                "title": "Stage",
+                "type": "string"
+              },
+              "deploy_version": {
+                "title": "Deploy Version",
+                "type": "integer"
+              },
+              "canvas_revision": {
+                "pattern": "^[a-f0-9]{64}$",
+                "title": "Canvas Revision",
+                "type": "string"
+              },
+              "nodes": {
+                "items": {
+                  "$ref": "#/$defs/NodeModelSettings"
+                },
+                "title": "Nodes",
+                "type": "array"
+              }
+            },
+            "required": [
+              "group_code",
+              "project_code",
+              "multi_agent_id",
+              "stage",
+              "deploy_version",
+              "canvas_revision",
+              "nodes"
+            ],
+            "title": "NodeModelSettingsResult",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/NodeModelSettingsResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[NodeModelSettingsResult]",
+        "type": "object"
+      }
+    },
+    {
+      "name": "update_multi_agent_node_model_settings",
+      "inputSchema": {
+        "$defs": {
+          "NodeModelSettingsUpdate": {
+            "additionalProperties": false,
+            "properties": {
+              "node_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Node Id",
+                "type": "string"
+              },
+              "max_tokens": {
+                "anyOf": [
+                  {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Max Tokens"
+              },
+              "reasoning_effort": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "none",
+                      "minimal",
+                      "low",
+                      "medium",
+                      "high",
+                      "xhigh"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reasoning Effort"
+              }
+            },
+            "required": [
+              "node_id"
+            ],
+            "title": "NodeModelSettingsUpdate",
+            "type": "object"
+          },
+          "ProjectSelector": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "default": "current",
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "group_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Group Code"
+              },
+              "project_code": {
+                "anyOf": [
+                  {
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Project Code"
+              }
+            },
+            "title": "ProjectSelector",
+            "type": "object"
+          },
+          "UpdateNodeModelSettingsRequest": {
+            "additionalProperties": false,
+            "properties": {
+              "project_scope": {
+                "$ref": "#/$defs/ProjectSelector"
+              },
+              "multi_agent_id": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "stage": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "D",
+                      "P"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Stage"
+              },
+              "deploy_version": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Deploy Version"
+              },
+              "operation_id": {
+                "format": "uuid4",
+                "title": "Operation Id",
+                "type": "string"
+              },
+              "expected_revision": {
+                "pattern": "^[a-f0-9]{64}$",
+                "title": "Expected Revision",
+                "type": "string"
+              },
+              "updates": {
+                "items": {
+                  "$ref": "#/$defs/NodeModelSettingsUpdate"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "title": "Updates",
+                "type": "array"
+              }
+            },
+            "required": [
+              "multi_agent_id",
+              "operation_id",
+              "expected_revision",
+              "updates"
+            ],
+            "title": "UpdateNodeModelSettingsRequest",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "request": {
+            "$ref": "#/$defs/UpdateNodeModelSettingsRequest"
+          }
+        },
+        "required": [
+          "request"
+        ],
+        "title": "update_multi_agent_node_model_settingsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "$defs": {
+          "ErrorDetail": {
+            "additionalProperties": false,
+            "description": "외부에 노출할 수 있는 allowlist error detail.",
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "path": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path"
+              },
+              "node_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Node Id"
+              },
+              "repair_hint": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repair Hint"
+              },
+              "next_action": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Next Action"
+              },
+              "retryable": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Retryable"
+              },
+              "details": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Details"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ErrorDetail",
+            "type": "object"
+          },
+          "NodeModelSettingsSaveResult": {
+            "additionalProperties": false,
+            "description": "검증된 draft 저장 결과와 변경된 node ID.",
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "multi_agent_id": {
+                "title": "Multi Agent Id",
+                "type": "string"
+              },
+              "name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "stage": {
+                "const": "D",
+                "default": "D",
+                "title": "Stage",
+                "type": "string"
+              },
+              "deploy_version": {
+                "title": "Deploy Version",
+                "type": "integer"
+              },
+              "canvas_revision": {
+                "pattern": "^[a-f0-9]{64}$",
+                "title": "Canvas Revision",
+                "type": "string"
+              },
+              "changed_node_ids": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Changed Node Ids",
+                "type": "array"
+              },
+              "migrated_node_ids": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Migrated Node Ids",
+                "type": "array"
+              }
+            },
+            "required": [
+              "group_code",
+              "project_code",
+              "multi_agent_id",
+              "deploy_version",
+              "canvas_revision",
+              "changed_node_ids"
+            ],
+            "title": "NodeModelSettingsSaveResult",
+            "type": "object"
+          },
+          "ProjectContextTarget": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name"
+            ],
+            "title": "ProjectContextTarget",
+            "type": "object"
+          },
+          "ProjectExecutionContext": {
+            "additionalProperties": false,
+            "properties": {
+              "scope": {
+                "enum": [
+                  "current",
+                  "specified",
+                  "all"
+                ],
+                "title": "Scope",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected",
+                  "specified",
+                  "all"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              },
+              "projects": {
+                "items": {
+                  "$ref": "#/$defs/ProjectContextTarget"
+                },
+                "title": "Projects",
+                "type": "array"
+              },
+              "requires_confirmation": {
+                "title": "Requires Confirmation",
+                "type": "boolean"
+              },
+              "notice": {
+                "title": "Notice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "selection_source",
+              "projects",
+              "requires_confirmation",
+              "notice"
+            ],
+            "title": "ProjectExecutionContext",
+            "type": "object"
+          },
+          "ProjectSelectionContext": {
+            "additionalProperties": false,
+            "description": "실제 실행 대상과 구분되는 요청 시점의 저장된 선택.",
+            "properties": {
+              "status": {
+                "enum": [
+                  "selected",
+                  "not_selected",
+                  "unavailable"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "project": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/SelectedProject"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "title": "ProjectSelectionContext",
+            "type": "object"
+          },
+          "SelectedProject": {
+            "additionalProperties": false,
+            "properties": {
+              "group_code": {
+                "title": "Group Code",
+                "type": "string"
+              },
+              "group_name": {
+                "title": "Group Name",
+                "type": "string"
+              },
+              "project_code": {
+                "title": "Project Code",
+                "type": "string"
+              },
+              "project_name": {
+                "title": "Project Name",
+                "type": "string"
+              },
+              "selection_source": {
+                "enum": [
+                  "auto_selected",
+                  "user_selected"
+                ],
+                "title": "Selection Source",
+                "type": "string"
+              }
+            },
+            "required": [
+              "group_code",
+              "group_name",
+              "project_code",
+              "project_name",
+              "selection_source"
+            ],
+            "title": "SelectedProject",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/NodeModelSettingsSaveResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectExecutionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "selection_context": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ProjectSelectionContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "ok"
+        ],
+        "title": "ResultEnvelope[NodeModelSettingsSaveResult]",
         "type": "object"
       }
     }
