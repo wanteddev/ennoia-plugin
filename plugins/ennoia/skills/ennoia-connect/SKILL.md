@@ -20,6 +20,10 @@ host에서 보이는 Skill 이름(`ennoia-connect`), 설치된 Plugin 식별자,
 
 `specified` scope는 해당 호출의 대상이다. 이를 기본 프로젝트가 바뀌었다고 설명하지 않는다. 읽기 목적의 `all` 결과는 프로젝트별로 구분한다. 프로젝트 권한이 사라지면 다른 프로젝트로 임의 대체하지 않는다.
 
+## 일부 도구가 보이지 않을 때
+
+[도구 발견 복구](../../references/tool-discovery.md)에 따라 전체 재발견, 실제 연결 revision 비교, 필요 시 새 채팅 확인을 진행한다. 설정 reload의 성공만으로 기존 채팅의 도구 목록이 갱신됐다고 보고하지 않는다. 목록 미발견과 서버·backend 미지원, 실제 인증 오류를 구분하고 기존 작업 ID와 승인 범위를 보존한다.
+
 ## 인증 복구
 
 host의 `needs-auth` 또는 `AUTH_REQUIRED`, `ENNOIA_REAUTH_REQUIRED`, HTTP 401이면 설치된 실제 Ennoia MCP 서버의 host 인증 흐름을 확인한다. host의 Connected 표시는 실제 사용 연결의 인증 오류보다 우선하지 않는다. Tool 자체를 발견하지 못한 상태와 인증 오류는 구분한다. Claude CLI는 `/mcp`, Codex CLI는 해당 설치 서버의 인증 명령·안내, 앱은 Ennoia 연결 상세의 로그인/재연결을 사용한다. plugin이 부여한 실제 서버 이름을 먼저 확인한다. 수동 등록 서버가 없는 상태에서 `codex mcp login ennoia`가 반드시 통한다고 가정하지 않는다.

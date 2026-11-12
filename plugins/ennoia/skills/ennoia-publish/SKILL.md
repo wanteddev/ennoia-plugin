@@ -11,6 +11,8 @@ description: "Ennoia 에이전트의 운영 배포·상태 확인·중지, 기�
 
 ## 실행 범위
 
+배포 목록·실행·추적·사용법 도구가 보이지 않으면 [도구 발견 복구](../../references/tool-discovery.md)를 먼저 따른다. 현재 목록 누락만으로 이전 서버·backend 미지원으로 판단하거나 실행·재배포로 확인하지 않는다.
+
 Ennoia MCP의 `get_current_ennoia_project`로 대상 그룹·프로젝트를 확인해 표시한다. 사용자 선택이 없는 `auto_selected` 상태에서는 배포하지 않는다. 이미 승인된 구체적 배포·App 변경은 단계마다 다시 허락을 묻지 않는다. 배포 요청이 App 공개 공유나 기존 배포 중지까지 의미하지는 않는다.
 
 `list_multi_agents`/`get_multi_agent`로 대상 ID와 draft를 확인하고 `list_multi_agent_deployments`로 현재 배포를 확인한다. tool 입력은 현재 schema를 따른다. graph 수정·검증·저장이 필요한 요청은 `ennoia-build-agent`의 작업부터 완료한다.

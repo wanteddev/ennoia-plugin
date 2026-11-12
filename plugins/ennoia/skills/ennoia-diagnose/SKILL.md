@@ -11,6 +11,8 @@ description: "Ennoia 에이전트의 실행 실패, 응답 지연, Trace, 토큰
 
 ## 조사
 
+Trace·조회 도구가 보이지 않으면 [도구 발견 복구](../../references/tool-discovery.md)로 현재 연결의 전체 목록·실제 revision·새 채팅을 확인한다. 목록 누락을 실행 실패·서버 미지원으로 단정하지 않고 기존 Trace ID와 조회 대상을 유지한다.
+
 이미 확인한 현재 그룹·프로젝트는 재사용한다. 사용자가 특정 프로젝트를 지정했다면 해당 scope를 사용하며, 보고 문구만을 위해 현재 선택을 다시 조회하지 않는다. `all` 조회는 읽기 분석에만 사용하고 각 결과의 실제 프로젝트를 구분한다.
 
 1. 에이전트가 불명확하면 `list_multi_agents`로 이름을 검색한다. `list_multi_agent_traces`에는 발견된 `multi_agent_id` 또는 이름 중 하나만 전달한다.

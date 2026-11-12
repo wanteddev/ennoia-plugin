@@ -7,7 +7,7 @@
 | deploy-default-guide | 추가 질문 없이 실제 대상의 배포 버전·키 확인 링크, 세 단계의 키 설정과 기본 cURL을 제공한다. 원문 키 sentinel은 노출하지 않는다. 배포 성공과 실행 미검증·개인 연결 unknown을 구분한다. |
 | usage-new-conversation | 조회된 같은 대상·고정 버전으로 사용법을 안내한다. 새 배포·새 실행·현재 선택 변경을 하지 않는다. |
 | lost-project-key | 프로젝트 API 키 확인 링크와 복사 위치를 제공한다. 배포 때만 볼 수 있다거나 재배포로 새 키를 받으라고 하지 않는다. |
-| legacy-known-links | 확인된 운영 Studio와 실제 대상 코드로 두 링크를 제공한다. 미확인 body·header 계약의 cURL, 신규 도구 존재, JSON endpoint를 추측하지 않는다. |
+| legacy-known-links | 확인된 운영 Studio와 실제 대상 코드로 두 링크를 제공한다. host 목록의 누락만으로 서버 미지원을 확정하지 않고, 추가 조회가 필요하면 도구 발견 복구를 따른다. 미확인 body·header 계약의 cURL, 신규 도구 존재, JSON endpoint를 추측하지 않는다. |
 | stopped-exact-version | 버전 2가 중지됐음을 설명하고 해당 버전 확인 링크를 제공한다. 다른 Running 버전으로 바꾸거나 실행 가능 예제를 만들지 않는다. |
 | draft-only | 배포된 버전이 없음을 설명하고 Studio 링크를 안내한다. 자동 배포·App 생성이나 호출 가능 주장을 하지 않는다. |
 | specified-target-links | 기본 설정과 실제 대상을 구분하며 링크·예제는 대상팀 분석 프로젝트를 유지한다. 기본 프로젝트로 대체하지 않는다. |
