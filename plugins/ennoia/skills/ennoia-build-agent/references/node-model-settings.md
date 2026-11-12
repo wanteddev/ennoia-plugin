@@ -33,6 +33,6 @@
 - `NODE_MODEL_SETTINGS_UNSUPPORTED`이면 정확한 node ID와 `editable`, `unsupported_reason`을 확인한다. 노드 유형이나 모델을 바꾸어 통과시키지 않는다.
 - `NODE_MODEL_SETTINGS_SAVE_UNCERTAIN` 또는 이 작업의 `MUTATION_RECONCILIATION_REQUIRED`이면 같은 ID로 `list_multi_agent_deployments`를 조회한다. 반환된 `data.items`에서 현재 D 항목의 실제 `deploy_version`을 확인해 `get_multi_agent_node_model_settings`에 `stage=D`와 함께 전달한다. 새 draft 버전이 없으면 원래 선택한 버전의 상태만 확인하고 저장 미확인으로 보고한다. 이전 P 버전을 D 조회에 재사용하거나 새 operation ID·같은 PUT으로 재저장하지 않는다.
 - 전송을 재시도하는 동일 요청은 같은 `operation_id`와 payload를 유지한다. 생략과 명시적 null도 payload의 일부다.
-- 두 도구가 없거나 발견된 도구의 API가 404·계약 미지원으로 실패하면 전용 편집을 중단하고 확인된 에이전트의 Studio 화면으로 안내한다. Canvas를 자동 역변환하거나 대체 에이전트를 생성하지 않는다. Plugin·MCP 버전만으로 API 배포 상태를 확정하지 않는다.
+- 두 도구가 보이지 않으면 [도구 발견 복구](../../../references/tool-discovery.md)로 현재 연결의 제공 범위를 먼저 확인한다. 복구 후에도 전용 편집을 진행할 수 없거나 발견된 도구의 API가 404·계약 미지원으로 실패하면 확인된 에이전트의 Studio 화면으로 안내한다. 목록 누락과 실제 API 오류는 구분하며 Canvas를 자동 역변환하거나 대체 에이전트를 생성하지 않는다. Plugin·MCP 버전만으로 API 배포 상태를 확정하지 않는다.
 
 `canvas_revision`은 snapshot hash이며 upstream의 원자적 CAS가 아니다. UI 동시 편집의 충돌을 완전히 차단하지 못한다는 제한을 함께 전달한다.

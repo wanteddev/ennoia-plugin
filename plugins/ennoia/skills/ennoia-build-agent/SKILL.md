@@ -13,6 +13,8 @@ description: "Ennoia multi-agent를 새로 만들거나 기존 graph·draft와 �
 
 설치된 Ennoia MCP tool을 이름으로 발견하고 현재 연결의 input schema를 따른다. 이미 확인한 현재 project scope는 재사용하고, 없을 때 `get_current_ennoia_project`로 대상 이름을 확인한다. `auto_selected`이면 생성·실행·저장 전에 사용자 선택을 확보한다. 이미 지정된 대상·모델·기존 설정은 유지한다. 기존 수정의 ID가 이미 확인됐으면 그대로 사용한다. 없을 때만 `list_multi_agents`로 검색한다. 기존 Agent·SuperAgent의 `max_tokens`나 `reasoning.effort`만 변경할 때는 현재 host의 `get_multi_agent_node_model_settings`와 `update_multi_agent_node_model_settings` 지원을 확인하고 [노드 모델 설정 편집](references/node-model-settings.md)을 따른다. 이 전용 경로는 기존 ID와 Canvas를 보존하며 전체 graph 조회·검증·저장 절차를 대체한다. 기존 Canvas의 노드 프롬프트만 바꿀 때는 `get_multi_agent_node_prompts`와 `update_multi_agent_node_prompts`가 현재 host에 있는지 먼저 확인하고, 두 도구가 있으면 [노드 프롬프트 편집](references/node-prompt-editing.md)을 따른다. 이 경로는 아래 전체 graph 재구성·검증·`save_multi_agent` 절차를 사용하지 않는다. 전체 graph·흐름을 수정할 때는 `get_multi_agent`에 `format=agent_config`가 실제 input schema에 있을 때 그 형식으로 조회한다. 없는 이전 schema에는 `format`을 보내지 않는다. 현 upstream의 `CANONICAL_GRAPH_UNAVAILABLE`/`details.reason=revision_not_supported`는 canonical edit revision·CAS 부재를 뜻한다. 손실된 Canvas에서 nodes/edges를 자동 재구성하거나 대체 에이전트를 생성하지 않는다. 안전한 원본 graph/export가 없으면 확인 가능한 설정만 제시하고 수정은 제한한다. 필요한 입력만 사용자에게 확인한다.
 
+필요한 도구가 보이지 않으면 [도구 발견 복구](../../references/tool-discovery.md)를 먼저 따른다. 현재 host의 누락만으로 서버 미지원이나 Studio 편집 전환을 확정하지 않는다. 기존 작업 ID를 유지해 전체 발견·실제 revision 비교·새 채팅 확인을 거친다.
+
 ## 필요한 것만 발견
 
 - 처음 graph를 작성할 때 `list_multi_agent_node_types`, 사용할 type의 `get_multi_agent_node_schema`, `get_multi_agent_edge_schema`를 확인한다. 상세 schema와 예제를 우선한다.
@@ -37,7 +39,7 @@ graph 입력과 자원 식별자는 [Graph 작성 계약](references/graph-autho
 
 테스트는 입력과 실행 경로를 먼저 구분한다. 원본 `nodes`/`edges`를 받는 `test_multi_agent`·`start_multi_agent_test`는 기존 제한 테스트이며 `allow_side_effects=false`를 유지한다. `test_supported=false`/`TEST_NODE_UNSUPPORTED`이면 이 경로를 시작하지 않는다. 지원 field가 없는 이전 응답을 false로 채우지 않는다. 지원되는 graph는 짧은 작업에 sync, 오래 걸릴 작업에 async 도구를 사용하고, 비동기 결과는 같은 `test_id`의 `get_multi_agent_test`로 wait/backoff 조회한다. `running`은 완료가 아니며 새 test를 중복 시작하거나 거부·승인 필요 실행을 우회하지 않는다.
 
-저장된 draft의 Studio 실행 테스트는 별도 경로다. 현재 host에 `start_saved_multi_agent_test`와 조회·승인 재개·취소 schema가 있으면 [저장된 draft 테스트](references/saved-draft-testing.md)를 따른다. 이 경로는 서버가 저장 원본을 실행하고 사용자 credential을 주입하므로 MCP·connector가 실제 외부 변경을 수행할 수 있다. 대상 프로젝트·draft와 부작용 가능성을 알리고 명시적인 테스트 승인이 있을 때만 시작한다. 사용자 직접 테스트 요청과 이전 승인 맥락은 재사용하며 단계마다 재승인받지 않는다. 새 도구가 없는 이전 host에는 미지원 사실을 알린다. 테스트 실패를 우회하려고 자동 배포하거나 Canvas를 canonical graph로 역변환하지 않는다.
+저장된 draft의 Studio 실행 테스트는 별도 경로다. 현재 host에 `start_saved_multi_agent_test`와 조회·승인 재개·취소 schema가 있으면 [저장된 draft 테스트](references/saved-draft-testing.md)를 따른다. 이 경로는 서버가 저장 원본을 실행하고 사용자 credential을 주입하므로 MCP·connector가 실제 외부 변경을 수행할 수 있다. 대상 프로젝트·draft와 부작용 가능성을 알리고 명시적인 테스트 승인이 있을 때만 시작한다. 사용자 직접 테스트 요청과 이전 승인 맥락은 재사용하며 단계마다 재승인받지 않는다. 새 도구가 보이지 않으면 도구 발견 복구를 거쳐 확인한 현재 연결의 제한만 알린다. 테스트 실패를 우회하려고 자동 배포하거나 Canvas를 canonical graph로 역변환하지 않는다.
 
 기존 제한 테스트 미지원은 저장 불가나 저장된 draft 테스트 미지원을 뜻하지 않는다. 저장이 요청됐고 검증과 저장 입력이 유효하면 기존 저장 경로를 진행한다. 다만 사용자가 테스트 성공을 저장 조건으로 정했다면 미지원·미완료 상태에서는 저장을 보류한다. SuperAgent의 `SUPERAGENT_STRUCTURE_ONLY`는 구조·설정 검증이며 실제 runtime build·실행 성공이 아니다. 상세 구조와 지원 불일치는 [Graph 작성 계약](references/graph-authoring.md), 경고·재시도는 [저장 복구](references/save-and-retry.md)를 따른다.
 

@@ -4,7 +4,7 @@
 
 ## 시작 조건과 대상
 
-1. 현재 host에 `start_saved_multi_agent_test`, `get_saved_multi_agent_test`, `resume_saved_multi_agent_test`, `cancel_saved_multi_agent_test`가 있는지 발견하고 실제 input schema를 따른다. 없는 이전 host에서는 저장된 draft 테스트 미지원 사실을 알린다. 직접 backend 호출이나 자동 배포로 우회하지 않는다.
+1. 현재 host에 `start_saved_multi_agent_test`, `get_saved_multi_agent_test`, `resume_saved_multi_agent_test`, `cancel_saved_multi_agent_test`가 있는지 발견하고 실제 input schema를 따른다. 필요한 도구가 없으면 [도구 발견 복구](../../../references/tool-discovery.md)를 거쳐 현재 연결의 제공 범위를 확인한다. 이미 시작한 테스트는 기존 `test_id` 조회부터 복구하며, 조회 도구 누락을 새 start나 직접 backend 호출·자동 배포로 우회하지 않는다.
 2. 이미 지정한 project와 `multi_agent_id`를 재사용한다. `list_multi_agents` 등 현재 목록에서 해당 대상의 `stage=D`와 실제 `deploy_version`을 확인한다. `deploy_version=0`도 유효할 수 있으나 기본값으로 추측하지 않는다. 목록에 없거나 저장 후 변경됐다면 실행할 버전을 먼저 확인한다.
 3. 대상 프로젝트·에이전트·draft 버전과 설정된 MCP·connector 도구가 실제 외부 변경을 수행할 수 있음을 사용자에게 알린다. 이 실행을 읽기 전용 안전 테스트라고 표현하지 않는다. `USER` credential이나 `ACTIVE` 연결만으로 `readOnly`라고 판정하지 않는다. credential 값은 받거나 출력하지 않는다.
 4. 명시적인 테스트 승인이 있을 때만 `confirm=true`를 전달한다. 사용자의 직접 테스트 요청과 이미 확인한 대상·부작용 범위의 이전 승인은 재사용한다. 생성·수정·검증·저장 요청만으로 외부 부작용이 가능한 테스트 승인까지 추정하지 않는다. 승인된 같은 테스트의 polling과 복구 단계마다 재승인받지 않는다.
