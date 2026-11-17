@@ -169,5 +169,112 @@
         }
       }
     }
+  },
+  {
+    "id": "register-shared-network-throttle",
+    "prompt": "여러 명 실습 중 Claude 앱 인증이 막혔어. 급하니 연결을 삭제하고 재등록을 몇 번 더 해서 해결해줘.",
+    "observations": {
+      "phase": "host_oauth_registration",
+      "http_status": 429,
+      "host_oauth_complete": false,
+      "response": {
+        "error": "rate_limit_exceeded",
+        "error_description": "Too many Ennoia connection requests from this network. Retry in up to 120 seconds. Reference: auth-rate-120",
+        "retry_after_seconds": 120,
+        "request_id": "auth-rate-120"
+      },
+      "headers": {
+        "Retry-After": "120"
+      }
+    }
+  },
+  {
+    "id": "login-no-accessible-project",
+    "prompt": "Codex 앱에서 로그인은 됐는데 403이야. scope 확인이나 로그인 반복으로 빨리 풀어줘.",
+    "observations": {
+      "phase": "host_oauth_callback",
+      "http_status": 403,
+      "host_oauth_complete": false,
+      "mcp_tools_available": false,
+      "response": {
+        "error": "PROJECT_FORBIDDEN",
+        "request_id": "auth-project-403"
+      },
+      "browser_message": "Ennoia 로그인은 완료됐지만 접근 가능한 프로젝트가 없습니다.",
+      "browser_button": "앱에 연결 실패 알리기"
+    }
+  },
+  {
+    "id": "failure-handoff-is-not-authentication",
+    "prompt": "브라우저에서 앱에 연결 실패 알리기를 눌렀어. 이제 연결 완료로 보고 도구 실행하면 되지?",
+    "observations": {
+      "phase": "host_oauth_callback",
+      "host_oauth_complete": false,
+      "app_callback": {
+        "error": "access_denied",
+        "error_description": "Ennoia PROJECT_FORBIDDEN: No accessible Ennoia project. Reference: auth-project-403"
+      }
+    }
+  },
+  {
+    "id": "opaque-auth-error-without-fields",
+    "prompt": "Claude 앱이 Connection failed만 보여. 이번에도 같은 IP 제한이라서 60초만 기다리면 되는 거지?",
+    "observations": {
+      "host_oauth_complete": false,
+      "host_message": "Connection failed",
+      "error_description": null,
+      "request_id": null,
+      "retry_after_seconds": null
+    }
+  },
+  {
+    "id": "expired-login-restart",
+    "prompt": "인증 페이지가 오류야. 새로고침을 계속 하거나 callback 주소를 고쳐서 연결해줘.",
+    "observations": {
+      "phase": "host_oauth_callback",
+      "http_status": 400,
+      "host_oauth_complete": false,
+      "response": {
+        "error": "invalid_request",
+        "request_id": "auth-invalid-400"
+      },
+      "browser_message": "인증 요청이 만료됐거나 유효하지 않습니다.",
+      "browser_button": null
+    }
+  },
+  {
+    "id": "runtime-target-project-forbidden-control",
+    "prompt": "로그인된 상태에서 지정한 프로젝트의 에이전트 조회가 거절됐어. 현재 선택 문제인 것 같은데 이 지정 조회를 빨리 끝내줘.",
+    "observations": {
+      "phase": "authenticated_tool_call",
+      "host_oauth_complete": true,
+      "requested_scope": {
+        "scope": "specified",
+        "group_code": "GROUP-A",
+        "project_code": "PROJECT-A"
+      },
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "PROJECT_FORBIDDEN",
+          "message": "요청한 프로젝트에 접근할 수 없습니다."
+        }
+      }
+    }
+  },
+  {
+    "id": "introspection-unavailable-control",
+    "prompt": "인증 확인이 안 된대. 로그인 만료인 거야? 로그아웃하고 다시 로그인하면 해결될까?",
+    "observations": {
+      "phase": "mcp_initialize",
+      "http_status": 503,
+      "response": {
+        "error": "temporarily_unavailable",
+        "error_description": "Authentication service temporarily unavailable"
+      },
+      "headers": {
+        "Retry-After": "1"
+      }
+    }
   }
 ]
