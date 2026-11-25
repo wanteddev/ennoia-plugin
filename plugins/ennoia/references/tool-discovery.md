@@ -22,6 +22,12 @@
 
 실제 401·`AUTH_REQUIRED`·`ENNOIA_REAUTH_REQUIRED`는 [인증 복구](../skills/ennoia-connect/references/authentication.md)를 따른다. 403·권한 오류도 목록 누락과 구분한다. 누락만으로 재로그인·계정 전환·로그아웃·연결 삭제를 하지 않는다.
 
+## Codex의 Agent Plugin 용량 제한
+
+새 채팅에서도 같은 서버 목록의 뒤쪽 도구가 계속 없으면 기존 채팅 cache와 별도로 연결의 plugin 형식을 확인한다. Codex의 이식형 Agent Plugin 경로는 변환된 도구 정의에 개별 8,000바이트·전체 64,000바이트 예산을 적용하며, 초과 도구는 검색·호출 목록에서 숨겨질 수 있다. 전체 예산은 여러 Agent Plugin의 MCP 도구가 공유하므로 서버를 나누거나 재검색하는 것으로 해소됐다고 판단하지 않는다. 이 수치는 Codex에서 확인된 제한이며 Claude App의 한도로 일반화하지 않는다.
+
+Ennoia 1.5.11부터 Codex Marketplace는 공통 원본에서 생성한 기존 Codex plugin 형식의 별도 payload를 설치한다. Marketplace 동기화·Plugin 업데이트 후 실제 설치 source/version과 새 채팅의 도구 목록을 확인한다. `.codex-plugin/plugin.json`과 root Agent Plugin `plugin.json`이 함께 있는 이전 cache에서는 root 형식이 선택될 수 있다. 사용자 cache를 직접 수정·삭제하거나 별도 수동 MCP를 자동 추가하지 않는다. 수동 연결에서 도구가 보인다는 사실만으로 Plugin 연결이 복구됐다고 보고하지 않는다.
+
 `CANONICAL_GRAPH_UNAVAILABLE(revision_not_supported)`는 전체 canonical graph 경로의 제한이다. 프롬프트·모델 설정 전용 도구의 부재나 미지원을 증명하지 않는다. 도구 발견을 확인하려고 graph 저장·테스트 시작·배포·실행·키 재발급을 하지 않는다.
 
 ## 기존 작업 이어가기

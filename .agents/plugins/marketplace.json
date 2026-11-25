@@ -8,7 +8,7 @@
       "name": "ennoia",
       "source": {
         "source": "local",
-        "path": "./plugins/ennoia"
+        "path": "./plugins/ennoia-codex"
       },
       "policy": {
         "installation": "AVAILABLE",

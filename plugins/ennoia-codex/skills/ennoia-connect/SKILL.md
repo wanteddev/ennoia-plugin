@@ -1,0 +1,45 @@
+---
+name: ennoia-connect
+description: "Ennoia 로그인, OAuth 재인증, 계정 전환 또는 작업할 그룹·프로젝트 선택이 필요할 때 사용합니다. 외부 MCP 공급자의 연결 문제는 ennoia-integrations를 사용합니다."
+---
+
+# Ennoia 연결
+
+Ennoia 계정과 작업 대상을 확인해 다음 업무를 바로 시작할 수 있게 한다.
+
+응답 해석과 최종 안내는 [공통 응답 규칙](../../references/response-guide.md)을 적용한다.
+
+## 연결 확인
+
+host에서 보이는 Skill 이름(`ennoia-connect`), 설치된 Plugin 식별자, 실제 MCP 서버 이름은 서로 다른 값이다. Skill 목록만 있을 때 그 이름을 Plugin ID나 서버 이름의 조회 filter에 넣지 않는다. Plugin/MCP 도구가 안 보이면 host의 **전체 Plugin·MCP server inventory**에서 실제 식별자를 확인한 뒤 해당 항목의 활성화·연결 상태를 조회한다. host가 이미 정확한 식별자를 제공했다면 그것을 사용하고 불명확하면 미확인으로 남긴다. 설치된 로컬 manifest 이름만으로 현재 host 설치 ID를 추측하지 않는다.
+
+host OAuth 등록·로그인 콜백이 실패했거나 인증이 아직 끝나지 않았으면 먼저 아래 인증 복구를 적용한다. 이 단계에서 프로젝트·scope 조회 도구를 호출해 인증을 우회하지 않는다. 인증이 완료된 뒤 다음 연결 확인을 진행한다.
+
+1. 설치된 Ennoia MCP에서 `get_current_ennoia_project`를 발견해 호출한다. host에 따라 tool prefix가 달라지므로 `mcp__ennoia__` 같은 전체 이름을 고정하지 않는다.
+2. 인증·scope 확인이 필요하면 `get_ennoia_context`를 호출한다. 정상 업무에서 이미 확인된 상태를 매 호출마다 중복 조회하지 않는다.
+3. 그룹·프로젝트 이름으로 대상을 표시한다. `project_context`가 실제 호출 대상의 근거다. 사용자가 이미 정확한 대상을 정했다면 다시 허락을 묻지 않는다.
+4. 대상을 바꿔야 하면 `list_ennoia_projects`로 exact code를 찾고 `set_current_ennoia_project`로 저장한다. 동명 프로젝트는 그룹까지 비교한다. 사용자가 선택하지 않은 `auto_selected` 값으로 생성·실행·변경을 시작하지 않는다.
+
+`specified` scope는 해당 호출의 대상이다. 이를 기본 프로젝트가 바뀌었다고 설명하지 않는다. 읽기 목적의 `all` 결과는 프로젝트별로 구분한다. 프로젝트 권한이 사라지면 다른 프로젝트로 임의 대체하지 않는다.
+
+## 일부 도구가 보이지 않을 때
+
+[도구 발견 복구](../../references/tool-discovery.md)에 따라 전체 재발견, 실제 연결 revision 비교, 필요 시 새 채팅 확인을 진행한다. 설정 reload의 성공만으로 기존 채팅의 도구 목록이 갱신됐다고 보고하지 않는다. 목록 미발견과 서버·backend 미지원, 실제 인증 오류를 구분하고 기존 작업 ID와 승인 범위를 보존한다.
+
+## 인증 복구
+
+OAuth 오류 응답·앱·로그인 브라우저에서 실제 확인한 실패 단계와 오류 코드로 [인증 상태 구분](references/authentication.md)을 적용한다. 등록 `rate_limit_exceeded`/429는 서버가 반환한 재시도 시간을 따르고, 인증 중 `PROJECT_FORBIDDEN`은 프로젝트 접근 권한 확보로 복구한다. 인증 후 특정 프로젝트의 권한 거절이나 `INSUFFICIENT_SCOPE`와 구분한다.
+
+host의 `needs-auth` 또는 `AUTH_REQUIRED`, `ENNOIA_REAUTH_REQUIRED`, HTTP 401이면 설치된 실제 Ennoia MCP 서버의 host 인증 흐름을 확인한다. host의 Connected 표시는 실제 사용 연결의 인증 오류보다 우선하지 않는다. Tool 자체를 발견하지 못한 상태와 인증 오류는 구분한다. Claude CLI는 `/mcp`, Codex CLI는 해당 설치 서버의 인증 명령·안내, 앱은 Ennoia 연결 상세의 로그인/재연결을 사용한다. plugin이 부여한 실제 서버 이름을 먼저 확인한다. 수동 등록 서버가 없는 상태에서 `codex mcp login ennoia`가 반드시 통한다고 가정하지 않는다.
+
+실패 안내는 확인된 원인·다음 행동·서버가 준 대기 시간·문의 코드를 짧게 전달한다. 브라우저에 **앱에 연결 실패 알리기**가 보이면 먼저 버튼으로 원래 앱에 실패를 전달하도록 안내한다. 실패 전달은 인증 성공이 아니며, 원인을 해결한 뒤 앱에서 연결을 다시 시작한다. 앱이 상세를 숨기거나 이전 서버가 새 필드를 반환하지 않으면 없는 원인·대기 시간·문의 코드를 만들지 않는다.
+
+재인증 뒤 `get_ennoia_context`와 현재 프로젝트를 확인한다. 같은 실패를 반복하면 오류 코드와 host 연결 상태를 보고하고 무한 재시도하지 않는다. 세부 오류 구분은 [인증 복구](references/authentication.md)를 읽는다.
+
+새 serverInfo revision을 사용하려면 실제 사용 연결을 새로 initialize한 metadata와 배포 image revision을 대조한다. Plugin 버전·다른 연결의 cached schema만으로 새 backend 기능을 확정하지 않는다. 인증 실패에 남은 이전 `project_context`는 현재 선택의 증거가 아니다.
+
+사용자가 계정 전환을 요청했을 때만 `switch_ennoia_account`, 로그아웃을 요청했을 때만 `logout_ennoia`를 사용한다. 단순 조회 실패를 해결하려고 기존 연결을 삭제하지 않는다.
+
+## 완료 기준
+
+인증 성공, 선택된 그룹·프로젝트, 가능한 다음 작업을 간결하게 표시한다. OAuth가 끝나지 않았다면 연결 완료라고 보고하지 않는다. 토큰·cookie·API key를 사용자에게 복사해 달라고 하거나 파일에 저장하지 않는다.

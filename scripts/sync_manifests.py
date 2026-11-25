@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+CODEX_PAYLOAD = Path("plugins/ennoia-codex")
+SHARED_COMPONENTS = ("assets", "mcp", "references", "skills")
 
 
 def outputs(root: Path) -> dict[Path, dict]:
@@ -37,7 +39,7 @@ def outputs(root: Path) -> dict[Path, dict]:
         },
         root / ".agents/plugins/marketplace.json": {
             "name": "ennoia", "interface": {"displayName": "Ennoia"},
-            "plugins": [{"name": manifest["name"], "source": {"source": "local", "path": "./plugins/ennoia"},
+            "plugins": [{"name": manifest["name"], "source": {"source": "local", "path": "./plugins/ennoia-codex"},
                          "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"}, "category": "Productivity"}],
         },
     }
@@ -58,24 +60,67 @@ def asset_outputs(root: Path) -> dict[Path, bytes]:
     return assets
 
 
+def generated_outputs(root: Path) -> dict[Path, bytes]:
+    """공통 원본과 생성 metadata로 self-contained Codex payload까지 만든다."""
+    source = root / "plugins/ennoia"
+    if source.is_symlink() or any(path.is_symlink() for path in source.rglob("*")):
+        raise ValueError("공유 payload에 symlink를 사용할 수 없습니다.")
+    generated = {path: (json.dumps(data, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+                 for path, data in outputs(root).items()}
+    generated.update(asset_outputs(root))
+    shared = {}
+    for component in SHARED_COMPONENTS:
+        for path in sorted((source / component).rglob("*")):
+            if path.is_file():
+                shared[path] = path.read_bytes()
+    # 첫 생성에서도 아직 disk에 없는 icon/logo와 최신 manifest를 복사한다.
+    shared.update({path: data for path, data in generated.items()
+                   if path.is_relative_to(source) and (
+                       path.relative_to(source).parts[0] in SHARED_COMPONENTS
+                       or path.relative_to(source).as_posix() in (".codex-plugin/plugin.json", ".mcp.json")
+                   )})
+    generated.update({root / CODEX_PAYLOAD / path.relative_to(source): data for path, data in shared.items()})
+    return generated
+
+
+def stale_codex_paths(root: Path, generated: dict[Path, bytes]) -> list[Path]:
+    payload = root / CODEX_PAYLOAD
+    expected_files = set(generated)
+    expected_directories = {payload}
+    for path in generated:
+        if path.is_relative_to(payload):
+            expected_directories.update(parent for parent in path.parents if parent.is_relative_to(payload))
+    return sorted((path for path in payload.rglob("*")
+                   if path not in (expected_directories if path.is_dir() else expected_files)),
+                  key=lambda path: (-len(path.parts), str(path)))
+
+
+def output_mismatches(root: Path, generated: dict[Path, bytes]) -> list[str]:
+    mismatches = [str(path.relative_to(root)) for path, expected in generated.items()
+                  if path.is_symlink() or not path.is_file() or path.read_bytes() != expected]
+    mismatches.extend(str(path.relative_to(root)) for path in stale_codex_paths(root, generated))
+    return sorted(mismatches)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="변경 없이 생성 결과의 일치 여부를 확인")
     args = parser.parse_args()
-    mismatches = []
-    generated = {path: (json.dumps(data, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
-                 for path, data in outputs(ROOT).items()}
-    generated.update(asset_outputs(ROOT))
-    for path, expected in generated.items():
-        if args.check:
-            if not path.is_file() or path.read_bytes() != expected:
-                mismatches.append(str(path.relative_to(ROOT)))
-        else:
+    generated = generated_outputs(ROOT)
+    payload = ROOT / CODEX_PAYLOAD
+    if payload.is_symlink() or any(path.is_symlink() for path in payload.rglob("*")):
+        raise SystemExit("Codex 생성 payload에 symlink를 사용할 수 없습니다.")
+    mismatches = output_mismatches(ROOT, generated) if args.check else []
+    if not args.check:
+        # 생성 경로만 정리한다. 남은 root plugin.json은 로딩 형식을 바꿀 수 있다.
+        for path in stale_codex_paths(ROOT, generated):
+            path.rmdir() if path.is_dir() else path.unlink()
+        for path, expected in generated.items():
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(expected)
     if mismatches:
         raise SystemExit("생성 파일이 원본과 다릅니다. python3 scripts/sync_manifests.py 실행 필요: " + ", ".join(mismatches))
-    print("Manifest·asset sync 확인 완료" if args.check else "호환 manifest·asset 생성 완료")
+    print("Manifest·Codex payload sync 확인 완료" if args.check else "호환 manifest·Codex payload 생성 완료")
 
 
 if __name__ == "__main__":

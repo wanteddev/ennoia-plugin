@@ -12,6 +12,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.validate_contracts import validate_repository_contracts
+from scripts.sync_manifests import CODEX_PAYLOAD, generated_outputs, output_mismatches
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOL_PATTERN = re.compile(r"`((?:get|set|list|create|update|delete|clone|rename|share|start|continue|resume|cancel|stop|deploy|invoke|add|connect|disconnect|import|upload|prepare|retry|validate|test|save|switch|logout)_[a-z_]+)`")
@@ -84,12 +85,21 @@ def validate_repository(root: Path) -> list[str]:
             errors.append("marketplace는 하나의 Ennoia payload를 설치해야 함")
         else:
             ac, bc = a["plugins"][0], b["plugins"][0]
-            if ac.get("source") != {"source": "local", "path": "./plugins/ennoia"} or bc.get("source") != "./plugins/ennoia":
+            if ac.get("source") != {"source": "local", "path": "./plugins/ennoia-codex"} or bc.get("source") != "./plugins/ennoia":
                 errors.append("marketplace source 경로 오류")
             if ac.get("name") != "ennoia" or bc.get("name") != "ennoia" or bc.get("version") != portable["version"]:
                 errors.append("marketplace manifest identity 불일치")
             if ac.get("policy") != {"installation": "AVAILABLE", "authentication": "ON_INSTALL"} or ac.get("category") != "Productivity":
                 errors.append("marketplace 설치·인증 policy 오류")
+
+        # 원본과 byte 단위로 같아야 계약·relative reference가 host별로 달라지지 않는다.
+        generated = generated_outputs(root)
+        for mismatch in output_mismatches(root, generated):
+            if mismatch.startswith(CODEX_PAYLOAD.as_posix() + "/"):
+                errors.append(f"Codex 배포 artifact 불일치: {mismatch}")
+        codex_payload = root / CODEX_PAYLOAD
+        if codex_payload.is_symlink() or any(path.is_symlink() for path in codex_payload.rglob("*")):
+            errors.append("Codex 배포 payload의 symlink는 cache 밖을 참조할 수 있습니다")
 
         tools = set(read_json(root / "tests/fixtures/ennoia-tools.json")["tools"])
         errors.extend(validate_repository_contracts(root))
