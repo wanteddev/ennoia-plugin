@@ -168,6 +168,7 @@ claude plugin update ennoia@ennoia
 | 설치했는데 Skill이 안 보임 | Plugin 활성화를 확인하고 새 대화·세션을 시작합니다. |
 | Skill은 보이는데 Ennoia에 연결되지 않음 | Plugin의 MCP 활성화와 Ennoia 로그인을 확인합니다. Claude Code에서는 `/mcp`를 사용합니다. |
 | 일부 도구만 보이거나 기존 채팅과 새 채팅의 목록이 다름 | [도구 발견 복구](plugins/ennoia/references/tool-discovery.md)에 따라 전체 도구 재발견·실제 연결 revision·새 채팅의 목록을 확인합니다. 설정 재로드 성공만으로 기존 채팅이 복구됐다고 판단하지 않습니다. |
+| Codex 새 채팅에서도 일부 도구가 계속 없음 | Marketplace와 Plugin을 1.5.11 이상으로 업데이트한 뒤 새 작업에서 확인합니다. Codex용 배포본은 기존 Codex 플러그인 형식으로 설치됩니다. 서버 목록과 실제 호출 가능한 도구 목록을 각각 확인하며, 수동 MCP 연결을 추가해 복구됐다고 판단하지 않습니다. |
 | 이미 Ennoia MCP를 수동 등록함 | Plugin과 기존 연결이 함께 있을 수 있습니다. 별도 MCP를 추가 등록하지 말고 실제 사용하는 연결부터 확인합니다. |
 
 <details>

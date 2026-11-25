@@ -1,0 +1,52 @@
+---
+name: ennoia-build-agent
+description: "Ennoia multi-agent를 새로 만들거나 기존 graph·draft와 모델 설정을 수정, 검증, 테스트, 저장할 때 사용합니다. 이미 배포된 App 실행이나 운영 배포 요청은 별도 Skill의 대상입니다."
+---
+
+# Ennoia 에이전트 만들기
+
+사용자가 요청한 업무를 Ennoia graph로 만들고 요청한 단계까지 완료한다. 생성 요청만으로 운영 배포·공유를 추가하지 않는다.
+
+응답 해석과 최종 안내는 [공통 응답 규칙](../../references/response-guide.md)을 적용한다.
+
+## 대상과 입력
+
+설치된 Ennoia MCP tool을 이름으로 발견하고 현재 연결의 input schema를 따른다. 이미 확인한 현재 project scope는 재사용하고, 없을 때 `get_current_ennoia_project`로 대상 이름을 확인한다. `auto_selected`이면 생성·실행·저장 전에 사용자 선택을 확보한다. 이미 지정된 대상·모델·기존 설정은 유지한다. 기존 수정의 ID가 이미 확인됐으면 그대로 사용한다. 없을 때만 `list_multi_agents`로 검색한다. 기존 Agent·SuperAgent의 `max_tokens`나 `reasoning.effort`만 변경할 때는 현재 host의 `get_multi_agent_node_model_settings`와 `update_multi_agent_node_model_settings` 지원을 확인하고 [노드 모델 설정 편집](references/node-model-settings.md)을 따른다. 이 전용 경로는 기존 ID와 Canvas를 보존하며 전체 graph 조회·검증·저장 절차를 대체한다. 기존 Canvas의 노드 프롬프트만 바꿀 때는 `get_multi_agent_node_prompts`와 `update_multi_agent_node_prompts`가 현재 host에 있는지 먼저 확인하고, 두 도구가 있으면 [노드 프롬프트 편집](references/node-prompt-editing.md)을 따른다. 이 경로는 아래 전체 graph 재구성·검증·`save_multi_agent` 절차를 사용하지 않는다. 전체 graph·흐름을 수정할 때는 `get_multi_agent`에 `format=agent_config`가 실제 input schema에 있을 때 그 형식으로 조회한다. 없는 이전 schema에는 `format`을 보내지 않는다. 현 upstream의 `CANONICAL_GRAPH_UNAVAILABLE`/`details.reason=revision_not_supported`는 canonical edit revision·CAS 부재를 뜻한다. 손실된 Canvas에서 nodes/edges를 자동 재구성하거나 대체 에이전트를 생성하지 않는다. 안전한 원본 graph/export가 없으면 확인 가능한 설정만 제시하고 수정은 제한한다. 필요한 입력만 사용자에게 확인한다.
+
+필요한 도구가 보이지 않으면 [도구 발견 복구](../../references/tool-discovery.md)를 먼저 따른다. 현재 host의 누락만으로 서버 미지원이나 Studio 편집 전환을 확정하지 않는다. 기존 작업 ID를 유지해 전체 발견·실제 revision 비교·새 채팅 확인을 거친다.
+
+## 필요한 것만 발견
+
+- 처음 graph를 작성할 때 `list_multi_agent_node_types`, 사용할 type의 `get_multi_agent_node_schema`, `get_multi_agent_edge_schema`를 확인한다. 상세 schema와 예제를 우선한다.
+- 새 agent의 모델을 자동 선택할 때는 현재 project의 `list_multi_agent_models`를 먼저 조회하고 [모델 선택 기준](references/model-selection.md)을 따른다. 업무 난이도·비용·필수 기능에 맞는 모델군·등급 안에서 사용 가능한 최신 버전을 기본으로 선택한다. 사용자가 exact 모델·버전을 지정했거나 기존 graph를 수정하는 경우에는 해당 설정을 유지한다.
+- 다른 자원 종류·사용 가능 여부가 불명확하면 `get_multi_agent_capabilities` 요약을 읽는다. 필요한 `list_multi_agent_mcp_servers`, `list_multi_agent_rag_collections`만 query로 좁혀 조회한다.
+- MCP는 선택한 서버의 `list_multi_agent_mcp_tools`를 조회한 뒤 사용할 도구의 `get_multi_agent_mcp_tool_schema`만 읽는다. 카탈로그와 OAuth 연결 상태를 혼동하지 않는다.
+- 같은 project·schema·capability version의 유효한 조회 결과는 작업 중 재사용한다. project·model·version이 바뀌거나 서버가 stale이라고 판단하면 관련 부분만 다시 조회한다.
+
+graph 입력과 자원 식별자는 [Graph 작성 계약](references/graph-authoring.md)을 필요한 경우 읽는다.
+
+## 업무에 맞는 구조 선택
+
+새 graph를 만들거나 역할·흐름을 바꿀 때는 [설계 판단 기준](references/agent-design.md)을 읽는다. 입력과 산출물·성공 조건, 고정 순서와 동적 위임의 필요성, 사용할 자원, 실패·승인·반복 한계를 기존 요청에서 정리한다. 구조를 바꿀 만큼 중요한 정보만 추가로 확인한다. 사용자 지정 구조·모델은 유지하고, 요구를 만족하는 최소 구성과 선택 이유를 정한다. 도구 사용이나 역할 수만으로 SuperAgent를 선택하지 않는다.
+
+노드 간 값을 전달하거나 조건·반복·MCP 입력을 작성할 때는 [데이터 전달과 전체 예제](references/dataflow-examples.md)를 읽는다. 각 소비 필드가 어디서 생성되는지와 누락 시 동작을 맞춘 뒤, 현재 node schema가 허용하는 설정으로 작성한다. 예제의 model·resource 변수는 discovery 결과로 치환하며 예제 자체를 실행 성공의 증거로 삼지 않는다.
+
+## 검증·테스트·저장
+
+캐시 설정을 요청받으면 `llmConfig.cache_control`은 Gateway 응답 캐시 제어(True는 Gateway 설정을 따름, False는 `Cache-Control: no-cache`)이며 프롬프트 캐싱과 별개임을 설명한다. 현재 node schema가 지원하는 `prompt_cache`의 기본값은 true이며, Anthropic Claude Chat 노드의 고정 시스템 prefix 캐싱을 자동 요청한다. 자동 추가를 끄려면 `prompt_cache=false`를 명시한다. 미지원 모델·미확인 alias 또는 캐시할 시스템 text가 없는 요청에는 자동 지점을 추가하지 않는다. TTL은 5분이다. 모델별 최소 prefix 길이·동일 prefix 조건이 필요하고 cache hit를 보장하지 않는다. 사용자 입력마다 달라지는 내용을 고정 시스템 지침에 섞지 않는다. `PROMPT_CACHE_RUNTIME_UNSUPPORTED`면 runtime 업데이트가 필요한 상태로 보고하며, 사용자 동의 없이 false로 바꿔 검증을 통과시키지 않는다.
+
+`validate_multi_agent`의 envelope `ok`와 `data.valid`를 모두 확인한다. 실패한 node/path와 `repair_hint`에 맞춰 수정한 뒤 재검증한다. 동일 실패에 근거 없는 수정을 반복하지 않는다.
+
+테스트는 입력과 실행 경로를 먼저 구분한다. 원본 `nodes`/`edges`를 받는 `test_multi_agent`·`start_multi_agent_test`는 기존 제한 테스트이며 `allow_side_effects=false`를 유지한다. `test_supported=false`/`TEST_NODE_UNSUPPORTED`이면 이 경로를 시작하지 않는다. 지원 field가 없는 이전 응답을 false로 채우지 않는다. 지원되는 graph는 짧은 작업에 sync, 오래 걸릴 작업에 async 도구를 사용하고, 비동기 결과는 같은 `test_id`의 `get_multi_agent_test`로 wait/backoff 조회한다. `running`은 완료가 아니며 새 test를 중복 시작하거나 거부·승인 필요 실행을 우회하지 않는다.
+
+저장된 draft의 Studio 실행 테스트는 별도 경로다. 현재 host에 `start_saved_multi_agent_test`와 조회·승인 재개·취소 schema가 있으면 [저장된 draft 테스트](references/saved-draft-testing.md)를 따른다. 이 경로는 서버가 저장 원본을 실행하고 사용자 credential을 주입하므로 MCP·connector가 실제 외부 변경을 수행할 수 있다. 대상 프로젝트·draft와 부작용 가능성을 알리고 명시적인 테스트 승인이 있을 때만 시작한다. 사용자 직접 테스트 요청과 이전 승인 맥락은 재사용하며 단계마다 재승인받지 않는다. 새 도구가 보이지 않으면 도구 발견 복구를 거쳐 확인한 현재 연결의 제한만 알린다. 테스트 실패를 우회하려고 자동 배포하거나 Canvas를 canonical graph로 역변환하지 않는다.
+
+기존 제한 테스트 미지원은 저장 불가나 저장된 draft 테스트 미지원을 뜻하지 않는다. 저장이 요청됐고 검증과 저장 입력이 유효하면 기존 저장 경로를 진행한다. 다만 사용자가 테스트 성공을 저장 조건으로 정했다면 미지원·미완료 상태에서는 저장을 보류한다. SuperAgent의 `SUPERAGENT_STRUCTURE_ONLY`는 구조·설정 검증이며 실제 runtime build·실행 성공이 아니다. 상세 구조와 지원 불일치는 [Graph 작성 계약](references/graph-authoring.md), 경고·재시도는 [저장 복구](references/save-and-retry.md)를 따른다.
+
+새 graph나 전체 graph 수정의 저장은 `save_multi_agent`를 사용한다. 같은 graph·사용자·project에서 검증한 `validation_id` 경로를 우선해 큰 graph를 재전송하지 않는다. `validation_id`와 원본 nodes/edges를 동시에 보내지 않는다. graph를 변경했으면 다시 검증한다. 검증 ID만으로 저장의 create/update 결정, create 이름 또는 update 대상 ID가 정해진 것은 아니다. 실제 요청·조회에서 확인한 값을 사용하고 빠진 필드만 확인한다. 설명용 문구를 도구 인자에 넣지 않는다. 기존 에이전트의 변경 내용을 draft로 저장할 때는 `operation=update`와 발견한 `multi_agent_id`를 사용한다. Published만 있고 draft가 없어도 같은 ID로 update하며, 이를 지원하는 backend가 새 draft를 저장한다. 앞의 안전한 원본 graph 확보 제한은 그대로 유지한다. 지원하지 않는 backend의 오류와 재시도·만료는 [저장 복구](references/save-and-retry.md)를 따른다.
+
+## 결과
+
+대상 프로젝트, 생성/수정한 에이전트, 검증·테스트·저장 각각의 실제 상태와 남은 제한을 전달한다. 테스트 실패를 성공으로 덮거나 저장을 배포 완료로 표현하지 않는다. 응답의 credential을 출력하지 않는다.
+
+생성·수정 저장이 확인되면 공통 응답 규칙의 **저장된 에이전트 링크**에 따라 실제 대상과 저장된 ID로 만든 **에이전트 열기** 링크를 최종 응답에 반드시 포함한다. 저장 전 검증·테스트 결과만으로 링크를 만들지 않는다.

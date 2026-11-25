@@ -22,7 +22,9 @@ class ValidationTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name) / "repo"
-        shutil.copytree(ROOT, self.root, ignore=shutil.ignore_patterns(".git", ".venv", "__pycache__", "results"))
+        shutil.copytree(ROOT, self.root, ignore=shutil.ignore_patterns(
+            ".git", ".venv", ".local", ".superpowers", "__pycache__", "results", "docs",
+        ))
 
     def test_valid_repository(self):
         self.assertEqual(self.validate(self.root), [])
@@ -92,6 +94,18 @@ class ValidationTests(unittest.TestCase):
     def test_missing_reference_is_rejected(self):
         (self.root / "plugins/ennoia/skills/ennoia-knowledge/references/uploads.md").unlink()
         self.assertTrue(any("reference" in e for e in self.validate(self.root)))
+
+    def test_codex_payload_drift_is_rejected(self):
+        path = self.root / "plugins/ennoia-codex/skills/ennoia-build-agent/SKILL.md"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("incomplete generated skill\n")
+        self.assertTrue(any("Codex" in e for e in self.validate(self.root)))
+
+    def test_root_agent_manifest_in_codex_payload_is_rejected(self):
+        path = self.root / "plugins/ennoia-codex/plugin.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text((self.root / "plugins/ennoia/plugin.json").read_text())
+        self.assertTrue(any("Codex" in e for e in self.validate(self.root)))
 
     def test_knowledge_skill_has_file_upload_recovery_guidance(self):
         skill = (ROOT / "plugins/ennoia/skills/ennoia-knowledge/SKILL.md").read_text()

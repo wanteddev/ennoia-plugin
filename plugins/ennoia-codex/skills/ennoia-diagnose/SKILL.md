@@ -1,0 +1,37 @@
+---
+name: ennoia-diagnose
+description: "Ennoia 에이전트의 실행 실패, 응답 지연, Trace, 토큰 사용량, 비용 또는 프로젝트 예산을 조사할 때 사용합니다."
+---
+
+# Ennoia 실행 진단
+
+실제 실행 증거로 실패·지연·사용량을 설명하고 확인된 원인과 추정을 구분한다.
+
+응답 해석과 최종 안내는 [공통 응답 규칙](../../references/response-guide.md)을 적용한다.
+
+## 조사
+
+Trace·조회 도구가 보이지 않으면 [도구 발견 복구](../../references/tool-discovery.md)로 현재 연결의 전체 목록·실제 revision·새 채팅을 확인한다. 목록 누락을 실행 실패·서버 미지원으로 단정하지 않고 기존 Trace ID와 조회 대상을 유지한다.
+
+이미 확인한 현재 그룹·프로젝트는 재사용한다. 사용자가 특정 프로젝트를 지정했다면 해당 scope를 사용하며, 보고 문구만을 위해 현재 선택을 다시 조회하지 않는다. `all` 조회는 읽기 분석에만 사용하고 각 결과의 실제 프로젝트를 구분한다.
+
+1. 에이전트가 불명확하면 `list_multi_agents`로 이름을 검색한다. `list_multi_agent_traces`에는 발견된 `multi_agent_id` 또는 이름 중 하나만 전달한다.
+2. Studio 테스트와 배포 App 실행을 구분해 `sources`를 선택한다. 최근·해당 배포 버전으로 좁혀 요약을 조회한 뒤 관련 `trace_id`만 `get_multi_agent_trace`로 읽는다.
+3. 최초 실패 observation, 부모·자식 관계, 상태·오류, duration, model, input/output, token·cost를 연결한다. 전체 graph·모든 trace를 먼저 가져오지 않는다.
+4. 사용량은 `get_project_usage`, 비용은 `get_project_cost`, 남은 예산은 `get_project_budget_status`를 사용한다. 호출 전에는 실제 host input schema에서 지원하는 인자만 확인한다. 기존 또는 반환된 결과의 source·field 의미가 요청한 지표와 필터를 지원하는지도 별도로 확인한다. 기간·timezone·프로젝트 범위는 지원하는 인자와 반환된 의미 안에서만 맞춰 비교한다. 에이전트별 LLM 요청 수·비용을 도구 이름이나 일반 사용량에서 추론하지 않는다. 해당 지표·필터를 지원한다는 source 계약이 확인되지 않으면 이를 얻기 위한 인자를 넣거나 결과를 약속하지 않는다. 확인된 프로젝트 범위의 값만 보고 요청 지표는 미확인으로 남긴다. 새 `resource_count`는 일별 resource count이지 LLM 요청 수가 아니다. `applied_agent_scope=project`면 agent 조건을 적용한 비용이라고 말하지 않는다. 이전 응답에 새 field가 없으면 scope·통화·producer timezone·반영 지연을 unknown으로 남긴다.
+
+## 해석
+
+- 배포된 에이전트의 실행 호출(`invoke_deployed_multi_agent`)에서 `MCP_CONNECTION_REQUIRED`가 실행 시작 전에 반환되어 Trace가 없을 수 있다. 개인 외부 도구 연결을 확인할 수 없다는 응답과 Trace 부재를 구분하고, 공통 응답 규칙의 플랫폼 안내를 따른다. Trace가 없다는 이유로 graph 오류를 단정하거나 재실행·재배포하지 않는다.
+- `FAIL_AGENT_NETWORK` 같은 wrapper만으로 네트워크·Redis·worker 중 하나를 원인으로 확정하지 않는다. 실제 하위 오류와 시간상 선후 관계가 필요하다.
+- `truncated=true`, `is_complete_tree=false`, `partial_failures`가 있으면 증거의 범위를 명시한다. 현재 도구가 제공하는 상세만 추가 조회하고 존재하지 않는 pagination·로그 API를 만들지 않는다.
+- `null` token·cost·latency는 미확인 값이다. 0으로 계산하거나 합계가 완전하다고 주장하지 않는다. 누락 범위를 함께 보고한다.
+- duration/latency의 단위나 집계 범위가 충돌하면 각각의 출처와 불일치를 보고한다. 예를 들어 요약의 81ms와 root trace의 81,588ms를 같은 확정 latency로 취급하지 않는다. `source`·`completeness`는 반환된 row의 보고 범위로 읽고 전체 LLM 비용 보증으로 확대하지 않는다. cost=0도 coverage가 불명확하면 전체 비용이 0 또는 무료라는 뜻이 아니다.
+- LLM 추론, MCP 호출, 대기, 재시도 중 어디에 시간이 쓰였는지 나눈다. 한 번의 호출을 p95 성능이나 전체 서비스 상태로 일반화하지 않는다.
+- 캐시는 Gateway 응답 캐시(`llmConfig.cache_control`)와 모델의 시스템 prefix 캐시(`llmConfig.prompt_cache`)를 구분한다. `prompt_cache`는 지원 runtime에서 기본 true이고 false로 자동 추가를 끌 수 있다. 미지원 모델·캐시할 prefix가 없는 요청에는 지점이 추가되지 않으므로 `cache_control=true`나 설정값만으로 실제 cache hit를 판단하지 않는다. 제공된 provider usage나 SSE가 있으면 최초 호출의 캐시 생성량(`cache_creation_input_tokens` 또는 `prompt_tokens_details.cache_creation_tokens`)과 동일 prefix 후속 호출의 읽기량(`cache_read_input_tokens` 또는 `prompt_tokens_details.cached_tokens`)을 확인한다. 필드가 없으면 미확인으로 남기며 읽기 0만으로 미생성·매번 재생성을 구분하지 않는다. 모델별 최소 prefix 길이·TTL·prefix 변경과 실제 배포 revision을 확인한다. provider cache hit와 Ennoia 예산 할인을 구분하고, 현재 예산 정산의 기본 입력 단가 정책 때문에 cache hit만으로 예산 차감액 감소를 약속하지 않는다.
+
+오류 처리와 재시도는 응답의 `error.next_action`, `repair_hint`, `retryable`을 따른다. 조회 실패를 해결하려고 에이전트 재실행·삭제·배포를 시작하지 않는다. 수정이 요청됐다면 근거가 가리키는 범위에서 해당 작업 Skill로 이어간다.
+
+## 결과
+
+대상과 시간 범위, 확인한 증상, 근거가 있는 원인, 아직 모르는 점, 가장 직접적인 다음 조치를 간결하게 전달한다. credential·cookie·API key와 불필요한 원문 개인정보를 보고서에 싣지 않는다.

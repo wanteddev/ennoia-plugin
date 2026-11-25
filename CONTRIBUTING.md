@@ -9,7 +9,7 @@
 - 프로젝트·모델·배포 범위와 기존 사용자 승인을 보존합니다. 일반 작업마다 새로운 승인 단계를 추가하지 않습니다.
 - OAuth credential을 받는 별도 로컬 script, global hook, host 설정 덮어쓰기, 직접 backend 우회 호출을 추가하지 않습니다. 패키지의 local file uploader는 remote prepare가 발급한 1회용 upload header만 받아 지정된 Ennoia proxy로 전송합니다.
 - Input schema와 실제 결과는 현재 MCP가 기준입니다. `tests/fixtures/ennoia-tools.json`은 tool-name inventory이며, `ennoia-tool-contracts.json`은 실행·대화 조회·노드 프롬프트 편집·목록·저장된 draft 테스트 도구의 입력·출력 JSON Schema snapshot입니다. `ennoia-contract-cases.json`의 허용·거절 예제를 함께 검사합니다. MCP 계약 변경 시 확인한 source revision과 두 snapshot을 함께 갱신합니다. 이 자료는 runtime schema를 대체하지 않습니다.
-- Skill/reference는 `plugins/ennoia` 내부에서만 상대 경로로 참조합니다. ZIP 생성과 host별 Skill 복제는 필요하지 않습니다.
+- Skill/reference는 `plugins/ennoia` 원본 내부에서만 상대 경로로 참조합니다. Codex 배포본은 generator가 복사하며 직접 편집하지 않습니다.
 
 ## 저장소 구조
 
@@ -26,12 +26,18 @@ plugins/ennoia/
   skills/                           # 공유 Skill 원본 8개
   references/                       # 공통 응답 해석·표시 규칙
   assets/                           # 공식 아이콘·로고, 다크 모드용 로고
+plugins/ennoia-codex/                # Codex 설치용 생성 payload (root plugin.json 없음)
+  .codex-plugin/plugin.json          # 기존 Codex plugin 형식
+  .mcp.json                         # 동일 remote MCP·local uploader 설정
+  skills/, references/, assets/, mcp/ # 공통 원본의 생성 복사본
 scripts/                            # 작성자용 sync·검증 도구
 tests/                              # 배포 회귀 검증과 tool 계약 snapshot
 evals/                              # 모델 동작 검증 시나리오
 ```
 
-두 Marketplace는 동일한 `./plugins/ennoia`를 설치합니다. Marketplace와 Plugin 이름은 모두 `ennoia`이며 설치 식별자는 `ennoia@ennoia`입니다. MCP는 `https://mcp.ennoia.so/mcp`에 원격 연결합니다. Plugin 밖의 파일이나 symlink를 참조하지 않아 host cache로 복사해도 필요한 자료가 유지됩니다. 로컬 파일 업로드에는 Node.js가 필요하며 host가 패키지의 local MCP를 시작합니다. 사용자가 별도 서버를 수동 실행할 필요는 없습니다.
+Claude Marketplace는 `./plugins/ennoia`, Codex Marketplace는 `./plugins/ennoia-codex`를 설치합니다. Marketplace와 Plugin 이름은 모두 `ennoia`이며 설치 식별자는 `ennoia@ennoia`입니다. MCP는 같은 `https://mcp.ennoia.so/mcp`에 원격 연결합니다. Codex는 지원되는 root Agent Plugin manifest를 우선 선택하고 해당 경로에 도구 정의 예산을 적용하므로, Codex 생성 payload에는 root `plugin.json`을 포함하지 않습니다. `.codex-plugin/plugin.json`만 추가하는 것으로는 로딩 형식이 바뀌지 않습니다.
+
+Skill 8개와 references/assets/uploader의 원본은 `plugins/ennoia` 하나입니다. 생성 복사본도 Git 배포 트리에 포함해 Marketplace 설치 직후 사용할 수 있게 합니다. 각 payload는 Plugin 밖의 파일이나 symlink를 참조하지 않으며 host cache로 복사해도 필요한 자료가 유지됩니다. 로컬 파일 업로드에는 Node.js가 필요하며 host가 패키지의 local MCP를 시작합니다. 사용자가 별도 서버를 수동 실행할 필요는 없습니다.
 
 ## 변경하기
 
@@ -42,7 +48,7 @@ python3 -m pip install -r requirements-dev.txt
 python3 scripts/sync_manifests.py
 ```
 
-이 명령은 공식 asset 원본에서 다크 모드 로고와 Skill별 아이콘 복사본도 생성합니다. 배포할 Plugin 내용이 바뀌면 version을 올려 host cache가 갱신되게 합니다. README 등 패키지 밖의 안내 문서만 바뀐 경우에는 Plugin version을 올리지 않습니다.
+이 명령은 공식 asset 원본에서 다크 모드 로고와 Skill별 아이콘을 생성한 뒤 Codex payload를 동기화합니다. 원본에서 삭제한 파일과 Codex 경로의 불필요한 root manifest도 정리하며 `--check`는 차이만 보고합니다. `plugins/ennoia-codex`는 생성 전용 경로입니다. 배포할 Plugin 내용이 바뀌면 version을 올려 host cache가 갱신되게 합니다. README 등 패키지 밖의 안내 문서만 바뀐 경우에는 Plugin version을 올리지 않습니다.
 
 ## 검증
 
@@ -76,7 +82,7 @@ claude plugin validate --strict .claude-plugin/marketplace.json
 claude plugin validate --strict plugins/ennoia
 ```
 
-Claude validator의 성공은 Skill 행동이나 OAuth 성공을 증명하지 않습니다. 설치 후 실제 inventory에서 Skill 8개, Ennoia Remote MCP 1개, local file uploader MCP 1개를 확인하고, 읽기 호출로 인증과 project context를 확인합니다. Codex는 해당 버전의 plugin validator 또는 native `plugin list`/`plugin add`로 설치를 검증합니다.
+Claude validator의 성공은 Skill 행동이나 OAuth 성공을 증명하지 않습니다. 설치 후 실제 inventory에서 Skill 8개, Ennoia Remote MCP 1개, local file uploader MCP 1개를 확인하고, 읽기 호출로 인증과 project context를 확인합니다. Codex는 해당 버전의 plugin validator 또는 native `plugin list`/`plugin add`로 설치를 검증합니다. 서버 `tools/list`와 실제 새 채팅의 Code Mode `ALL_TOOLS`를 대조해 remote 도구 80개가 모두 노출되는지 확인합니다. 수동 MCP를 제외한 Plugin 단독 조건과 이전 버전에서 업데이트한 cache 조건을 따로 검사하고, 로컬 fixture 검증을 production OAuth·수정 성공으로 일반화하지 않습니다.
 
 문서 본문 문구를 정규식으로 맞추는 테스트 대신 broken reference, package 밖 경로, manifest version drift, MCP credential 포함, 미확인 tool 같은 배포 실패를 검사합니다. 모델 동작은 `evals/scenarios.json`을 별도로 사용합니다.
 
